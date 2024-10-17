@@ -178,14 +178,16 @@ jobs:
           cd -
       - name: Copy Bin Files
         run: |
-          find "$SDK_HOME/bin/" -type f -name "*xray*.ipk" -exec cp {} "${{ github.workspace }}" \;
+          find "$SDK_HOME/bin/" -type f -name "*.ipk" -exec cp {} "${{ github.workspace }}" \;
           find "${{ github.workspace }}" -type f -name "*.ipk" -exec ls -lh {} \;
       - name: Release and Upload Assets
         uses: softprops/action-gh-release@v1
-        with:
-          files: '*.ipk'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          files: '*.ipk'
+        
 
   notify:
     name: Notify Release Publish
