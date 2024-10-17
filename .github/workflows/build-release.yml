@@ -21,6 +21,7 @@ on:
 env:
   PACKAGE_NAME: ${{ inputs.package_name }}
   CACHE_DIR: ~/cache
+  UPLOAD_BIN_DIR: true
 
 jobs:
   release:
@@ -174,11 +175,21 @@ jobs:
           cd "$SDK_HOME"
           make defconfig
           make package/${PACKAGE_NAME}/{clean,compile} V=s
-          echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
+          echo "Time=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_ENV
           find "$SDK_HOME/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
           cd -
+          
+      - name: Upload bin directory
+        uses: actions/upload-artifact@main
+        if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
+        with:
+          name: package_${{ env.Time }}
+          path: $SDK_HOME/bin/  
+          
       - name: Copy Bin Files
         run: |
+          touch release.txt
+          [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
           NAME=$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)
           find "$SDK_HOME/bin/" -type f -name "*${NAME}.ipk" -exec cp {} "${{ github.workspace }}" \;
           find "${{ github.workspace }}" -type f -name "*.ipk" -exec ls -lh {} \;
@@ -187,7 +198,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.PACKAGE_NAME }}_${{ steps.tag.outputs.release_tag }}
+          tag_name: ${{ env.Time  }}
+          body_path: release.txt
           files: '*.ipk'
         
 
