@@ -174,6 +174,7 @@ jobs:
           cd "$SDK_HOME"
           make defconfig
           make package/${PACKAGE_NAME}/{clean,compile} V=s
+          echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
           find "$SDK_HOME/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
           cd -
       - name: Copy Bin Files
@@ -185,7 +186,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.tag.outputs.release_tag }}
+          tag_name: ${{ env.PACKAGE_NAME }}_${{ steps.tag.outputs.release_tag }}
           files: '*.ipk'
         
 
