@@ -181,7 +181,7 @@ jobs:
           
       - name: Upload bin directory
         uses: actions/upload-artifact@main
-        if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
+        if: env.UPLOAD_BIN_DIR == 'true'
         with:
           name: package_${{ env.Time }}
           path: $SDK_HOME/bin/  
@@ -190,8 +190,9 @@ jobs:
         run: |
           touch release.txt
           [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
-          NAME=$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)
-          find "$SDK_HOME/bin/" -type f -name "*${NAME}.ipk" -exec cp {} "${{ github.workspace }}" \;
+          NAME=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-).ipk
+          PACKAGE_DIR="${SDK_HOME}/bin/"
+          find ${PACKAGE_DIR} -type f -name ${NAME} -exec cp {} "${{ github.workspace }}" \;
           find "${{ github.workspace }}" -type f -name "*.ipk" -exec ls -lh {} \;
       - name: Release and Upload Assets
         uses: softprops/action-gh-release@v1
