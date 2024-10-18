@@ -11,7 +11,7 @@ on:
         type: boolean
       
       package_name:
-        description: "Select the package_name"
+        description: "Select the package"
         required: false
         default: "all"
         type: choice
