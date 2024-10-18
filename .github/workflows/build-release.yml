@@ -180,7 +180,6 @@ jobs:
         run: |
           cd "${{ env.SDK_HOME }}"
           make defconfig
-          # make package/${{ env.PACKAGE_NAME }}/{clean,compile} V=s
           make package/${{ env.PACKAGE_NAME }}/{clean,compile}
           echo "Time=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_ENV
           find "${{ env.SDK_HOME }}/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
