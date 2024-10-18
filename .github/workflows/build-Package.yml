@@ -4,6 +4,12 @@ on:
   repository_dispatch:
   workflow_dispatch:
     inputs:
+      ssh:
+        description: "SSH connection to Actions"
+        required: false
+        default: false
+        type: boolean
+      
       package_name:
         description: "Select the package_name"
         required: false
@@ -16,6 +22,7 @@ on:
           - luci-app-unishare
           - luci-app-v2ray-server
           - luci-app-sunpanel
+          
           
 
 env:
@@ -212,6 +219,7 @@ jobs:
           files: '*.ipk'
           
       - name: SSH connection to Actions
+        if: (inputs.ssh == true) || contains(github.event.action, 'ssh')
         uses: mxschmitt/action-tmate@v3  
 
   notify:
