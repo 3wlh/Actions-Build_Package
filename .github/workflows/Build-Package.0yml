@@ -31,13 +31,9 @@ env:
   UPLOAD_BIN_DIR: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    - name: Set up secret file
-      run: |
-        echo "Time=$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
-    
+  release:
     name: Build for ${{ matrix.arch }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -142,7 +138,6 @@ jobs:
           echo "CACHE_DIR_DL=$CACHE_DIR_DL" >> $GITHUB_ENV
           echo "CACHE_DIR_FEEDS=$CACHE_DIR_FEEDS" >> $GITHUB_ENV
           echo "SDK_HOME=$(mktemp -d)" >> $GITHUB_ENV
-          exit 1
       
       - name: Download and Unzip SDK
         run: |
@@ -221,8 +216,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.Time }}
-          body_path: release.txt
           files: '*.ipk'
           
       - name: SSH connection to Actions
