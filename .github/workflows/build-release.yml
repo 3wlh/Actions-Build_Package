@@ -162,24 +162,26 @@ jobs:
         env:
           OPENWRT_GOLANG_COMMIT: ${{ secrets.OPENWRT_GOLANG_COMMIT }}
         run: |
-          cd "$SDK_HOME"
+          cd "${SDK_HOME}"
           ./scripts/feeds update -a
           test -d "feeds/packages/net/$PACKAGE_NAME" && rm -rf "feeds/packages/net/$PACKAGE_NAME" || true
           test -d "feeds/packages/lang/golang" && rm -rf "feeds/packages/lang/golang" || true
           curl https://codeload.github.com/openwrt/packages/tar.gz/${OPENWRT_GOLANG_COMMIT:-master} | tar -xz -C "feeds/packages/lang" --strip=2 packages-${OPENWRT_GOLANG_COMMIT:-master}/lang/golang
-          ln -s "${{ github.workspace }}" "package/$PACKAGE_NAME"
+          NAME=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)
+          find ${{ github.workspace }} -type d -name ${NAME} -exec ln -s {} "package/${PACKAGE_NAME}" \;
+          # ln -s "${{ github.workspace }}/${PACKAGE_NAME}" "package/${PACKAGE_NAME}"
           ./scripts/feeds install -a
           cd -
       - name: Build Packages
         run: |
-          cd "$SDK_HOME"
+          cd "{$SDK_HOME}"
           make defconfig
           make package/${PACKAGE_NAME}/{clean,compile} V=s
           echo "Time=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_ENV
           find "${SDK_HOME}/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
           cd -
           
-      - name: Upload bin directory
+      - name: Upload to bin directory
         uses: actions/upload-artifact@main
         if: ${{env.UPLOAD_BIN_DIR}} == 'true'
         with:
@@ -195,7 +197,7 @@ jobs:
           find ${PACKAGE_DIR} -type f -name ${NAME} -exec cp {} "${{ github.workspace }}" \;
           find "${{ github.workspace }}" -type f -name "*.ipk" -exec ls -lh {} \;
       
-      - name: Release and Upload Assets
+      - name: Upload to Release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
