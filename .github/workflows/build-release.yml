@@ -184,7 +184,7 @@ jobs:
         if: env.UPLOAD_BIN_DIR == 'true'
         with:
           name: package_${{ env.Time }}
-          path: $SDK_HOME/bin/  
+          path: $SDK_HOME/bin 
           
       - name: Copy Bin Files
         run: |
@@ -194,6 +194,7 @@ jobs:
           PACKAGE_DIR="${SDK_HOME}/bin/"
           find ${PACKAGE_DIR} -type f -name ${NAME} -exec cp {} "${{ github.workspace }}" \;
           find "${{ github.workspace }}" -type f -name "*.ipk" -exec ls -lh {} \;
+      
       - name: Release and Upload Assets
         uses: softprops/action-gh-release@v1
         env:
