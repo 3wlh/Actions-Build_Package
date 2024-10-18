@@ -34,10 +34,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     
-    name: Set up secret file
-    run: |
-      echo "Time=$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
-    
     name: Build for ${{ matrix.arch }}
     strategy:
       fail-fast: false
@@ -107,6 +103,10 @@ jobs:
       CCACHE_DIR: ~/.ccache
       CONFIG_CCACHE: y
     steps:
+      - name: Set up secret file
+        run: |
+          echo "Time=$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
+      
       - name: Checkout
         uses: actions/checkout@v2
 
