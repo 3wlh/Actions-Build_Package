@@ -135,7 +135,7 @@ jobs:
       - name: Download and Unzip SDK
         run: |
           cd "$CACHE_DIR_SDK"
-          if ! ( wget -q -O - "$SDK_URL_PATH/sha256sums" | grep -- "${{ env.SDK_NAME }} " > sha256sums.small 2>/dev/null ) ; then
+          if ! ( wget -q -O - "$SDK_URL_PATH/sha256sums" | grep -- "${{ env.SDK_NAME }}" > sha256sums.small 2>/dev/null ) ; then
             echo "::error::Can not find ${{ env.SDK_NAME }} file in sha256sums."
             exit 1
           fi
