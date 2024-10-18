@@ -176,15 +176,15 @@ jobs:
           make defconfig
           make package/${PACKAGE_NAME}/{clean,compile} V=s
           echo "Time=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_ENV
-          find "$SDK_HOME/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
+          find "${SDK_HOME}/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
           cd -
           
       - name: Upload bin directory
         uses: actions/upload-artifact@main
-        if: env.UPLOAD_BIN_DIR == 'true'
+        if: ${{env.UPLOAD_BIN_DIR}} == 'true'
         with:
-          name: package_${{ env.Time }}
-          path: $SDK_HOME/bin 
+          name: package_${{ matrix.arch }}_${{ env.Time }}
+          path: ${SDK_HOME}/bin 
           
       - name: Copy Bin Files
         run: |
