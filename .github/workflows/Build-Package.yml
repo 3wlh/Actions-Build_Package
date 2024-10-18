@@ -31,10 +31,9 @@ env:
   UPLOAD_BIN_DIR: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    
+  release:
     name: Build for ${{ matrix.arch }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -103,10 +102,10 @@ jobs:
       CCACHE_DIR: ~/.ccache
       CONFIG_CCACHE: y
     steps:
-      - name: Set up secret file
+      - name: Select the Time
         run: |
-          echo "Time=$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
-      
+          echo "Time=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_ENV
+          
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -143,7 +142,6 @@ jobs:
           echo "CACHE_DIR_DL=$CACHE_DIR_DL" >> $GITHUB_ENV
           echo "CACHE_DIR_FEEDS=$CACHE_DIR_FEEDS" >> $GITHUB_ENV
           echo "SDK_HOME=$(mktemp -d)" >> $GITHUB_ENV
-          exit 1
       
       - name: Download and Unzip SDK
         run: |
@@ -195,7 +193,6 @@ jobs:
           cd "${{ env.SDK_HOME }}"
           make defconfig
           make package/${{ env.PACKAGE_NAME }}/{clean,compile}
-          echo "Time=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_ENV
           find "${{ env.SDK_HOME }}/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
           cd -
       
@@ -229,3 +226,23 @@ jobs:
       - name: SSH connection to Actions
         if: (inputs.ssh == true) || contains(github.event.action, 'ssh')
         uses: mxschmitt/action-tmate@v3  
+
+  notify:
+    name: Notify Release Publish
+    runs-on: ubuntu-latest
+    env:
+      TRIGGER_URL: ${{ secrets.TRIGGER_URL }}
+      TRIGGER_TOKEN: ${{ secrets.TRIGGER_TOKEN }}
+    needs: release
+    steps:
+      - name: Notify Jenkins
+        run: |
+          if [ -z "$TRIGGER_URL" ] ; then
+            echo "::warning::No trigger url found, skip..."
+            exit 0
+          fi
+          curl -X POST \
+              -H "Content-Type: application/json; charset=utf-8" \
+              -H "Authorization: Bearer $TRIGGER_TOKEN" \
+              -d "{\"event\":\"release\",\"repository\":\"${{ github.repository }}\",\"ref\":\"${{ github.ref }}\"}" \
+              "$TRIGGER_URL" || true
