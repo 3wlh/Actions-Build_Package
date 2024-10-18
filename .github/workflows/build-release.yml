@@ -177,9 +177,6 @@ jobs:
           ./scripts/feeds install -a >/dev/null 2>&1
           cd -
       
-      - name: SSH connection to Actions
-        uses: mxschmitt/action-tmate@v3
-      
       - name: Build Packages
         run: |
           cd "${{ env.SDK_HOME }}"
@@ -189,8 +186,6 @@ jobs:
           find "${{ env.SDK_HOME }}/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
           cd -
       
-      
-          
       - name: Upload to bin directory
         uses: actions/upload-artifact@main
         if: ${{env.UPLOAD_BIN_DIR}} == 'true'
@@ -215,7 +210,9 @@ jobs:
           tag_name: ${{ env.Time  }}
           body_path: release.txt
           files: '*.ipk'
-        
+          
+      - name: SSH connection to Actions
+        uses: mxschmitt/action-tmate@v3  
 
   notify:
     name: Notify Release Publish
