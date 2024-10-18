@@ -204,9 +204,11 @@ jobs:
         run: |
           touch release.txt
           [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
-          NAME=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
+          app=*app*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
+          i18n=*i18n*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
           PACKAGE_DIR="${{ env.SDK_HOME }}/bin/"
-          find ${PACKAGE_DIR} -type f -name ${NAME} -exec cp {} "${{ github.workspace }}" \;
+          find ${PACKAGE_DIR} -type f -name ${app} -exec cp {} "${{ github.workspace }}/${{ matrix.arch }}-luci-app-cifs-mount.ipk" \;
+          find ${PACKAGE_DIR} -type f -name ${i18n} -exec cp {} "${{ github.workspace }}/${{ matrix.arch }}-luci-i18n-cifs-mount-zh-cn.ipk" \;
           find "${{ github.workspace }}" -type f -name "*.ipk" -exec ls -lh {} \;
       
       - name: Upload to Release
