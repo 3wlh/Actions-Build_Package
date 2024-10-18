@@ -197,7 +197,7 @@ jobs:
           touch release.txt
           [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
           NAME=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-).ipk
-          PACKAGE_DIR="${SDK_HOME}/bin"
+          PACKAGE_DIR="${SDK_HOME}/bin/"
           find ${PACKAGE_DIR} -type f -name ${NAME} -exec cp {} "${{ github.workspace }}" \;
           find "${{ github.workspace }}" -type f -name "*.ipk" -exec ls -lh {} \;
       
