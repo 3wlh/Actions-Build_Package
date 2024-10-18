@@ -21,9 +21,7 @@ on:
           - luci-app-bypass
           - luci-app-unishare
           - luci-app-v2ray-server
-          - luci-app-sunpanel
-          
-          
+          - luci-app-sunpanel       
 
 env:
   PACKAGE_NAME: ${{ inputs.package_name }}
