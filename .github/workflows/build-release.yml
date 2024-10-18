@@ -135,8 +135,8 @@ jobs:
       - name: Download and Unzip SDK
         run: |
           cd "$CACHE_DIR_SDK"
-          if ! ( wget -q -O - "$SDK_URL_PATH/sha256sums" | grep -- "$SDK_NAME" > sha256sums.small 2>/dev/null ) ; then
-            echo "::error::Can not find ${SDK_NAME} file in sha256sums."
+          if ! ( wget -q -O - "$SDK_URL_PATH/sha256sums" | grep -- "${{ env.SDK_NAME }} " > sha256sums.small 2>/dev/null ) ; then
+            echo "::error::Can not find ${{ env.SDK_NAME }} file in sha256sums."
             exit 1
           fi
           SDK_FILE="$(cat sha256sums.small | cut -d' ' -f2 | sed 's/*//g')"
@@ -149,8 +149,8 @@ jobs:
           fi
           cd -
           file "$CACHE_DIR_SDK/$SDK_FILE"
-          tar -I zstd -xvf "$CACHE_DIR_SDK/$SDK_FILE" -C "$SDK_HOME" --strip=1
-          cd "$SDK_HOME"
+          tar -I zstd -xvf "$CACHE_DIR_SDK/$SDK_FILE" -C "${{ env.SDK_HOME }}" --strip=1
+          cd "${{ env.SDK_HOME }}"
           test -d "dl" && rm -rf "dl" || true
           test -d "feeds" && rm -rf "feeds" || true
           ln -s "$CACHE_DIR_DL" "dl"
@@ -165,24 +165,25 @@ jobs:
         env:
           OPENWRT_GOLANG_COMMIT: ${{ secrets.OPENWRT_GOLANG_COMMIT }}
         run: |
-          cd "${SDK_HOME}"
-          ./scripts/feeds update -a
+          cd "${{ env.SDK_HOME }}"
+          ./scripts/feeds update -a >/dev/null 2>&1
           test -d "feeds/packages/net/$PACKAGE_NAME" && rm -rf "feeds/packages/net/$PACKAGE_NAME" || true
           test -d "feeds/packages/lang/golang" && rm -rf "feeds/packages/lang/golang" || true
           curl https://codeload.github.com/openwrt/packages/tar.gz/${OPENWRT_GOLANG_COMMIT:-master} | tar -xz -C "feeds/packages/lang" --strip=2 packages-${OPENWRT_GOLANG_COMMIT:-master}/lang/golang
           NAME=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)
-          find ${{ github.workspace }} -type d -name ${NAME} -exec ln -s {} "package/${PACKAGE_NAME}" \;
-          # ln -s "${{ github.workspace }}/${PACKAGE_NAME}" "package/${PACKAGE_NAME}"
-          ./scripts/feeds install -a
+          find ${{ github.workspace }} -type d -name ${NAME} -exec ln -s {} "package/${{ env.PACKAGE_NAME }}" \;
+          find "package/" -type d -name ${NAME} -exec echo {} \;
+          # ln -s "${{ github.workspace }}/${{ env.PACKAGE_NAME }}" "package/${{ env.PACKAGE_NAME }}"
+          ./scripts/feeds install -a >/dev/null 2>&1
           cd -
       - name: Build Packages
         run: |
-          cd "${SDK_HOME}"
+          cd "${{ env.SDK_HOME }}"
           make defconfig
-          # make package/${PACKAGE_NAME}/{clean,compile} V=s
-          make package/${PACKAGE_NAME}/{clean,compile}
+          # make package/${{ env.PACKAGE_NAME }}/{clean,compile} V=s
+          make package/${{ env.PACKAGE_NAME }}/{clean,compile}
           echo "Time=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_ENV
-          find "${SDK_HOME}/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
+          find "${{ env.SDK_HOME }}/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
           cd -
           
       - name: Upload to bin directory
@@ -190,14 +191,14 @@ jobs:
         if: ${{env.UPLOAD_BIN_DIR}} == 'true'
         with:
           name: package_${{ matrix.arch }}_${{ env.Time }}
-          path: ${SDK_HOME}/bin 
+          path: ${{ env.SDK_HOME }}/bin 
           
       - name: Copy Bin Files
         run: |
           touch release.txt
           [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
           NAME=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-).ipk
-          PACKAGE_DIR="${SDK_HOME}/bin/"
+          PACKAGE_DIR="${{ env.SDK_HOME }}/bin/"
           find ${PACKAGE_DIR} -type f -name ${NAME} -exec cp {} "${{ github.workspace }}" \;
           find "${{ github.workspace }}" -type f -name "*.ipk" -exec ls -lh {} \;
       
