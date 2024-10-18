@@ -216,8 +216,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.Time  }}
-          body_path: release.txt
           files: '*.ipk'
           
       - name: SSH connection to Actions
