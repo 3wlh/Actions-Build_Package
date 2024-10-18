@@ -111,9 +111,11 @@ jobs:
           key: openwrt-${{ matrix.arch }}-${{ env.PACKAGE_NAME }}-${{ steps.cache_key.outputs.timestamp }}
           restore-keys: |
             openwrt-${{ matrix.arch }}-${{ env.PACKAGE_NAME }}-
+      
       - name: Install Dependencies
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get install -y ccache gettext libncurses5-dev xsltproc
+      
       - name: Create Directories
         run: |
           CACHE_DIR_SDK="$(eval echo "$CACHE_DIR/sdk")"
@@ -129,6 +131,7 @@ jobs:
           echo "CACHE_DIR_DL=$CACHE_DIR_DL" >> $GITHUB_ENV
           echo "CACHE_DIR_FEEDS=$CACHE_DIR_FEEDS" >> $GITHUB_ENV
           echo "SDK_HOME=$(mktemp -d)" >> $GITHUB_ENV
+      
       - name: Download and Unzip SDK
         run: |
           cd "$CACHE_DIR_SDK"
@@ -194,7 +197,7 @@ jobs:
           touch release.txt
           [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
           NAME=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-).ipk
-          PACKAGE_DIR="${SDK_HOME}/bin/"
+          PACKAGE_DIR="${SDK_HOME}/bin"
           find ${PACKAGE_DIR} -type f -name ${NAME} -exec cp {} "${{ github.workspace }}" \;
           find "${{ github.workspace }}" -type f -name "*.ipk" -exec ls -lh {} \;
       
