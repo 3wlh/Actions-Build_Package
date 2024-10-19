@@ -115,12 +115,7 @@ jobs:
         run: |
           [ ! -d "${{ env.IPK_DIR }}" ] && mkdir -p "${{ env.IPK_DIR }}"
           chmod +x ${{ env.CP }}
-          # Make="${{ env.PACKAGE_NAME }}/Makefile"
-          # sed -i '/LUCI_PKGARCH/d' ${Make}
-          # sed -i "/include \$(TOPDIR)\/rules.mk/a\\\nLUCI_PKGARCH:=${{ matrix.arch }}" ${Make}
-          # cat ${Make}
-          # exit 1
-
+          
       - name: Prepare Cache Key
         id: cache_key
         run: echo "::set-output name=timestamp::$(date +"%s")"
@@ -204,7 +199,7 @@ jobs:
       - name: Build Packages
         run: |
           cd "${{ env.SDK_HOME }}"
-          make defconfig  >/dev/null 2>&1
+          make defconfig  >/dev/null
           # make package/${{ env.PACKAGE_NAME }}/{clean,compile} V=s
           make package/${{ env.PACKAGE_NAME }}/{clean,compile}
           find "${{ env.SDK_HOME }}/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
