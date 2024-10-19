@@ -187,7 +187,7 @@ jobs:
           ln -s "${{ github.workspace }}/${{ env.PACKAGE_NAME }}" "package/${{ env.PACKAGE_NAME }}"
           Make="package/${{ env.PACKAGE_NAME }}/Makefile"
           sed -i '/LUCI_PKGARCH/d' ${Make}
-          sed -i "LUCI_TITLE/a\LUCI_PKGARCH:=${{ matrix.arch }}" ${Make}
+          sed -i "include $.*rules.mk/a\LUCI_PKGARCH:=${{ matrix.arch }}" ${Make}
           cat ${Make}
           exit 1
           ./scripts/feeds install -a >/dev/null 2>&1
