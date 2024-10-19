@@ -200,7 +200,7 @@ jobs:
       - name: Build Packages
         run: |
           cd "${{ env.SDK_HOME }}"
-          make defconfig
+          make defconfig  >/dev/null 2>&1
           # make package/${{ env.PACKAGE_NAME }}/{clean,compile} V=s
           make package/${{ env.PACKAGE_NAME }}/{clean,compile}
           find "${{ env.SDK_HOME }}/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
