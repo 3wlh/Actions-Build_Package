@@ -181,10 +181,12 @@ jobs:
           test -d "feeds/packages/net/$PACKAGE_NAME" && rm -rf "feeds/packages/net/$PACKAGE_NAME" || true
           test -d "feeds/packages/lang/golang" && rm -rf "feeds/packages/lang/golang" || true
           curl https://codeload.github.com/openwrt/packages/tar.gz/${OPENWRT_GOLANG_COMMIT:-master} | tar -xz -C "feeds/packages/lang" --strip=2 packages-${OPENWRT_GOLANG_COMMIT:-master}/lang/golang
-          NAME=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)
-          find ${{ github.workspace }} -type d -name ${NAME} -exec ln -s {} "package/${{ env.PACKAGE_NAME }}" \;
-          find "package/" -type d -name ${NAME} -exec echo {} \;
-          # ln -s "${{ github.workspace }}/${{ env.PACKAGE_NAME }}" "package/${{ env.PACKAGE_NAME }}"
+          Name=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)
+          # find ${{ github.workspace }} -type d -name ${Name} -exec ln -s {} "package/${{ env.PACKAGE_NAME }}" \;
+          # find "package/" -type d -name ${Name} -exec echo {} \;
+          ln -s "${{ github.workspace }}/${{ env.PACKAGE_NAME }}" "package/${{ env.PACKAGE_NAME }}"
+          Make="package/${{ env.PACKAGE_NAME }}/Makefile"
+          sed -i '/LUCI_PKGARCH/d' ${Make}
           ./scripts/feeds install -a >/dev/null 2>&1
           cd -
       
@@ -201,11 +203,13 @@ jobs:
         run: |
           touch release.txt
           [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
-          app=*app*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
-          i18n=*i18n*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
+          Name=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
+          # app=*app*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
+          # i18n=*i18n*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
           PACKAGE_DIR="${{ env.SDK_HOME }}/bin/"
-          find ${PACKAGE_DIR} -type f -name ${app} -exec cp {} "${{ github.workspace }}/luci-app-cifs-mount_${{ matrix.arch }}.ipk" \;
-          find ${PACKAGE_DIR} -type f -name ${i18n} -exec cp {} "${{ github.workspace }}/luci-i18n-cifs-mount-zh-cn_${{ matrix.arch }}.ipk" \;
+          find ${PACKAGE_DIR} -type f -name ${Name} -exec cp {} "${{ github.workspace }}" \;
+          # find ${PACKAGE_DIR} -type f -name ${app} -exec cp {} "${{ github.workspace }}/luci-app-cifs-mount_${{ matrix.arch }}.ipk" \;
+          # find ${PACKAGE_DIR} -type f -name ${i18n} -exec cp {} "${{ github.workspace }}/luci-i18n-cifs-mount-zh-cn_${{ matrix.arch }}.ipk" \;
           find "${{ github.workspace }}" -type f -name "*.ipk" -exec ls -lh {} \;
       
       - name: Upload to bin directory
