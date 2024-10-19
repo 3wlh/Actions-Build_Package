@@ -115,7 +115,7 @@ jobs:
           sed -i '/LUCI_PKGARCH/d' ${Make}
           sed -i "/include \$(TOPDIR)\/rules.mk/a\\\nLUCI_PKGARCH:=${{ matrix.arch }}" ${Make}
           cat ${Make}
-          exit 1
+          #exit 1
 
       - name: Prepare Cache Key
         id: cache_key
