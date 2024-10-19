@@ -113,9 +113,9 @@ jobs:
         run: |
           Make="${{ env.PACKAGE_NAME }}/Makefile"
           sed -i '/LUCI_PKGARCH/d' ${Make}
-          sed -i "/include \$(TOPDIR)\/rules.mk/a\LUCI_PKGARCH:=${{ matrix.arch }}" ${Make}
+          sed -i "/include \$(TOPDIR)\/rules.mk/a\\nLUCI_PKGARCH:=${{ matrix.arch }}" ${Make}
           cat ${Make}
-          exit 1 
+          exit 1
 
       - name: Prepare Cache Key
         id: cache_key
@@ -193,11 +193,6 @@ jobs:
           # find ${{ github.workspace }} -type d -name ${Name} -exec ln -s {} "package/${{ env.PACKAGE_NAME }}" \;
           # find "package/" -type d -name ${Name} -exec echo {} \;
           ln -s "${{ github.workspace }}/${{ env.PACKAGE_NAME }}" "package/${{ env.PACKAGE_NAME }}"
-          Make="package/${{ env.PACKAGE_NAME }}/Makefile"
-          sed -i '/LUCI_PKGARCH/d' ${Make}
-          sed -i "/include \$(TOPDIR)\/rules.mk/a\LUCI_PKGARCH:=${{ matrix.arch }}" ${Make}
-          cat ${Make}
-          exit 1
           ./scripts/feeds install -a >/dev/null 2>&1
           cd -
       
