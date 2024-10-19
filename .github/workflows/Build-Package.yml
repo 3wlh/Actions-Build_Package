@@ -111,10 +111,14 @@ jobs:
           
       - name: Package the ${{ matrix.arch }}
         run: |
-          Make="${{ env.PACKAGE_NAME }}/Makefile"
-          sed -i '/LUCI_PKGARCH/d' ${Make}
-          sed -i "/include \$(TOPDIR)\/rules.mk/a\\\nLUCI_PKGARCH:=${{ matrix.arch }}" ${Make}
-          cat ${Make}
+          echo "IPK_DIR=${{ github.workspace }}/IPK" >> $GITHUB_ENV
+          echo "CP=${{ github.workspace }}/.github/Shell/cp.sh" >> $GITHUB_ENV
+          [ ! -d "${{ env.IPK_DIR }}" ] && mkdir -p "${{ env.IPK_DIR }}"
+          chmod +x ${{ env.CP }}
+          # Make="${{ env.PACKAGE_NAME }}/Makefile"
+          # sed -i '/LUCI_PKGARCH/d' ${Make}
+          # sed -i "/include \$(TOPDIR)\/rules.mk/a\\\nLUCI_PKGARCH:=${{ matrix.arch }}" ${Make}
+          # cat ${Make}
           # exit 1
 
       - name: Prepare Cache Key
@@ -211,13 +215,9 @@ jobs:
           touch release.txt
           [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
           Name=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
-          # app=*app*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
-          # i18n=*i18n*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
           PACKAGE_DIR="${{ env.SDK_HOME }}/bin/"
-          find ${PACKAGE_DIR} -type f -name ${Name} -exec cp {} "${{ github.workspace }}" \;
-          # find ${PACKAGE_DIR} -type f -name ${app} -exec cp {} "${{ github.workspace }}/luci-app-cifs-mount_${{ matrix.arch }}.ipk" \;
-          # find ${PACKAGE_DIR} -type f -name ${i18n} -exec cp {} "${{ github.workspace }}/luci-i18n-cifs-mount-zh-cn_${{ matrix.arch }}.ipk" \;
-          find "${{ github.workspace }}" -type f -name "*.ipk" -exec ls -lh {} \;
+          find ${PACKAGE_DIR} -type f -name ${Name} -exec bash "${{ env.CP }}" {} "${{ env.IPK_DIR }}" "${{ matrix.arch }}" \;
+          find "${{ env.IPK_DIR }}" -type f -name "*.ipk" -exec ls -lh {} \;
       
       - name: Upload to bin directory
         uses: actions/upload-artifact@main
@@ -233,7 +233,7 @@ jobs:
         with:
           tag_name: ${{ env.Time }}
           body_path: release.txt
-          files: '*.ipk'
+          files: ${{ env.IPK_DIR }}/*.ipk
           
       - name: SSH connection to Actions
         if: (inputs.ssh == true) || contains(github.event.action, 'ssh')
