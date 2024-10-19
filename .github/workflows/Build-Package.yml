@@ -114,7 +114,7 @@ jobs:
         run: echo "::set-output name=timestamp::$(date +"%s")"
 
       - name: Setup Cache
-        uses: actions/cache@v2
+        uses: actions/cache@main
         with:
           path: |
             ${{ env.CACHE_DIR }}
