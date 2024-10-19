@@ -113,7 +113,7 @@ jobs:
         run: |
           Make="${{ env.PACKAGE_NAME }}/Makefile"
           sed -i '/LUCI_PKGARCH/d' ${Make}
-          sed -i "/include \$(TOPDIR)\/rules.mk/a\\nLUCI_PKGARCH:=${{ matrix.arch }}" ${Make}
+          sed -i "/include \$(TOPDIR)\/rules.mk/a\\\nLUCI_PKGARCH:=${{ matrix.arch }}" ${Make}
           cat ${Make}
           exit 1
 
