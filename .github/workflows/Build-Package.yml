@@ -107,7 +107,15 @@ jobs:
       - name: Select the Time
         run: |
           sudo timedatectl set-timezone "${TZ}"
-          echo "Time=$(echo $(date +"%Y.%m.%d-%H%M") | sed 's/.$/0/')" >> $GITHUB_ENV   
+          echo "Time=$(echo $(date +"%Y.%m.%d-%H%M") | sed 's/.$/0/')" >> $GITHUB_ENV
+          
+      - name: Package the ${{ matrix.arch }}
+        run: |
+          Make="${{ env.PACKAGE_NAME }}/Makefile"
+          sed -i '/LUCI_PKGARCH/d' ${Make}
+          sed -i "/include \$(TOPDIR)\/rules.mk/a\LUCI_PKGARCH:=${{ matrix.arch }}" ${Make}
+          cat ${Make}
+          exit 1 
 
       - name: Prepare Cache Key
         id: cache_key
