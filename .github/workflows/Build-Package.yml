@@ -100,14 +100,14 @@ jobs:
       SDK_NAME: ${{ matrix.sdk_name }}
       CCACHE_DIR: ~/.ccache
       CONFIG_CCACHE: y
-    steps:
-      - name: Select the Time
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@main
+        
+     - name: Select the Time
         run: |
           sudo timedatectl set-timezone "${TZ}"
-          echo "Time=$(echo $(date +"%Y.%m.%d-%H%M") | sed 's/.$/0/')" >> $GITHUB_ENV
-          
-      - name: Checkout
-        uses: actions/checkout@v2
+          echo "Time=$(echo $(date +"%Y.%m.%d-%H%M") | sed 's/.$/0/')" >> $GITHUB_ENV   
 
       - name: Prepare Cache Key
         id: cache_key
@@ -129,7 +129,6 @@ jobs:
       
       - name: Create Directories
         run: |
-          exit 1
           CACHE_DIR_SDK="$(eval echo "$CACHE_DIR/sdk")"
           CACHE_DIR_DL="$(eval echo "$CACHE_DIR/dl")"
           CACHE_DIR_FEEDS="$(eval echo "$CACHE_DIR/feeds")"
@@ -193,17 +192,11 @@ jobs:
         run: |
           cd "${{ env.SDK_HOME }}"
           make defconfig
+          # make package/${{ env.PACKAGE_NAME }}/{clean,compile} V=s
           make package/${{ env.PACKAGE_NAME }}/{clean,compile}
           find "${{ env.SDK_HOME }}/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
           cd -
       
-      - name: Upload to bin directory
-        uses: actions/upload-artifact@main
-        if: ${{env.UPLOAD_BIN_DIR}} == 'true'
-        with:
-          name: package_${{ matrix.arch }}_${{ env.Time }}
-          path: ${{ env.SDK_HOME }}/bin 
-          
       - name: Copy Bin Files
         run: |
           touch release.txt
@@ -211,10 +204,17 @@ jobs:
           app=*app*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
           i18n=*i18n*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
           PACKAGE_DIR="${{ env.SDK_HOME }}/bin/"
-          find ${PACKAGE_DIR} -type f -name ${app} -exec cp {} "${{ github.workspace }}/${{ matrix.arch }}-luci-app-cifs-mount.ipk" \;
-          find ${PACKAGE_DIR} -type f -name ${i18n} -exec cp {} "${{ github.workspace }}/${{ matrix.arch }}-luci-i18n-cifs-mount-zh-cn.ipk" \;
+          find ${PACKAGE_DIR} -type f -name ${app} -exec cp {} "${{ github.workspace }}/luci-app-cifs-mount_${{ matrix.arch }}.ipk" \;
+          find ${PACKAGE_DIR} -type f -name ${i18n} -exec cp {} "${{ github.workspace }}/luci-i18n-cifs-mount-zh-cn_${{ matrix.arch }}.ipk" \;
           find "${{ github.workspace }}" -type f -name "*.ipk" -exec ls -lh {} \;
       
+      - name: Upload to bin directory
+        uses: actions/upload-artifact@main
+        if: ${{env.UPLOAD_BIN_DIR}} == 'true'
+        with:
+          name: ${{ matrix.arch }}_package_${{ env.Time }}
+          path: ${{ env.SDK_HOME }}/bin 
+          
       - name: Upload to Release
         uses: softprops/action-gh-release@v1
         env:
