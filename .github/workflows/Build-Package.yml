@@ -104,10 +104,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
         
-     - name: Select the Time
-       run: |
-         sudo timedatectl set-timezone "${TZ}"
-         echo "Time=$(echo $(date +"%Y.%m.%d-%H%M") | sed 's/.$/0/')" >> $GITHUB_ENV   
+      - name: Select the Time
+        run: |
+          sudo timedatectl set-timezone "${TZ}"
+          echo "Time=$(echo $(date +"%Y.%m.%d-%H%M") | sed 's/.$/0/')" >> $GITHUB_ENV   
 
       - name: Prepare Cache Key
         id: cache_key
