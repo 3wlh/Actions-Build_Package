@@ -104,15 +104,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
         
-      - name: Select the Time
+      - name: ADD to ENV
         run: |
           sudo timedatectl set-timezone "${TZ}"
           echo "Time=$(echo $(date +"%Y.%m.%d-%H%M") | sed 's/.$/0/')" >> $GITHUB_ENV
-          
-      - name: Package the ${{ matrix.arch }}
-        run: |
           echo "IPK_DIR=${{ github.workspace }}/IPK" >> $GITHUB_ENV
           echo "CP=${{ github.workspace }}/.github/Shell/cp.sh" >> $GITHUB_ENV
+          
+      - name: Configuration
+        run: |
           [ ! -d "${{ env.IPK_DIR }}" ] && mkdir -p "${{ env.IPK_DIR }}"
           chmod +x ${{ env.CP }}
           # Make="${{ env.PACKAGE_NAME }}/Makefile"
