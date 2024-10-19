@@ -26,6 +26,7 @@ on:
 env:
   PACKAGE_NAME: ${{ inputs.package_name }}
   CACHE_DIR: ~/cache
+  TZ: Asia/Shanghai
   UPLOAD_BIN_DIR: true
 
 jobs:
@@ -102,7 +103,8 @@ jobs:
     steps:
       - name: Select the Time
         run: |
-          echo "Time=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_ENV
+          sudo timedatectl set-timezone "${TZ}"
+          echo "Time=$(echo $(date +"%Y.%m.%d-%H%M") | sed 's/.$/0/')" >> $GITHUB_ENV
           
       - name: Checkout
         uses: actions/checkout@v2
@@ -127,6 +129,7 @@ jobs:
       
       - name: Create Directories
         run: |
+          exit 1
           CACHE_DIR_SDK="$(eval echo "$CACHE_DIR/sdk")"
           CACHE_DIR_DL="$(eval echo "$CACHE_DIR/dl")"
           CACHE_DIR_FEEDS="$(eval echo "$CACHE_DIR/feeds")"
