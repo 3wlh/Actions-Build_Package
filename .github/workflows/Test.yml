@@ -46,7 +46,7 @@ jobs:
        
       - name: Configuration
         run: |
-          echo ${{ variables.TIME }} > Time.env
+          echo ${{ vars.TIME }} > Time.env
           cat "Time.env"
           
       - name: SSH connection to Actions
