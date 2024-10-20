@@ -1,0 +1,92 @@
+name: Build and Package
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: "SSH connection to Actions"
+        required: false
+        default: false
+        type: boolean
+      
+      package_name:
+        description: "Select the package"
+        required: false
+        default: "all"
+        type: choice
+        options:
+          - all
+          - luci-app-cifs-mount
+          - luci-app-bypass
+          - luci-app-unishare
+          - luci-app-v2ray-server
+          - luci-app-sunpanel       
+
+env:
+  PACKAGE_NAME: ${{ inputs.package_name }}
+  CACHE_DIR: ~/cache
+  TZ: Asia/Shanghai
+  Time: "0000.00.00_0000"
+  UPLOAD_BIN_DIR: true
+
+jobs:
+  release:
+    name: Build for ${{ matrix.arch }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: Test-0
+            delayed: "0"
+            sdk_name: -sdk-bcm27xx-bcm2710_
+          - arch: Test—1
+            delayed: "80"
+
+    env:
+      Delayed: ${{ matrix.delayed }}
+      CCACHE_DIR: ~/.ccache
+      CONFIG_CCACHE: y
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@main
+        
+      - name: ADD to ENV
+        run: |
+          sleep ${{ env.Delayed }}
+        
+      - name: ADD to ENV
+        if: ${{ env.Time }} == "0000.00.00_0000"
+        run: |
+          sudo timedatectl set-timezone "${TZ}"
+          echo "Time=$(date -d @$(((($(date +%s) + 60) / 120) * 120)) "+%Y.%m.%d_%H%M")" >> $GITHUB_ENV
+          
+      - name: Configuration
+        run: |
+          [ ! -d "${{ env.IPK_DIR }}" ] && mkdir -p "${{ env.IPK_DIR }}"
+          chmod +x ${{ env.CP }}
+          
+      - name: SSH connection to Actions
+        if: (inputs.ssh == true) || contains(github.event.action, 'ssh')
+        uses: mxschmitt/action-tmate@v3  
+
+  notify:
+    name: Notify Release Publish
+    runs-on: ubuntu-latest
+    env:
+      TRIGGER_URL: ${{ secrets.TRIGGER_URL }}
+      TRIGGER_TOKEN: ${{ secrets.TRIGGER_TOKEN }}
+    needs: release
+    steps:
+      - name: Notify Jenkins
+        run: |
+          if [ -z "$TRIGGER_URL" ] ; then
+            echo "::warning::No trigger url found, skip..."
+            exit 0
+          fi
+          curl -X POST \
+              -H "Content-Type: application/json; charset=utf-8" \
+              -H "Authorization: Bearer $TRIGGER_TOKEN" \
+              -d "{\"event\":\"release\",\"repository\":\"${{ github.repository }}\",\"ref\":\"${{ github.ref }}\"}" \
+              "$TRIGGER_URL" || true
