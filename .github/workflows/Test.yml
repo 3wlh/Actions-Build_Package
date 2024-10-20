@@ -35,7 +35,7 @@ jobs:
           - arch: Test-0
             delayed: "0"
           - arch: Test-1
-            delayed: "10"
+            delayed: "5"
 
     env:
       Delayed: ${{ matrix.delayed }}
