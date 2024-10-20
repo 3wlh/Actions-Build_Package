@@ -24,14 +24,13 @@ env:
   TZ: Asia/Shanghai
   UPLOAD_BIN_DIR: true
 
+
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Time=$(date +"%Y.%m.%d_%H%M%S")"  >> $GITHUB_ENV
   release:
     name: Build for ${{ matrix.arch }}
     runs-on: ubuntu-latest
+    steps:
+      - run: echo "Time=$(date +"%Y.%m.%d_%H%M%S")"  >> $GITHUB_ENV
     strategy:
       fail-fast: false
       matrix:
