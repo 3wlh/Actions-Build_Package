@@ -54,7 +54,6 @@ jobs:
           sudo timedatectl set-timezone "${TZ}"
           test ! -f "Time.env" && echo "Time=$(date +"%Y.%m.%d_%H%M%S")" > Time.env
           test -f "Time.env" && cat Time.env >> $GITHUB_ENV
-          [ ${{ env.Time }} == "" ] && exit 1
           
       - name: Configuration
         run: |
