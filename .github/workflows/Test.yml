@@ -35,8 +35,6 @@ jobs:
         include:
           - arch: Test-0
             delayed: "0"
-          - arch: Test-1
-            delayed: "5"
 
     env:
       Delayed: ${{ matrix.delayed }}
@@ -48,7 +46,8 @@ jobs:
        
       - name: Configuration
         run: |
-          echo ${{ secrets.Time }}
+          echo ${{ secrets.Time }} > Time.env
+          cat "Time.env"
           
       - name: SSH connection to Actions
         if: (inputs.ssh == true) || contains(github.event.action, 'ssh')
