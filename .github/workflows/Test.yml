@@ -22,7 +22,7 @@ env:
   PACKAGE_NAME: ${{ inputs.package_name }}
   CACHE_DIR: ~/cache
   TZ: Asia/Shanghai
-  Time: "0000.00.00_0000"
+  Time: ""
   UPLOAD_BIN_DIR: true
 
 jobs:
@@ -36,7 +36,7 @@ jobs:
           - arch: Test-0
             delayed: "0"
           - arch: Test-1
-            delayed: "30"
+            delayed: "10"
 
     env:
       Delayed: ${{ matrix.delayed }}
@@ -51,15 +51,15 @@ jobs:
           sleep ${{ env.Delayed }}
         
       - name: ADD to ENV
-        if: ${{ env.Time }} == "0000.00.00_0000"
         run: |
           sudo timedatectl set-timezone "${TZ}"
-          echo "Time=$(date +"%Y.%m.%d_%H%M%S")" >> $GITHUB_ENV
+          test ! -f "Time.env" && echo "Time=$(date +"%Y.%m.%d_%H%M%S")" > Time.env
+          test ! -f "Time.env" && cat Time.env >> $GITHUB_ENV
+          test ${{ env.Time }} = "" && exit 1
           
       - name: Configuration
         run: |
-          [ ! -d "${{ env.IPK_DIR }}" ] && mkdir -p "${{ env.IPK_DIR }}"
-          chmod +x ${{ env.CP }}
+          echo ${{ env.Time }}
           
       - name: SSH connection to Actions
         if: (inputs.ssh == true) || contains(github.event.action, 'ssh')
