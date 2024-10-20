@@ -22,7 +22,6 @@ env:
   PACKAGE_NAME: ${{ inputs.package_name }}
   CACHE_DIR: ~/cache
   TZ: Asia/Shanghai
-  Time: ""
   UPLOAD_BIN_DIR: true
 
 jobs:
