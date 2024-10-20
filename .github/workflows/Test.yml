@@ -35,9 +35,8 @@ jobs:
         include:
           - arch: Test-0
             delayed: "0"
-            sdk_name: -sdk-bcm27xx-bcm2710_
-          - arch: Test—1
-            delayed: "80"
+          - arch: Test-1
+            delayed: "30"
 
     env:
       Delayed: ${{ matrix.delayed }}
@@ -55,7 +54,7 @@ jobs:
         if: ${{ env.Time }} == "0000.00.00_0000"
         run: |
           sudo timedatectl set-timezone "${TZ}"
-          echo "Time=$(date -d @$(((($(date +%s) + 60) / 120) * 120)) "+%Y.%m.%d_%H%M")" >> $GITHUB_ENV
+          echo "Time=$(date +"%Y.%m.%d_%H%M%S")" >> $GITHUB_ENV
           
       - name: Configuration
         run: |
