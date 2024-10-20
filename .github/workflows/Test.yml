@@ -25,6 +25,20 @@ env:
   UPLOAD_BIN_DIR: true
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+      
+    - name: ADD to ENV
+      run: |
+        echo "Time=$(date +"%Y.%m.%d_%H%M%S")"  >> $GITHUB_ENV  
+      
+
+jobs:
   release:
     name: Build for ${{ matrix.arch }}
     runs-on: ubuntu-latest
@@ -44,17 +58,7 @@ jobs:
     steps: 
       - name: Checkout
         uses: actions/checkout@main
-        
-      - name: ADD to ENV
-        run: |
-          sleep ${{ env.Delayed }}
-        
-      - name: ADD to ENV
-        run: |
-          sudo timedatectl set-timezone "${TZ}"
-          test ! -f "Time.env" && echo "Time=$(date +"%Y.%m.%d_%H%M%S")" > Time.env
-          test -f "Time.env" && cat Time.env >> $GITHUB_ENV
-          
+       
       - name: Configuration
         run: |
           echo ${{ env.Time }}
