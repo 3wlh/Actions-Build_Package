@@ -13,10 +13,10 @@ on:
       package_name:
         description: "Select the package"
         required: false
-        default: "Test"
+        default: "all"
         type: choice
         options:
-          - Test      
+          - all
 
 env:
   PACKAGE_NAME: ${{ inputs.package_name }}
