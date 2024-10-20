@@ -29,8 +29,6 @@ jobs:
   release:
     name: Build for ${{ matrix.arch }}
     runs-on: ubuntu-latest
-    steps:
-      - run: echo "Time=$(date +"%Y.%m.%d_%H%M%S")"  >> $GITHUB_ENV
     strategy:
       fail-fast: false
       matrix:
@@ -50,7 +48,7 @@ jobs:
        
       - name: Configuration
         run: |
-          echo ${{ env.Time }}
+          echo ${{ secrets.Time }}
           
       - name: SSH connection to Actions
         if: (inputs.ssh == true) || contains(github.event.action, 'ssh')
