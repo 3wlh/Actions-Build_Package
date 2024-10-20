@@ -13,15 +13,10 @@ on:
       package_name:
         description: "Select the package"
         required: false
-        default: "all"
+        default: "Test"
         type: choice
         options:
-          - all
-          - luci-app-cifs-mount
-          - luci-app-bypass
-          - luci-app-unishare
-          - luci-app-v2ray-server
-          - luci-app-sunpanel       
+          - Test      
 
 env:
   PACKAGE_NAME: ${{ inputs.package_name }}
