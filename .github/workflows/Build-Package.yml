@@ -204,7 +204,7 @@ jobs:
           touch release.txt
           [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
           # name=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
-          name="*$(echo ${{ env.PACKAGE_NAME }} | sed's/luci-app-//')*.ipk"
+          name="*$(echo ${{ env.PACKAGE_NAME }} | sed 's/luci-app-//')*.ipk"
           PACKAGE_DIR="${{ env.SDK_HOME }}/bin/"
           File=$(find "${PACKAGE_DIR}" -name "${name}")
           for dir in $(echo ${File} | sed 's| | |g')
