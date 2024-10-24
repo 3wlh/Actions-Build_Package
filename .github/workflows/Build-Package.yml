@@ -205,7 +205,7 @@ jobs:
           [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
           name=*${{ env.PACKAGE_NAME }}*.ipk
           PACKAGE_DIR="${{ env.SDK_HOME }}/bin/"
-          File=$(find "/root/123/" -name "${name}")
+          File=$(find "${PACKAGE_DIR}" -name "${name}")
           for dir in $(echo ${File} |sed 's| | |g')
           do
             # echo ${dir}
