@@ -107,7 +107,7 @@ jobs:
       - name: ADD to ENV
         run: |
           sudo timedatectl set-timezone "${TZ}"
-          echo "Time=$(date -d @$(((($(date +%s) + 60) / 120) * 120)) "+%Y.%m.%d_%H%M")" >> $GITHUB_ENV
+          echo "Time=$(date -d @$(((($(date +%s) + 150) / 300) * 300)) "+%Y.%m.%d_%H%M")" >> $GITHUB_ENV
           DIR="${{ github.workspace }}/IPK"
           test -d "${DIR}" || mkdir -p "${DIR}"
           echo "IPK_DIR=${DIR}" >> $GITHUB_ENV
@@ -203,10 +203,11 @@ jobs:
         run: |
           touch release.txt
           [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
-          name=*${{ env.PACKAGE_NAME }}*.ipk
+          # name=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
+          name="*$(echo ${{ env.PACKAGE_NAME }} | sed's/luci-app-//')*.ipk"
           PACKAGE_DIR="${{ env.SDK_HOME }}/bin/"
           File=$(find "${PACKAGE_DIR}" -name "${name}")
-          for dir in $(echo ${File} |sed 's| | |g')
+          for dir in $(echo ${File} | sed 's| | |g')
           do
             # echo ${dir}
             cp -f ${dir} "${{ env.IPK_DIR }}/${{ matrix.arch }}_$(basename ${dir} | sed 's/_all//')"
