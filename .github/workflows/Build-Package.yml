@@ -108,13 +108,8 @@ jobs:
         run: |
           sudo timedatectl set-timezone "${TZ}"
           echo "Time=$(date -d @$(((($(date +%s) + 60) / 120) * 120)) "+%Y.%m.%d_%H%M")" >> $GITHUB_ENV
+          [ ! -d "${{ github.workspace }}/IPK" ] && mkdir -p "${{ github.workspace }}/IPK"
           echo "IPK_DIR=${{ github.workspace }}/IPK" >> $GITHUB_ENV
-          echo "CP=${{ github.workspace }}/.github/Shell/cp.sh" >> $GITHUB_ENV
-          
-      - name: Configuration
-        run: |
-          [ ! -d "${{ env.IPK_DIR }}" ] && mkdir -p "${{ env.IPK_DIR }}"
-          chmod +x ${{ env.CP }}
           
       - name: Prepare Cache Key
         id: cache_key
@@ -189,10 +184,7 @@ jobs:
           test -d "feeds/packages/net/$PACKAGE_NAME" && rm -rf "feeds/packages/net/$PACKAGE_NAME" || true
           test -d "feeds/packages/lang/golang" && rm -rf "feeds/packages/lang/golang" || true
           curl https://codeload.github.com/openwrt/packages/tar.gz/${OPENWRT_GOLANG_COMMIT:-master} | tar -xz -C "feeds/packages/lang" --strip=2 packages-${OPENWRT_GOLANG_COMMIT:-master}/lang/golang
-          Name=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)
-          # find ${{ github.workspace }} -type d -name ${Name} -exec ln -s {} "package/${{ env.PACKAGE_NAME }}" \;
-          # find "package/" -type d -name ${Name} -exec echo {} \;
-          ln -s "${{ github.workspace }}/${{ env.PACKAGE_NAME }}" "package/${{ env.PACKAGE_NAME }}"
+          ln -s "${{ github.workspace }}/*" "package/"
           ./scripts/feeds install -a >/dev/null 2>&1
           cd -
       
@@ -209,9 +201,15 @@ jobs:
         run: |
           touch release.txt
           [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
-          Name=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
+          name=*${{ env.PACKAGE_NAME }}*.ipk
           PACKAGE_DIR="${{ env.SDK_HOME }}/bin/"
-          find ${PACKAGE_DIR} -type f -name ${Name} -exec bash "${{ env.CP }}" {} "${{ env.IPK_DIR }}" "${{ matrix.arch }}" \;
+          # find ${PACKAGE_DIR} -type f -name ${Name} -exec bash "${{ env.CP }}" {} "${{ env.IPK_DIR }}" "${{ matrix.arch }}" \;
+          File=$(find "/root/123/" -name "${name}")
+          for dir in $(echo ${File} |sed 's| | |g')
+          do
+            # echo ${dir}
+            cp -f ${dir} "${{ env.IPK_DIR }}/${{ matrix.arch }}/_$(basename ${dir} | sed 's/_all//')"
+          done
           find "${{ env.IPK_DIR }}" -type f -name "*.ipk" -exec ls -lh {} \;
       
       - name: Upload to bin directory
