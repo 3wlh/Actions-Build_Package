@@ -29,7 +29,7 @@ jobs:
   jod_time:
     runs-on: ubuntu-latest
     outputs:
-      Time: ${{steps.output_time.outputs.time}}
+      time: ${{steps.output_time.outputs.time}}
     steps: 
       - name: output Time
         id: output_time
@@ -58,7 +58,7 @@ jobs:
        
       - name: Configuration
         run: |
-          echo "${{ needs.jod_time.outputs.Time }}"
+          echo "${{ needs.jod_time.outputs.time }}"
           
       - name: SSH connection to Actions
         if: (inputs.ssh == true) || contains(github.event.action, 'ssh')
