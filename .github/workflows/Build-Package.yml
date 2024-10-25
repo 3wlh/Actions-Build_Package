@@ -40,7 +40,7 @@ jobs:
         run: |
           sudo timedatectl set-timezone "${TZ}"
           echo "time=$(date "+%Y.%m.%d_%H%M%S")" >> $GITHUB_OUTPUT
-  release:
+  jod_release:
     name: Build for ${{ matrix.arch }}
     needs: jod_time
     runs-on: ubuntu-latest
@@ -241,13 +241,13 @@ jobs:
         if: (inputs.ssh == true) || contains(github.event.action, 'ssh')
         uses: mxschmitt/action-tmate@v3  
 
-  notify:
+  jod_notify:
     name: Notify Release Publish
     runs-on: ubuntu-latest
     env:
       TRIGGER_URL: ${{ secrets.TRIGGER_URL }}
       TRIGGER_TOKEN: ${{ secrets.TRIGGER_TOKEN }}
-    needs: release
+    needs: jod_release
     steps:
       - name: Notify Jenkins
         run: |
