@@ -40,6 +40,7 @@ jobs:
         run: |
           sudo timedatectl set-timezone "${TZ}"
           echo "time=$(date "+%Y.%m.%d_%H%M%S")" >> $GITHUB_OUTPUT
+
   jod_release:
     name: Build for ${{ matrix.arch }}
     needs: jod_time
