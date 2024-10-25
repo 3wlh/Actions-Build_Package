@@ -35,7 +35,7 @@ jobs:
       - name: output Time
         run: |
           sudo timedatectl set-timezone "${TZ}"
-          echo "Time=$($(date "+%Y.%m.%d_%H%M%S"))" >> $GITHUB_OUTPUT
+          echo "Time=$(date "+%Y.%m.%d_%H%M%S")" >> $GITHUB_OUTPUT
           
   release:
     name: Build for ${{ matrix.arch }}
@@ -58,7 +58,7 @@ jobs:
        
       - name: Configuration
         run: |
-          echo ${{ needs.jod_time.output.Time }}
+          echo ${{ needs.jod_time.outputs.Time }}
           
       - name: SSH connection to Actions
         if: (inputs.ssh == true) || contains(github.event.action, 'ssh')
