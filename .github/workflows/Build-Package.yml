@@ -30,8 +30,19 @@ env:
   UPLOAD_BIN_DIR: true
 
 jobs:
+  jod_time:
+    runs-on: ubuntu-latest
+    outputs:
+      time: ${{steps.output_time.outputs.time}}
+    steps: 
+      - name: output Time
+        id: output_time
+        run: |
+          sudo timedatectl set-timezone "${TZ}"
+          echo "time=$(date "+%Y.%m.%d_%H%M%S")" >> $GITHUB_OUTPUT
   release:
     name: Build for ${{ matrix.arch }}
+    needs: jod_time
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -98,19 +109,13 @@ jobs:
     env:
       SDK_URL_PATH: ${{ matrix.sdk_url_path }}
       SDK_NAME: ${{ matrix.sdk_name }}
+      Time: ${{ needs.jod_time.outputs.time }}
+      IPK_DIR: ${{ github.workspace }}/IPK
       CCACHE_DIR: ~/.ccache
       CONFIG_CCACHE: y
     steps: 
       - name: Checkout
         uses: actions/checkout@main
-        
-      - name: ADD to ENV
-        run: |
-          sudo timedatectl set-timezone "${TZ}"
-          echo "Time=$(date -d @$(((($(date +%s) + 150) / 300) * 300)) "+%Y.%m.%d_%H%M")" >> $GITHUB_ENV
-          DIR="${{ github.workspace }}/IPK"
-          test -d "${DIR}" || mkdir -p "${DIR}"
-          echo "IPK_DIR=${DIR}" >> $GITHUB_ENV
           
       - name: Prepare Cache Key
         id: cache_key
@@ -125,11 +130,11 @@ jobs:
           key: openwrt-${{ matrix.arch }}-${{ env.PACKAGE_NAME }}-${{ steps.cache_key.outputs.timestamp }}
           restore-keys: |
             openwrt-${{ matrix.arch }}-${{ env.PACKAGE_NAME }}-
-      
+
       - name: Install Dependencies
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get install -y ccache gettext libncurses5-dev xsltproc
-      
+
       - name: Create Directories
         run: |
           CACHE_DIR_SDK="$(eval echo "$CACHE_DIR/sdk")"
@@ -141,11 +146,12 @@ jobs:
           test -d "$CACHE_DIR_SDK" || mkdir -p "$CACHE_DIR_SDK"
           test -d "$CACHE_DIR_DL" || mkdir -p "$CACHE_DIR_DL"
           test -d "$CACHE_DIR_FEEDS" || mkdir -p "$CACHE_DIR_FEEDS"
+          test -d "${{ env.IPK_DIR }}" || mkdir -p "${{ env.IPK_DIR }}"
           echo "CACHE_DIR_SDK=$CACHE_DIR_SDK" >> $GITHUB_ENV
           echo "CACHE_DIR_DL=$CACHE_DIR_DL" >> $GITHUB_ENV
           echo "CACHE_DIR_FEEDS=$CACHE_DIR_FEEDS" >> $GITHUB_ENV
           echo "SDK_HOME=$(mktemp -d)" >> $GITHUB_ENV
-      
+
       - name: Download and Unzip SDK
         run: |
           cd "$CACHE_DIR_SDK"
@@ -176,6 +182,7 @@ jobs:
           sed -i 's#git.openwrt.org/project/luci#github.com/openwrt/luci#' feeds.conf
           sed -i 's#git.openwrt.org/feed/telephony#github.com/openwrt/telephony#' feeds.conf
           cd -
+
       - name: Update and Install Packages
         env:
           OPENWRT_GOLANG_COMMIT: ${{ secrets.OPENWRT_GOLANG_COMMIT }}
@@ -189,7 +196,7 @@ jobs:
           rm package/$(basename ${{ github.workspace }})
           ./scripts/feeds install -a >/dev/null 2>&1
           cd -
-      
+
       - name: Build Packages
         run: |
           cd "${{ env.SDK_HOME }}"
@@ -198,7 +205,7 @@ jobs:
           make package/${{ env.PACKAGE_NAME }}/{clean,compile}
           find "${{ env.SDK_HOME }}/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
           cd -
-      
+
       - name: Copy Bin Files
         run: |
           touch release.txt
@@ -213,14 +220,14 @@ jobs:
             cp -f ${dir} "${{ env.IPK_DIR }}/${{ matrix.arch }}_$(basename ${dir} | sed 's/_all//')"
           done
           find "${{ env.IPK_DIR }}" -name "*.ipk" -exec ls -lh {} \;
-      
+
       - name: Upload to bin directory
         uses: actions/upload-artifact@main
         if: ${{env.UPLOAD_BIN_DIR}} == 'true'
         with:
           name: ${{ matrix.arch }}_package_${{ env.Time }}
           path: ${{ env.SDK_HOME }}/bin 
-          
+
       - name: Upload to Release
         uses: softprops/action-gh-release@v1
         env:
@@ -229,7 +236,7 @@ jobs:
           tag_name: ${{ env.Time }}
           body_path: release.txt
           files: ${{ env.IPK_DIR }}/*.ipk
-          
+
       - name: SSH connection to Actions
         if: (inputs.ssh == true) || contains(github.event.action, 'ssh')
         uses: mxschmitt/action-tmate@v3  
