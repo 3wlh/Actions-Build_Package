@@ -29,11 +29,8 @@ jobs:
   jod_time:
     runs-on: ubuntu-latest
     outputs:
-      Time: ${{steps.output_time.output.time}}
+      Time: ${{steps.output_time.outputs.time}}
     steps: 
-      - name: Checkout
-        uses: actions/checkout@main
-        
       - name: output Time
         id: output_time
         run: |
