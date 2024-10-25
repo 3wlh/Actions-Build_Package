@@ -28,7 +28,7 @@ env:
 jobs:
   jod_time:
     runs-on: ubuntu-latest
-    output:
+    outputs:
       Time: ${{steps.output_time.output.time}}
     steps: 
       - name: Checkout
@@ -61,7 +61,7 @@ jobs:
        
       - name: Configuration
         run: |
-          echo ${{ needs.jod_time.output.Time }}
+          echo ${{ needs.jod_time.outputs.Time }}
           
       - name: SSH connection to Actions
         if: (inputs.ssh == true) || contains(github.event.action, 'ssh')
