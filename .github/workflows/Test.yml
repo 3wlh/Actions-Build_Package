@@ -61,7 +61,7 @@ jobs:
        
       - name: Configuration
         run: |
-          echo ${{ needs.jod_time.outputs.time }}
+          echo "${{ needs.jod_time.outputs.time }}"
           
       - name: SSH connection to Actions
         if: (inputs.ssh == true) || contains(github.event.action, 'ssh')
