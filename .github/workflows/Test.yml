@@ -26,8 +26,20 @@ env:
 
 
 jobs:
+  jod_time:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@main
+        
+      - name: output Time
+        run: |
+          sudo timedatectl set-timezone "${TZ}"
+          echo "Time=$($(date "+%Y.%m.%d_%H%M%S"))" >> $GITHUB_OUTPUT
+          
   release:
     name: Build for ${{ matrix.arch }}
+    needs: jod_time
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -46,8 +58,7 @@ jobs:
        
       - name: Configuration
         run: |
-          echo ${{ vars.TIME }} > Time.env
-          cat "Time.env"
+          echo ${{ needs: jod_time.output.Time }}
           
       - name: SSH connection to Actions
         if: (inputs.ssh == true) || contains(github.event.action, 'ssh')
