@@ -58,9 +58,6 @@ jobs:
           - arch: aarch64_generic
             toolchain_url_path: layerscape/armv8_64b
             toolchain_name: -toolchain-.*-armv8_64b_
-          - arch: rockchip_armv8
-            toolchain_url_path: rockchip/armv8
-            toolchain_name: -toolchain-.*-rockchip-armv8_
           - arch: arm_arm1176jzf-s_vfp
             toolchain_url_path: bcm27xx/bcm2708
             toolchain_name: -toolchain-.*-bcm27xx-bcm2708_
