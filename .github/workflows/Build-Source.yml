@@ -122,6 +122,7 @@ jobs:
       - name: Install Dependencies
         run: |
           # DEBIAN_FRONTEND=noninteractive sudo apt-get install -y ccache gettext libncurses5-dev xsltproc
+          sudo apt-get remove gcc g++
 
       - name: Setup Cache
         uses: actions/cache@main
