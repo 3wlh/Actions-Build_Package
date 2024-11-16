@@ -119,7 +119,7 @@ jobs:
           # echo "CXX=$(find "${{ env.SDK_HOME }}" -type l -name "*-linux-g++")" >> $GITHUB_ENV
           # find "${{ env.SDK_HOME }}" -type l -name "*-linux-gcc" -exec echo {} \;
           # echo "CC=$(find "${{ env.SDK_HOME }}" -type l -name "*-linux-gcc")" >> $GITHUB_ENV
-          echo "CXX=$(find "${{ env.SDK_HOME }}" -type l -name "*-linux-g++" | xargs -i basename {})" >> $GITHUB_ENV
+          echo "CXX=$(find "${{ env.SDK_HOME }}" -type f -name "*-linux-musl-g++.bin" | xargs -i basename {})" >> $GITHUB_ENV
           BIN=$(find "${{ env.SDK_HOME }}" -type l -name "*-linux-g++" -exec readlink -f {} \; | xargs -i dirname {})
           sudo sed -i '$a\PATH=$PATH:'"${BIN}" /etc/profile
           sudo sed -i '$a\STAGING_DIR='"${BIN}" /etc/profile
