@@ -57,6 +57,9 @@ jobs:
           - arch: aarch64_generic
             toolchain_url_path: http://downloads.openwrt.org/snapshots/targets/layerscape/armv8_64b
             toolchain_name: -toolchain-layerscape-armv8_64b_
+          - arch: arm64
+            toolchain_url_path: http://downloads.openwrt.org/snapshots/targets/rockchip/armv8
+            toolchain_name: -toolchain-rockchip-armv8_
           - arch: arm_arm1176jzf-s_vfp
             toolchain_url_path: https://downloads.openwrt.org/snapshots/targets/bcm27xx/bcm2708
             toolchain_name: -toolchain-bcm27xx-bcm2708_
