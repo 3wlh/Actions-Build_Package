@@ -168,10 +168,15 @@ jobs:
           # tar -I zstd -xvf "$CACHE_DIR_SDK/$SDK_FILE" -C "${{ env.SDK_HOME }}" --strip=1
           tar -I zstd -xf "$CACHE_DIR_SDK/$SDK_FILE" -C "${{ env.SDK_HOME }}" --strip=1
           cd "${{ env.SDK_HOME }}"
-          find "${{ env.SDK_HOME }}" -type l -name "*-linux-g++" -exec echo {} \;
-          echo "CXX=$(find "${{ env.SDK_HOME }}" -type l -name "*-linux-g++")" >> $GITHUB_ENV
-          find "${{ env.SDK_HOME }}" -type l -name "*-linux-gcc" -exec echo {} \;
-          echo "CC=$(find "${{ env.SDK_HOME }}" -type l -name "*-linux-gcc")" >> $GITHUB_ENV
+          # find "${{ env.SDK_HOME }}" -type l -name "*-linux-g++" -exec echo {} \;
+          # echo "CXX=$(find "${{ env.SDK_HOME }}" -type l -name "*-linux-g++")" >> $GITHUB_ENV
+          # find "${{ env.SDK_HOME }}" -type l -name "*-linux-gcc" -exec echo {} \;
+          # echo "CC=$(find "${{ env.SDK_HOME }}" -type l -name "*-linux-gcc")" >> $GITHUB_ENV
+          echo "CXX=$(find "${{ env.SDK_HOME }}" -type l -name "*-linux-g++" | xargs -i basename {})" >> $GITHUB_ENV
+          BIN=$(find "${{ env.SDK_HOME }}" -type l -name "*-linux-g++" -exec readlink -f {} \; | xargs -i dirname {})
+          sudo sed -i '$a\PATH=$PATH:'"${BIN}" /etc/profile
+          sudo sed -i '$a\STAGING_DIR='"${BIN}" /etc/profile
+          sudo sed -i '$a\export STAGING_DIR' /etc/profile
           cd -
 
       - name: Download and Source
@@ -188,6 +193,7 @@ jobs:
         
       - name: Build Source
         run: |
+          source /etc/profile
           cd "${{ env.SDK_HOME }}/${{ env.Source_DIR }}"
           CPP=$(find . -type f -name "*.cpp" -exec basename {} \;)
           echo ${CPP}
