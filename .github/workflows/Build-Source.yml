@@ -50,64 +50,64 @@ jobs:
       matrix:
         include:
           - arch: aarch64_cortex-a53
-            toolchain_url_path: ${Download_URL}/bcm27xx/bcm2710
+            toolchain_url_path: bcm27xx/bcm2710
             toolchain_name: -toolchain-.*-bcm27xx-bcm2710_
           - arch: aarch64_cortex-a72
-            toolchain_url_path: ${Download_URL}/mvebu/cortexa72/
+            toolchain_url_path: mvebu/cortexa72/
             toolchain_name: -toolchain-.*-mvebu-cortexa72_
           - arch: aarch64_generic
-            toolchain_url_path: ${Download_URL}/layerscape/armv8_64b
+            toolchain_url_path: layerscape/armv8_64b
             toolchain_name: -toolchain-.*-armv8_64b_
           - arch: arm64
-            toolchain_url_path: ${Download_URL}/rockchip/armv8
+            toolchain_url_path: rockchip/armv8
             toolchain_name: -toolchain-rockchip-armv8_
           - arch: arm_arm1176jzf-s_vfp
-            toolchain_url_path: ${Download_URL}/bcm27xx/bcm2708
+            toolchain_url_path: bcm27xx/bcm2708
             toolchain_name: -toolchain-.*-bcm27xx-bcm2708_
           - arch: arm_cortex-a15_neon-vfpv4
-            toolchain_url_path: ${Download_URL}/ipq806x/generic
+            toolchain_url_path: ipq806x/generic
             toolchain_name: -toolchain-.*-ipq806x-generic_
           - arch: arm_cortex-a5-vfpv4
-            toolchain_url_path: ${Download_URL}/at91/sama5
+            toolchain_url_path: at91/sama5
             toolchain_name: -toolchain-.*-at91-sama5_
           - arch: arm_cortex-a7_neon-vfpv4
-            toolchain_url_path: ${Download_URL}/bcm27xx/bcm2709
+            toolchain_url_path: bcm27xx/bcm2709
             toolchain_name: -toolchain-.*-bcm27xx-bcm2709_
           - arch: arm_cortex-a8_vfpv3
-            toolchain_url_path: ${Download_URL}/sunxi/cortexa8
+            toolchain_url_path: sunxi/cortexa8
             toolchain_name: -toolchain-.*-sunxi-cortexa8_
           - arch: arm_cortex-a9
-            toolchain_url_path: ${Download_URL}/bcm53xx/generic
+            toolchain_url_path: bcm53xx/generic
             toolchain_name: -toolchain-.*-bcm53xx-generic_
           - arch: arm_cortex-a9_vfpv3-d16
-            toolchain_url_path: ${Download_URL}/mvebu/cortexa9
+            toolchain_url_path: /mvebu/cortexa9
             toolchain_name: -toolchain-.*-mvebu-cortexa9_
           - arch: arm_mpcore
-            toolchain_url_path: ${Download_URL}/oxnas/ox820
+            toolchain_url_path: oxnas/ox820
             toolchain_name: -toolchain-.*-oxnas-ox820_
           - arch: i386_pentium
-            toolchain_url_path: ${Download_URL}/x86/legacy
+            toolchain_url_path: x86/legacy
             toolchain_name: -toolchain-.*-x86-legacy_
           - arch: i386_pentium4
-            toolchain_url_path: ${Download_URL}/x86/generic
+            toolchain_url_path: x86/generic
             toolchain_name: -toolchain-.*-x86-generic_
           - arch: mipsel_24kc
-            toolchain_url_path: ${Download_URL}/ramips/mt7620
+            toolchain_url_path: ramips/mt7620
             toolchain_name: -toolchain-.*-ramips-mt7620_
           - arch: mipsel_74kc
-            toolchain_url_path: ${Download_URL}/bcm47xx/mips74k
+            toolchain_url_path: bcm47xx/mips74k
             toolchain_name: -toolchain-.*-bcm47xx-mips74k_
           - arch: mipsel_mips32
-            toolchain_url_path: ${Download_URL}/bcm47xx/generic
+            toolchain_url_path: bcm47xx/generic
             toolchain_name: -toolchain-.*-bcm47xx-generic_
           - arch: mips_24kc
-            toolchain_url_path: ${Download_URL}/ath79/generic
+            toolchain_url_path: ath79/generic
             toolchain_name: -toolchain-.*-ath79-generic_
           - arch: mips_mips32
-            toolchain_url_path: ${Download_URL}/bcm63xx/generic
+            toolchain_url_path: bcm63xx/generic
             toolchain_name: -toolchain-.*-bcm63xx-generic_
           - arch: x86_64
-            toolchain_url_path: ${Download_URL}/x86/64
+            toolchain_url_path: x86/64
             toolchain_name: -toolchain-.*-x86-64_
 
     env:
@@ -153,13 +153,13 @@ jobs:
       - name: Download and Unzip ToolChain
         run: |
           cd "$CACHE_DIR_SDK"
-          if ! ( wget -q -O - "$SDK_URL_PATH/sha256sums" | grep -- "${{ env.SDK_NAME }}" > sha256sums.small 2>/dev/null ) ; then
+          if ! ( wget -q -O - "${Download_URL}/${SDK_URL_PATH}/sha256sums" | grep -- "${{ env.SDK_NAME }}" > sha256sums.small 2>/dev/null ) ; then
             echo "::error::Can not find ${{ env.SDK_NAME }} file in sha256sums."
             exit 1
           fi
           SDK_FILE="$(cat sha256sums.small | cut -d' ' -f2 | sed 's/*//g')"
           if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
-            wget -q -O "$SDK_FILE" "$SDK_URL_PATH/$SDK_FILE"
+            wget -q -O "$SDK_FILE" "${Download_URL}/${SDK_URL_PATH}/${SDK_FILE}"
             if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
               echo "::error::SDK can not be verified!"
               exit 1
