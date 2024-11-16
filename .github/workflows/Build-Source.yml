@@ -188,10 +188,10 @@ jobs:
         
       - name: Build Source
         run: |
-          cd "${{ env.SDK_HOME }}"
-          CPP=$(find "${{ env.Source_DIR }}" -type f -name "*.cpp")
+          cd "${{ env.SDK_HOME }}/${{ env.Source_DIR }}"
+          CPP=$(find . -type f -name "*.cpp" -exec basename {} \;)
           echo ${CPP}
-          ${{ env.CXX }} -fsigned-char ${CPP} -o ${{ env.APP_DIR }}/${{ env.PACKAGE_NAME }}-${{ matrix.arch }}
+          ${{ env.CXX }} -fsigned-char ${{ CPP }} -o ${{ env.APP_DIR }}/${{ env.PACKAGE_NAME }}-${{ matrix.arch }}
           cd -
 
       - name: Copy Bin Files
