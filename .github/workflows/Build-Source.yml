@@ -52,7 +52,7 @@ jobs:
             #toolchain_url_path: http://downloads.openwrt.org/releases/23.05.5/targets/layerscape/armv8_64b
             #toolchain_name: -toolchain-layerscape-armv8_64b_
           - arch: arm64
-            toolchain_url_path: http://downloads.openwrt.org/snapshots/targets/rockchip/armv8
+            toolchain_url_path: http://downloads.openwrt.org/releases/23.05.5/targets/rockchip/armv8
             toolchain_name: -toolchain-rockchip-armv8_
 
     env:
