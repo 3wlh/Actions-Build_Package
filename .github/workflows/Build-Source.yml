@@ -170,8 +170,8 @@ jobs:
           # find "${{ env.SDK_HOME }}" -type l -name "*-linux-g++" -exec echo {} \;
           # echo "CXX=$(find "${{ env.SDK_HOME }}" -type l -name "*-linux-g++")" >> $GITHUB_ENV
           # find "${{ env.SDK_HOME }}" -type l -name "*-linux-gcc" -exec echo {} \;
-          # echo "CC=$(find "${{ env.SDK_HOME }}" -type l -name "*-linux-gcc")" >> $GITHUB_ENV
-          echo "CXX=$(find "${{ env.SDK_HOME }}" -type f -name "*-linux-musl-g++.bin" | xargs -i basename {})" >> $GITHUB_ENV
+          echo "CC=$(find "${{ env.SDK_HOME }}" -type l -name "*-linux-gcc" | xargs -i basename {})" >> $GITHUB_ENV
+          echo "CXX=$(find "${{ env.SDK_HOME }}" -type l -name "*-linux-g++" | xargs -i basename {})" >> $GITHUB_ENV
           BIN=$(find "${{ env.SDK_HOME }}" -type l -name "*-linux-g++" -exec readlink -f {} \; | xargs -i dirname {})
           sudo sed -i '$a\PATH=$PATH:'"${BIN}" /etc/profile
           sudo sed -i '$a\STAGING_DIR='"${BIN}" /etc/profile
@@ -196,7 +196,8 @@ jobs:
           cd "${{ env.SDK_HOME }}/${{ env.Source_DIR }}"
           CPP=$(find . -type f -name "*.cpp" -exec basename {} \;)
           echo ${CPP}
-          ${{ env.CXX }} -fsigned-char ${CPP} -o ${{ env.APP_DIR }}/${{ env.PACKAGE_NAME }}-${{ matrix.arch }}
+          # ${{ env.CXX }} -fsigned-char ${CPP} -o ${{ env.APP_DIR }}/${{ env.PACKAGE_NAME }}-${{ matrix.arch }}
+          ${{ env.CXX }} ${CPP} -o ${{ env.APP_DIR }}/${{ env.PACKAGE_NAME }}-${{ matrix.arch }}
           cd -
 
       - name: Copy Bin Files
