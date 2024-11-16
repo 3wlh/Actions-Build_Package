@@ -53,7 +53,7 @@ jobs:
             #toolchain_name: -toolchain-layerscape-armv8_64b_
           - arch: arm64
             toolchain_url_path: http://downloads.openwrt.org/releases/23.05.5/targets/rockchip/armv8
-            toolchain_name: -toolchain-rockchip-armv8_
+            toolchain_name: -toolchain-*-rockchip-armv8_
 
     env:
       SDK_URL_PATH: ${{ matrix.toolchain_url_path }}
