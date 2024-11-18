@@ -197,7 +197,9 @@ jobs:
           CPP=$(find . -type f -name "*.cpp" -exec basename {} \;)
           echo ${CPP}
           # ${{ env.CXX }} -fsigned-char ${CPP} -o ${{ env.APP_DIR }}/${{ env.PACKAGE_NAME }}-${{ matrix.arch }}
-          ${{ env.CXX }} ${CPP} -o ${{ env.APP_DIR }}/${{ env.PACKAGE_NAME }}-${{ matrix.arch }}
+          # 优化大小
+          ${{ env.CXX }} -Os ${CPP} -o ${{ env.APP_DIR }}/${{ env.PACKAGE_NAME }}-${{ matrix.arch }}
+          # ${{ env.CXX }} ${CPP} -o ${{ env.APP_DIR }}/${{ env.PACKAGE_NAME }}-${{ matrix.arch }}
           cd -
 
       - name: Copy Bin Files
