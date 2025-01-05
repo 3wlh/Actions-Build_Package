@@ -23,7 +23,7 @@ on:
 env:
   PACKAGE_NAME: ${{ inputs.Source_name }}
   Source_DIR: OpenWrt/${{ inputs.Source_name }}/
-  Download_URL: "https://downloads.openwrt.org/releases/23.05.5/targets"
+  Download_URL: "https://downloads.openwrt.org/releases/24.10.0-rc4/targets"
   CACHE_DIR: ~/cache
   TZ: Asia/Shanghai
   UPLOAD_BIN_DIR: true
