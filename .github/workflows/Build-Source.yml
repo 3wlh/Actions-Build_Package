@@ -32,11 +32,7 @@ on:
 env:
   PACKAGE_NAME: ${{ inputs.Source_name }}
   Source_DIR: OpenWrt/${{ inputs.Source_name }}/
-<<<<<<< HEAD
   Download_URL: "https://downloads.openwrt.org/releases/${{ inputs.Version }}/targets"
-=======
-  Download_URL: "https://downloads.openwrt.org/releases/24.10.0-rc4/targets"
->>>>>>> e0cf2ba44a7cd3f42ba64eda2ca19ebf8d3543d1
   CACHE_DIR: ~/cache
   TZ: Asia/Shanghai
   UPLOAD_BIN_DIR: true
