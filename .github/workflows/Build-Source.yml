@@ -10,6 +10,15 @@ on:
         default: false
         type: boolean
       
+      Version:
+        description: "Select the Version"
+        required: false
+        default: "23.05.5"
+        type: choice
+        options:
+          - 23.05.5
+          - 24.10.0-rc5
+      
       Source_name:
         description: "Select the Source"
         required: false
@@ -23,7 +32,7 @@ on:
 env:
   PACKAGE_NAME: ${{ inputs.Source_name }}
   Source_DIR: OpenWrt/${{ inputs.Source_name }}/
-  Download_URL: "https://downloads.openwrt.org/releases/23.05.5/targets"
+  Download_URL: "https://downloads.openwrt.org/releases/${{ inputs.Version }}/targets"
   CACHE_DIR: ~/cache
   TZ: Asia/Shanghai
   UPLOAD_BIN_DIR: true
