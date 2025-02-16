@@ -214,7 +214,7 @@ jobs:
       - name: Copy Bin Files
         run: |
           touch release.txt
-          [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
+          echo ${{ inputs.Version }} > release.txt
 
       - name: Upload to bin directory
         uses: actions/upload-artifact@main
