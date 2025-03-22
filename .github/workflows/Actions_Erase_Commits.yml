@@ -54,6 +54,7 @@ jobs:
         # 强制提交到远程仓库
         git push --force origin ${branch}
         # 拉取
+        git branch --set-upstream-to=origin/${branch} ${branch}
         git pull
     
     - name: Git Check Repositories
