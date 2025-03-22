@@ -42,7 +42,7 @@ jobs:
         # 获取当前默认分支
         branch=$(git rev-parse --abbrev-ref HEAD)
         # 创建一个新的分支
-        git checkout -b --orphan latest_branch
+        git checkout -b latest_branch
         # 添加所有文件
         git add -A
         # 提交更改
