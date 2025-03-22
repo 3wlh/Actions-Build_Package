@@ -33,8 +33,32 @@ jobs:
         test -d "GitHub" || mkdir -p "GitHub" 
         cd GitHub && ls
         git clone https://3wlh:${{ secrets.TOKEN_3WLH }}@github.com/3wlh/${{ inputs.repos }}
-        cd 3wlh.github.io && ls
-        rm -rf ADB.txt
-        git add .
-        git commit -m "update Sync $(date +%Y-%m-%d" "%H:%M:%S)"
-        git push -f
+        cd ${{ inputs.repos }} && ls
+    
+    - name: Git Erase Commits
+      run : |
+        test -d "GitHub/${{ inputs.repos }}" || exit 1
+        cd GitHub/${{ inputs.repos }} && ls
+        # 获取当前默认分支
+        branch=$(git rev-parse --abbrev-ref HEAD)
+        # 创建一个新的分支
+        git checkout --orphan latest_branch
+        # 添加所有文件
+        git add -A
+        # 提交更改
+        git commit -am "update Sync $(date +%Y-%m-%d" "%H:%M:%S)"
+        # 删除需要替换的分支
+        git branch -D ${branch}
+        # 重命名创建的分支为删除的分支
+        git branch -m %main%
+        # 强制提交到远程仓库
+        git push --force
+        # 拉取
+        git pull
+    
+    - name: Git Check Repositories
+      run : |
+        echo $(git log --pretty=oneline)
+        echo $(git branch -a)
+        echo $(git tag)
+        echo $(git ls-remote --tags)
