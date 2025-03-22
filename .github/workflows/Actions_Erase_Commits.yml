@@ -16,9 +16,6 @@ jobs:
   merge:
     if: github.event.repository.owner.id == github.event.sender.id || ! github.event.sender.id || github.event.sender.id == '119362912'
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: /tmp/GitHub
     steps:
     - name: Checkout
       uses: actions/checkout@main
@@ -33,7 +30,8 @@ jobs:
 
     - name: Git Clone Repositories
       run : |
-        ls
+        test -d "GitHub" || mkdir -p "GitHub" 
+        cd GitHub && ls
         git clone https://3wlh:${{ secrets.TOKEN_3WLH }}@github.com/3wlh/${{ inputs.repos }}
         cd 3wlh.github.io && ls
         rm -rf ADB.txt
