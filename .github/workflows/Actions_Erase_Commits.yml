@@ -44,7 +44,7 @@ jobs:
         # 创建一个新的分支
         git checkout -b latest_branch
         # 添加所有文件
-        git add -a
+        git add -A
         # 提交更改
         git commit -am "update Sync $(date +%Y-%m-%d" "%H:%M:%S)"
         # 删除需要替换的分支
