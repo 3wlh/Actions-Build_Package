@@ -13,8 +13,8 @@ on:
 
 
 jobs:
-  name: Erase ${{ inputs.repos }}
   merge:
+    name: Erase ${{ inputs.repos }}
     if: github.event.repository.owner.id == github.event.sender.id || ! github.event.sender.id || github.event.sender.id == '119362912'
     runs-on: ubuntu-latest
     steps:
