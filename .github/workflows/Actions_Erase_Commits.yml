@@ -46,7 +46,7 @@ jobs:
         # 添加所有文件
         git add -A
         # 提交更改
-        git commit -am "update Sync $(date +%Y-%m-%d" "%H:%M:%S)"
+        git commit -am "update $(date +%Y-%m-%d" "%H:%M:%S)"
         # 删除需要替换的分支
         git branch -d ${branch}
         # 重命名创建的分支为删除的分支
