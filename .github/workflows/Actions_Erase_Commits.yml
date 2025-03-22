@@ -9,8 +9,12 @@ on:
         default: "all"
         type: choice
         options:
+          - File
+          - Windows
+          - Source
+          - Yi_Source
           - 3wlh.github.io
-
+          
 
 jobs:
   merge:
