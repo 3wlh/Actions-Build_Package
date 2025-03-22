@@ -42,13 +42,15 @@ jobs:
         # 获取当前默认分支
         branch=$(git rev-parse --abbrev-ref HEAD)
         # 创建一个新的分支
-        git checkout -b latest_branch
+        git checkout --orphan latest_branch
         # 添加所有文件
-        git add -A
+        git add -a
         # 提交更改
         git commit -am "update Sync $(date +%Y-%m-%d" "%H:%M:%S)"
+        # 切换分支
+        git checkout latest_branch
         # 删除需要替换的分支
-        git branch -D ${branch}
+        git branch -d ${branch}
         # 重命名创建的分支为删除的分支
         git branch -m ${branch}
         # 强制提交到远程仓库
