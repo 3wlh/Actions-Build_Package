@@ -226,7 +226,7 @@ jobs:
           for dir in $(echo ${File} | sed 's| | |g')
           do
             echo ${dir}
-            cp -f ${dir} "${{ env.IPK_DIR }}/$(basename ${dir} | sed "s/all/${{ matrix.arch }}/")"
+            cp -f ${dir} "${{ env.IPK_DIR }}/$(basename ${dir} | sed 's/_all//' | sed "s/.ipk/_${{ matrix.arch }}.ipk/")"
           done
           find "${{ env.IPK_DIR }}" -name "*.ipk" -exec ls -lh {} \;
 
