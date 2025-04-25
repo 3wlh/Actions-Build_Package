@@ -27,7 +27,7 @@ env:
   PACKAGE_NAME: ${{ inputs.package_name }}
   CACHE_DIR: ~/cache
   TZ: Asia/Shanghai
-  UPLOAD_BIN_DIR: true
+  UPLOAD_BIN_DIR: false
 
 jobs:
   jod_time:
@@ -213,7 +213,7 @@ jobs:
           for dir in $(echo ${File} | sed 's| | |g')
           do
             # echo ${dir}
-            cp -f ${dir} "${{ env.IPK_DIR }}/${{ matrix.arch }}_$(basename ${dir} | sed 's/_all//')"
+            cp -f ${dir} "${{ env.IPK_DIR }}/$(basename ${dir} | sed "s/all/${{ matrix.arch }}/")"
           done
           find "${{ env.IPK_DIR }}" -name "*.ipk" -exec ls -lh {} \;
 
