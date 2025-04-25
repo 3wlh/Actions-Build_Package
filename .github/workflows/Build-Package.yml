@@ -65,61 +65,61 @@ jobs:
         include:
           - arch: aarch64_cortex-a53
             sdk_url_path: bcm27xx/bcm2710
-            sdk_name: -sdk-bcm27xx-bcm2710_
+            sdk_name: -sdk-.*-bcm27xx-bcm2710_
           - arch: aarch64_cortex-a72
             sdk_url_path: mvebu/cortexa72
-            sdk_name: -sdk-mvebu-cortexa72_
+            sdk_name: -sdk-.*-mvebu-cortexa72_
           - arch: aarch64_generic
             sdk_url_path: layerscape/armv8_64b
-            sdk_name: -sdk-layerscape-armv8_64b_
+            sdk_name: -sdk-.*-layerscape-armv8_64b_
           - arch: arm_arm1176jzf-s_vfp
             sdk_url_path: bcm27xx/bcm2708
-            sdk_name: -sdk-bcm27xx-bcm2708_
+            sdk_name: -sdk-.*-bcm27xx-bcm2708_
           - arch: arm_cortex-a15_neon-vfpv4
             sdk_url_path: ipq806x/generic
-            sdk_name: -sdk-ipq806x-generic_
+            sdk_name: -sdk-.*-ipq806x-generic_
           - arch: arm_cortex-a5-vfpv4
             sdk_url_path: at91/sama5
-            sdk_name: -sdk-at91-sama5_
+            sdk_name: -sdk-.*-at91-sama5_
           - arch: arm_cortex-a7_neon-vfpv4
             sdk_url_path: bcm27xx/bcm2709
-            sdk_name: -sdk-bcm27xx-bcm2709_
+            sdk_name: -sdk-.*-bcm27xx-bcm2709_
           - arch: arm_cortex-a8_vfpv3
             sdk_url_path: sunxi/cortexa8
-            sdk_name: -sdk-sunxi-cortexa8_
+            sdk_name: -sdk-.*-sunxi-cortexa8_
           - arch: arm_cortex-a9
             sdk_url_path: bcm53xx/generic
-            sdk_name: -sdk-bcm53xx-generic_
+            sdk_name: -sdk-.*-bcm53xx-generic_
           - arch: arm_cortex-a9_vfpv3-d16
             sdk_url_path: mvebu/cortexa9
-            sdk_name: -sdk-mvebu-cortexa9_
+            sdk_name: -sdk-.*-mvebu-cortexa9_
           - arch: arm_mpcore
             sdk_url_path: targets/oxnas/ox820
-            sdk_name: -sdk-oxnas-ox820_
+            sdk_name: -sdk-.*-oxnas-ox820_
           - arch: i386_pentium
             sdk_url_path: x86/legacy
-            sdk_name: -sdk-x86-legacy_
+            sdk_name: -sdk-.*-x86-legacy_
           - arch: i386_pentium4
             sdk_url_path: x86/generic
-            sdk_name: -sdk-x86-generic_
+            sdk_name: -sdk-.*-x86-generic_
           - arch: mipsel_24kc
             sdk_url_path: ramips/mt7620
-            sdk_name: -sdk-ramips-mt7620_
+            sdk_name: -sdk-.*-ramips-mt7620_
           - arch: mipsel_74kc
             sdk_url_path: bcm47xx/mips74k
-            sdk_name: -sdk-bcm47xx-mips74k_
+            sdk_name: -sdk-.*-bcm47xx-mips74k_
           - arch: mipsel_mips32
             sdk_url_path: bcm47xx/generic
-            sdk_name: -sdk-bcm47xx-generic_
+            sdk_name: -sdk-.*-bcm47xx-generic_
           - arch: mips_24kc
             sdk_url_path: ath79/generic
-            sdk_name: -sdk-ath79-generic_
+            sdk_name: -sdk-.*-ath79-generic_
           - arch: mips_mips32
             sdk_url_path: bcm63xx/generic
-            sdk_name: -sdk-bcm63xx-generic_
+            sdk_name: -sdk-.*-bcm63xx-generic_
           - arch: x86_64
             sdk_url_path: x86/64
-            sdk_name: -sdk-x86-64_
+            sdk_name: -sdk-.*-x86-64_
 
     env:
       SDK_URL_PATH: ${{ matrix.sdk_url_path }}
