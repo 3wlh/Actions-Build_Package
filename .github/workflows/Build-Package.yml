@@ -34,6 +34,7 @@ on:
           - luci-app-unishare
           - luci-app-v2ray-server
           - luci-app-sunpanel
+          - sunpanel
 
 env:
   PACKAGE_NAME: ${{ inputs.package_name }}
