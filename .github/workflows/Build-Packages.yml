@@ -20,8 +20,22 @@ on:
           - sunpanel
 
 jobs:
-  build:
+  jod_time:
+    name: Acquisition Time
+    runs-on: ubuntu-latest
+    outputs:
+      time: ${{steps.output_time.outputs.time}}
+    steps: 
+      - name: output Time
+        id: output_time
+        run: |
+          sudo timedatectl set-timezone "${TZ}"
+          echo "time=$(date "+%Y.%m.%d_%H%M%S")" >> $GITHUB_OUTPUT
+
+
+  jobs_build:
     name: Build ${{ matrix.arch }}-${{ matrix.sdk }}
+    needs: jod_time
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -32,7 +46,8 @@ jobs:
         sdk:
           - openwrt-24.10
           - SNAPSHOT
-          
+    env:
+      Time: ${{ needs.jod_time.outputs.time }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -63,13 +78,13 @@ jobs:
           else
             tar -zcvf ${{ matrix.sdk }}-${{ matrix.arch }}.tar.gz -C bin/packages/${{ matrix.arch }}/ packages_ci
           fi
-
+          
       - name: Upload to Release packages
-        uses: ncipollo/release-action@v1
-        with:          
+        uses: softprops/action-gh-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
           name: ${{ inputs.package_name }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          allowUpdates: true
-          replacesArtifacts: true
-          prerelease: false
-          artifacts: "${{ matrix.sdk }}-${{ matrix.arch }}.tar.gz"
+          tag_name: ${{ env.Time }}
+          body: ${{ inputs.package_name }}
+          files: "${{ matrix.sdk }}-${{ matrix.arch }}.tar.gz"
