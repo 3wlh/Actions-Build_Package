@@ -40,7 +40,7 @@ jobs:
           fetch-depth: 0
 
       - name: Build Packages
-        uses: immortalwrt/gh-action-sdk@master
+        uses: openwrt/gh-action-sdk@main
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
           FEEDNAME: packages_ci
