@@ -1,9 +1,23 @@
 name: Build Packages
 
 on:
-  push:
-    tags:
-      - "*"
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      package_name:
+        description: |
+          选择编译插件
+        required: false
+        default: "all"
+        type: choice
+        options:
+          - all
+          - luci-app-cifs-mount
+          - luci-app-bypass
+          - luci-app-unishare
+          - luci-app-v2ray-server
+          - luci-app-sunpanel
+          - sunpanel
 
 jobs:
   build:
@@ -21,25 +35,16 @@ jobs:
           - SNAPSHOT
           
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Build with Static Linking
-        run: |
-          sed -i '/golang-package/a \\tGO_PKG_DEFAULT_LDFLAGS:=-w -s -extldflags "-static"' openlist/Makefile
-
-      - name: UPX Compress
-        if: ${{ matrix.arch != 'loongarch64_generic' && matrix.arch != 'mips64_mips64r2' && matrix.arch != 'mips64_octeonplus' && matrix.arch != 'mips64el_mips64r2' && matrix.arch != 'riscv64_riscv64' }}
-        run: |
-          sed -i '/openlist.init/a \\t/usr/bin/upx --lzma --best $(1)\/usr\/bin\/openlist' openlist/Makefile
-
       - name: Build Packages
-        uses: sbwml/openwrt-gh-action-sdk@go1.25
+        uses: immortalwrt/gh-action-sdk@master
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
           FEEDNAME: packages_ci
-          PACKAGES: luci-app-openlist
+          PACKAGES: ${{ inputs.package_name }}
           NO_REFRESH_CHECK: true
 
       - name: Upload artifacts
