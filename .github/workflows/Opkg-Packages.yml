@@ -1,4 +1,5 @@
-name: Actions 
+name: Actions opkg-utils
+
 on:
   repository_dispatch:
   workflow_dispatch:      
