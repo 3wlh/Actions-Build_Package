@@ -1,4 +1,4 @@
-name: Actions Delete Commits
+name: Actions 
 on:
   repository_dispatch:
   workflow_dispatch:      
@@ -26,7 +26,7 @@ jobs:
         #sudo -E apt-get -qq -y update
         sudo -E apt-get -qq -y install python3 gzip
     
-    - name: Download Script
+    - name: Create Script
       run : |
         chmod -R 755 "$(pwd)/.github/.sh"
         for file in $(pwd)/.github/.sh/* ;do
@@ -59,14 +59,17 @@ jobs:
       run : |
         test -d "GitHub" || mkdir -p "GitHub" 
         cd GitHub && ls
-        git clone https://3wlh:${{ secrets.TOKEN_3WLH }}@github.com/3wlh/Source
+        git clone https://3wlh:${{ secrets.TOKEN_3WLH }}@github.com/3wlh/OpenWrt_Packages
         git clone git://git.yoctoproject.org/opkg-utils
         test -d "opkg-utils" && rm -rf opkg-utils/.git
         ls
     
-    - name: opkg-utils
+    - name: Install opkg-utils
       run : |
         chmod -R 755 "${{ github.workspace }}/GitHub/opkg-utils" && cd ${{ github.workspace }}/GitHub/opkg-utils && sudo make install
+        
+    - name: Create Repositories index 
+      run : |  
         cd ${{ github.workspace }}/GitHub/OpenWrt_Packages
         [[ -d ./packages/aarch64_generic ]] && opkg-make-index ./packages/aarch64_generic > ./packages/aarch64_generic/Packages
         [[ -d ./packages/x86_64 ]] && opkg-make-index ./packages/x86_64/ > ./packages/x86_64/Packages
@@ -88,11 +91,3 @@ jobs:
         # git gc --prune=now --aggressive >/dev/unll
         # 强制提交到远程仓库
         git push
-        
-    - name: Git Check Repositories
-      run : |
-        test -d "GitHub/${{ inputs.repos }}" && cd GitHub/${{ inputs.repos }}
-        git rm -rf --cached . >/tmp/delete.log
-        git log --pretty=oneline
-        git branch -a
-        echo -e "\n\e[92mDirectory size: $(du -hs | tr -d "\t.")"
