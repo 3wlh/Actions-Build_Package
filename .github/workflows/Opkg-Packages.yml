@@ -26,7 +26,16 @@ jobs:
       run: |
         #sudo -E apt-get -qq -y update
         sudo -E apt-get -qq -y install python3 gzip
-    
+        
+    - name: Git Clone Repositories
+      run : |
+        test -d "GitHub" || mkdir -p "GitHub" 
+        cd GitHub && ls
+        git clone https://3wlh:${{ secrets.TOKEN_3WLH }}@github.com/3wlh/OpenWrt_Packages
+        git clone git://git.yoctoproject.org/opkg-utils
+        test -d "opkg-utils" && rm -rf opkg-utils/.git
+        ls
+        
     - name: Create Script
       run : |
         chmod -R 755 "$(pwd)/.github/.sh"
@@ -49,7 +58,9 @@ jobs:
         taskd luci-lib-xterm luci-lib-taskd luci-app-store"
         Passwall "aarch64_generic" "24.10"
         Openlist2 "aarch64_generic"
-        find $(pwd) -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/packages/aarch64_generic/" \;
+        test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" || \
+        mkdir -p "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic"
+        find $(pwd) -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" \;
     
     - name: Download x86_64 Packages
       run : |
@@ -61,22 +72,15 @@ jobs:
         taskd luci-lib-xterm luci-lib-taskd luci-app-store"
         Passwall "x86_64" "24.10"
         Openlist2 "x86_64"
-        find $(pwd) -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/packages/x86_64/" \;
+        test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64" || \
+        mkdir -p "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64"
+        find $(pwd) -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64" \;
             
     - name: Set Git identity
       run : |
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
         sudo timedatectl set-timezone "Asia/Shanghai"
-
-    - name: Git Clone Repositories
-      run : |
-        test -d "GitHub" || mkdir -p "GitHub" 
-        cd GitHub && ls
-        git clone https://3wlh:${{ secrets.TOKEN_3WLH }}@github.com/3wlh/OpenWrt_Packages
-        git clone git://git.yoctoproject.org/opkg-utils
-        test -d "opkg-utils" && rm -rf opkg-utils/.git
-        ls
     
     - name: Install opkg-utils
       run : |
