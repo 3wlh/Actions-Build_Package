@@ -88,16 +88,13 @@ jobs:
         
     - name: Create Repositories index 
       run : |  
+        # gzip -k9 Packages
         cd ${{ github.workspace }}/GitHub/OpenWrt_Packages
         [[ -d ./packages/aarch64_generic ]] && opkg-make-index ./packages/aarch64_generic > ./packages/aarch64_generic/Packages
         [[ -d ./packages/x86_64 ]] && opkg-make-index ./packages/x86_64 > ./packages/x86_64/Packages
-        [[ -d ./packages/aarch64_generic ]] && cd packages/aarch64_generic
-        [[ -f ./Packages ]] && gzip -k9 Packages
-        cd -
-        [[ -d ./packages/x86_64 ]] && cd packages/x86_64
-        [[ -f ./Packages ]] && gzip -k9 Packages
+        [[ -f ./packages/aarch64_generic/Packages ]] && gzip -9c packages/aarch64_generic/Packages > packages/aarch64_generic/Packages.gz
+        [[ -f ./packages/x86_64/Packages ]] && gzip -9c packages/x86_64/Packages > packages/x86_64/Packages.gz
         
-    
     - name: Git Erase Commits
       run : |
         cd ${{ github.workspace }}/GitHub/OpenWrt_Packages
