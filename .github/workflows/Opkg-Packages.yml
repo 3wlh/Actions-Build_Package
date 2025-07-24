@@ -73,11 +73,12 @@ jobs:
       run : |  
         cd ${{ github.workspace }}/GitHub/OpenWrt_Packages
         [[ -d ./packages/aarch64_generic ]] && opkg-make-index ./packages/aarch64_generic > ./packages/aarch64_generic/Packages
-        [[ -d ./packages/x86_64 ]] && opkg-make-index ./packages/x86_64/ > ./packages/x86_64/Packages
-        [[ -d ./packages/aarch64_generic ]] && cd ${{ github.workspace }}/packages/aarch64_generic
-        [[ -d ./packages/aarch64_generic/Packages ]] && gzip -k9 Packages
-        [[ -d ./packages/x86_64 ]] && cd ${{ github.workspace }}/packages/x86_64
-        [[ -d ./packages/x86_64/Packages ]] && gzip -k9 Packages
+        #[[ -d ./packages/x86_64 ]] && opkg-make-index ./packages/x86_64/ > ./packages/x86_64/Packages
+        [[ -d ./packages/aarch64_generic ]] && cd packages/aarch64_generic
+        [[ -f ./Packages ]] && gzip -k9 Packages
+        cd -
+        #[[ -d ./packages/x86_64 ]] && cd packages/x86_64
+        #[[ -f ./Packages ]] && gzip -k9 Packages
         
     
     - name: Git Erase Commits
