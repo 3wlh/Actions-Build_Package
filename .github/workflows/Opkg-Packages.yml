@@ -4,13 +4,6 @@ on:
   repository_dispatch:
   workflow_dispatch:      
     inputs:
-      repos:
-        description: "Select the Repositories"
-        required: false
-        default: "all"
-        type: choice
-        options:
-          - all
 
 jobs:
   opkg:
