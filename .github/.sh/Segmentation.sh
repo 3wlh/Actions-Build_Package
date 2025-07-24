@@ -1,7 +1,7 @@
 #!/bin/bash
 PACKAGES_URL="${1}"
 PACKAGES_PATH="${2}"
-PACKAGES_NAME=(${2})
+PACKAGES_NAME=(${3})
 wget -qO- "${PACKAGES_URL}" | \
 while IFS= read -r LINE; do
     for PREFIX in "${PACKAGES_NAME[@]}"; do
