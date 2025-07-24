@@ -1,0 +1,98 @@
+name: Actions Delete Commits
+on:
+  repository_dispatch:
+  workflow_dispatch:      
+    inputs:
+      repos:
+        description: "Select the Repositories"
+        required: false
+        default: "all"
+        type: choice
+        options:
+          - all
+
+jobs:
+  opkg:
+    name: Opkg
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+      with:
+        fetch-depth: 0
+    
+    - name: Initialization environment
+      run: |
+        #sudo -E apt-get -qq -y update
+        sudo -E apt-get -qq -y install python3 gzip
+    
+    - name: Download Script
+      run : |
+        chmod -R 755 "$(pwd)/.github/.sh"
+        for file in $(pwd)/.github/.sh/* ;do
+          if [[ -f ${file} ]];then
+            # sudo chmod 755 "${file}"
+            name=$(basename ${file} .sh)
+            sudo ln -s ${file} /bin/${name}
+            echo "$(date '+%Y-%m-%d %H:%M:%S') - ${name} 创建OK."
+          fi
+        done
+        
+    - name: Download aarch64_generic Packages
+      run : |
+        test -d "packages/aarch64_generic" || mkdir -p "packages/aarch64_generic"
+        test -d "/tmp/aarch64_generic" || mkdir -p "/tmp/aarch64_generic"
+        test -d "/tmp/aarch64_generic" && cd "/tmp/aarch64_generic"
+        test -d "$(pwd)/packages/diy_packages" || mkdir -p "$(pwd)/packages/diy_packages"
+        # Segmentation "https://dl.openwrt.ai/releases/24.10/packages/aarch64_generic/kiddin9/" \
+        # "luci-app-unishare unishare webdav2 luci-app-v2ray-server sunpanel luci-app-sunpanel \
+        # taskd luci-lib-xterm luci-lib-taskd luci-app-store"
+        find $(pwd) -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/packages/aarch64_generic/" \;
+        
+    - name: Set Git identity
+      run : |
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        sudo timedatectl set-timezone "Asia/Shanghai"
+
+    - name: Git Clone Repositories
+      run : |
+        test -d "GitHub" || mkdir -p "GitHub" 
+        cd GitHub && ls
+        git clone https://3wlh:${{ secrets.TOKEN_3WLH }}@github.com/3wlh/Source
+        git clone git://git.yoctoproject.org/opkg-utils
+        test -d "opkg-utils" && rm -rf opkg-utils/.git
+        ls
+    
+    - name: opkg-utils
+      run : |
+        chmod -R 755 "${{ github.workspace }}/GitHub/opkg-utils" && cd ${{ github.workspace }}/GitHub/opkg-utils && sudo make install
+        cd ${{ github.workspace }}/GitHub/OpenWrt_Packages
+        [[ -d ./packages/aarch64_generic ]] && opkg-make-index ./packages/aarch64_generic > ./packages/aarch64_generic/Packages
+        [[ -d ./packages/x86_64 ]] && opkg-make-index ./packages/x86_64/ > ./packages/x86_64/Packages
+        [[ -d ./packages/aarch64_generic ]] && cd ${{ github.workspace }}/packages/aarch64_generic
+        [[ -d ./packages/aarch64_generic/Packages ]] && gzip -k9 Packages
+        [[ -d ./packages/x86_64 ]] && cd ${{ github.workspace }}/packages/x86_64
+        [[ -d ./packages/x86_64/Packages ]] && gzip -k9 Packages
+        
+    
+    - name: Git Erase Commits
+      run : |
+        cd ${{ github.workspace }}/GitHub/OpenWrt_Packages
+        # 添加所有文件
+        # git add -A >/dev/unll
+        git add -A
+        # 提交更改
+        git commit -am "update $(date +%Y-%m-%d" "%H:%M:%S)"
+        # 清理优化Git仓库
+        # git gc --prune=now --aggressive >/dev/unll
+        # 强制提交到远程仓库
+        git push
+        
+    - name: Git Check Repositories
+      run : |
+        test -d "GitHub/${{ inputs.repos }}" && cd GitHub/${{ inputs.repos }}
+        git rm -rf --cached . >/tmp/delete.log
+        git log --pretty=oneline
+        git branch -a
+        echo -e "\n\e[92mDirectory size: $(du -hs | tr -d "\t.")"
