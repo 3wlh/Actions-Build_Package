@@ -41,7 +41,6 @@ jobs:
         
     - name: Download aarch64_generic Packages
       run : |
-        test -d "packages/aarch64_generic" || mkdir -p "packages/aarch64_generic"
         test -d "/tmp/aarch64_generic" || mkdir -p "/tmp/aarch64_generic"
         test -d "/tmp/aarch64_generic" && cd "/tmp/aarch64_generic"
         test -d "$(pwd)/packages/diy_packages" || mkdir -p "$(pwd)/packages/diy_packages"
@@ -54,16 +53,15 @@ jobs:
     
     - name: Download x86_64 Packages
       run : |
-        test -d "packages/aarch64_generic" || mkdir -p "packages/aarch64_generic"
-        test -d "/tmp/aarch64_generic" || mkdir -p "/tmp/aarch64_generic"
-        test -d "/tmp/aarch64_generic" && cd "/tmp/aarch64_generic"
+        test -d "/tmp/x86_64" || mkdir -p "/tmp/x86_64"
+        test -d "/tmp/x86_64" && cd "/tmp/x86_64"
         test -d "$(pwd)/packages/diy_packages" || mkdir -p "$(pwd)/packages/diy_packages"
         Segmentation "https://dl.openwrt.ai/releases/24.10/packages/x86_64/kiddin9/" \
         "luci-app-unishare unishare webdav2 luci-app-v2ray-server sunpanel luci-app-sunpanel \
         taskd luci-lib-xterm luci-lib-taskd luci-app-store"
         Passwall "x86_64" "24.10"
         Openlist2 "x86_64"
-        find $(pwd) -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/packages/aarch64_generic/" \;
+        find $(pwd) -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/packages/x86_64/" \;
             
     - name: Set Git identity
       run : |
@@ -88,7 +86,7 @@ jobs:
       run : |  
         cd ${{ github.workspace }}/GitHub/OpenWrt_Packages
         [[ -d ./packages/aarch64_generic ]] && opkg-make-index ./packages/aarch64_generic > ./packages/aarch64_generic/Packages
-        [[ -d ./packages/x86_64 ]] && opkg-make-index ./packages/x86_64/ > ./packages/x86_64/Packages
+        [[ -d ./packages/x86_64 ]] && opkg-make-index ./packages/x86_64 > ./packages/x86_64/Packages
         [[ -d ./packages/aarch64_generic ]] && cd packages/aarch64_generic
         [[ -f ./Packages ]] && gzip -k9 Packages
         cd -
