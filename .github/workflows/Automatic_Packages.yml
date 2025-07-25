@@ -10,5 +10,3 @@ jobs:
   Automatic_Packages:
     uses: ./.github/workflows/Opkg-Packages.yml
     secrets: inherit
-    with:
-      name: "GitHub User"
