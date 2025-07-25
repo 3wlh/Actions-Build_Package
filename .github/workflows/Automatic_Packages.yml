@@ -1,0 +1,14 @@
+name: Automatic_Packages
+
+on:
+  schedule:
+    # - cron: '0 0 */2 * *'  # At 00:00 UTC, every 2 days
+    - cron: '*/2 * * * *'
+  workflow_dispatch:
+
+jobs:
+  Automatic_Packages:
+    uses: ./.github/workflows/Opkg-Packages.yml
+    secrets: inherit
+    with:
+      name: "GitHub User"
