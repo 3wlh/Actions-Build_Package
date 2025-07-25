@@ -110,11 +110,11 @@ jobs:
       run : |  
         # gzip -k9 Packages
         cd ${{ github.workspace }}/GitHub/OpenWrt_Packages
-        echo -e "${{ secrets.KEY }}" > mime.key
+        echo -e "${{ secrets.KEY }}" > /tmp/mime.key
         [[ -d packages/aarch64_generic ]] && opkg-make-index packages/aarch64_generic > packages/aarch64_generic/Packages
-        usign -S -m packages/aarch64_generic/Packages -s mime.key -x packages/aarch64_generic/Packages.sig
+        usign -S -m packages/aarch64_generic/Packages -s /tmp/mime.key -x packages/aarch64_generic/Packages.sig
         [[ -d packages/x86_64 ]] && opkg-make-index packages/x86_64 > packages/x86_64/Packages
-        usign -S -m packages/x86_64/Packages -s mime.key -x packages/x86_64/Packages.sig
+        usign -S -m packages/x86_64/Packages -s /tmp/mime.key -x packages/x86_64/Packages.sig
         [[ -f packages/aarch64_generic/Packages ]] && gzip -9c packages/aarch64_generic/Packages > packages/aarch64_generic/Packages.gz
         [[ -f packages/x86_64/Packages ]] && gzip -9c packages/x86_64/Packages > packages/x86_64/Packages.gz
         
