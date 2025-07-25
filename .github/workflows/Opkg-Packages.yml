@@ -28,6 +28,7 @@ jobs:
         test -d "GitHub" || mkdir -p "GitHub" 
         cd GitHub
         git clone https://3wlh:${{ secrets.TOKEN_3WLH }}@github.com/3wlh/OpenWrt_Packages
+        git clone git://git.yoctoproject.org/opkg-utils
         git clone https://git.openwrt.org/project/opkg-utils.git
         test -d "opkg-utils" && rm -rf opkg-utils/.git
         ls
@@ -88,10 +89,12 @@ jobs:
     - name: Create Repositories index 
       run : |  
         # gzip -k9 Packages
-        cd {{ github.workspace }}/GitHub/opkg-make-repo
         cd ${{ github.workspace }}/GitHub/OpenWrt_Packages
+        echo -e "${{ secrets.KEY }}" > mime.key
         [[ -d packages/aarch64_generic ]] && opkg-make-index packages/aarch64_generic > packages/aarch64_generic/Packages
-        [[ -d packages/x86_64 ]] && opkg-make-index packages/x86_64 > ./packages/x86_64/Packages
+        usign -S -m packages/aarch64_generic/Packages -s mime.key -x packages/aarch64_generic/Packages.sig
+        [[ -d packages/x86_64 ]] && opkg-make-index packages/x86_64 > packages/x86_64/Packages
+        usign -S -m packages/x86_64/Packages -s mime.key -x packages/x86_64/Packages.sig
         [[ -f packages/aarch64_generic/Packages ]] && gzip -9c packages/aarch64_generic/Packages > packages/aarch64_generic/Packages.gz
         [[ -f packages/x86_64/Packages ]] && gzip -9c packages/x86_64/Packages > packages/x86_64/Packages.gz
         
