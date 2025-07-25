@@ -1,7 +1,7 @@
 name: Automatic_Packages
 
 on: 
-  schedule:
+  #schedule:
     #- cron: '*/5 * * * *'  # 每5分钟一次
     #- cron: '0 0 */2 * *'  # 每2天一次
   workflow_dispatch:
