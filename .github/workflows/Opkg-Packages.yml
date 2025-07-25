@@ -21,16 +21,33 @@ jobs:
     - name: Initialization environment
       run: |
         #sudo -E apt-get -qq -y update
-        sudo -E apt-get -qq -y install python3 gzip usign
-        
+        sudo -E apt-get -qq -y install python3 gzip
+    
+    - name: Set Git identity
+      run : |
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        sudo timedatectl set-timezone "Asia/Shanghai"
+    
     - name: Git Clone Repositories
       run : |
         test -d "GitHub" || mkdir -p "GitHub" 
         cd GitHub
         git clone https://3wlh:${{ secrets.TOKEN_3WLH }}@github.com/3wlh/OpenWrt_Packages
         git clone git://git.yoctoproject.org/opkg-utils
+        git clone https://github.com/openwrt/usign.git
         test -d "opkg-utils" && rm -rf opkg-utils/.git
         ls
+    
+    - name: Install usign
+      run : |
+        chmod -R 755 "${{ github.workspace }}/GitHub/usign" && cd ${{ github.workspace }}/GitHub/usign && \
+        make && sudo make install
+    
+    - name: Install opkg-utils
+      run : |
+        chmod -R 755 "${{ github.workspace }}/GitHub/opkg-utils" && cd ${{ github.workspace }}/GitHub/opkg-utils && \
+        make && sudo make install
         
     - name: Create Script
       run : |
@@ -72,19 +89,8 @@ jobs:
         Openlist2 "x86_64"
         test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64" || \
         mkdir -p "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64"
-        find $(pwd) -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64" \;
+        find $(pwd) -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64" \;      
             
-    - name: Set Git identity
-      run : |
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git config --global user.name "github-actions[bot]"
-        sudo timedatectl set-timezone "Asia/Shanghai"
-    
-    - name: Install opkg-utils
-      run : |
-        chmod -R 755 "${{ github.workspace }}/GitHub/opkg-utils" && cd ${{ github.workspace }}/GitHub/opkg-utils && \
-        make && sudo make install
-        
     - name: Create Repositories index 
       run : |  
         # gzip -k9 Packages
