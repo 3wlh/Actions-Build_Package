@@ -1,9 +1,10 @@
 name: Actions opkg-utils
 
 on:
+  schedule:
+    - cron: '*/2 * * * *'
   repository_dispatch:
-  workflow_dispatch:      
-    inputs:
+  workflow_dispatch:
 
 jobs:
   opkg:
