@@ -26,10 +26,9 @@ jobs:
     - name: Git Clone Repositories
       run : |
         test -d "GitHub" || mkdir -p "GitHub" 
-        cd GitHub && ls
+        cd GitHub
         git clone https://3wlh:${{ secrets.TOKEN_3WLH }}@github.com/3wlh/OpenWrt_Packages
-        git clone git://git.yoctoproject.org/opkg-utils
-        git clone https://github.com/luochongjun/opkg-make-repo.git
+        git clone https://git.openwrt.org/project/opkg-utils.git
         test -d "opkg-utils" && rm -rf opkg-utils/.git
         ls
         
@@ -83,19 +82,18 @@ jobs:
     
     - name: Install opkg-utils
       run : |
-        chmod -R 755 "${{ github.workspace }}/GitHub/opkg-utils" && cd ${{ github.workspace }}/GitHub/opkg-utils && sudo make install
+        chmod -R 755 "${{ github.workspace }}/GitHub/opkg-utils" && cd ${{ github.workspace }}/GitHub/opkg-utils && \
+        make && sudo make install
         
     - name: Create Repositories index 
       run : |  
         # gzip -k9 Packages
         cd {{ github.workspace }}/GitHub/opkg-make-repo
-        ./make-index {{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic
-        ./make-index {{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64
-        #cd ${{ github.workspace }}/GitHub/OpenWrt_Packages
-        #[[ -d ./packages/aarch64_generic ]] && opkg-make-index ./packages/aarch64_generic > ./packages/aarch64_generic/Packages
-        #[[ -d ./packages/x86_64 ]] && opkg-make-index ./packages/x86_64 > ./packages/x86_64/Packages
-        #[[ -f ./packages/aarch64_generic/Packages ]] && gzip -9c packages/aarch64_generic/Packages > packages/aarch64_generic/Packages.gz
-        #[[ -f ./packages/x86_64/Packages ]] && gzip -9c packages/x86_64/Packages > packages/x86_64/Packages.gz
+        cd ${{ github.workspace }}/GitHub/OpenWrt_Packages
+        [[ -d packages/aarch64_generic ]] && opkg-make-index packages/aarch64_generic > packages/aarch64_generic/Packages
+        [[ -d packages/x86_64 ]] && opkg-make-index packages/x86_64 > ./packages/x86_64/Packages
+        [[ -f packages/aarch64_generic/Packages ]] && gzip -9c packages/aarch64_generic/Packages > packages/aarch64_generic/Packages.gz
+        [[ -f packages/x86_64/Packages ]] && gzip -9c packages/x86_64/Packages > packages/x86_64/Packages.gz
         
     - name: Git Erase Commits
       run : |
