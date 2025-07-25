@@ -30,26 +30,33 @@ jobs:
         sudo timedatectl set-timezone "Asia/Shanghai"
     
     - name: Git Clone Repositories
+      id: git_clone
       run : |
         test -d "GitHub" || mkdir -p "GitHub" 
-        cd GitHub
-        git clone https://3wlh:${{ secrets.TOKEN_3WLH }}@github.com/3wlh/OpenWrt_Packages
-        git clone git://git.yoctoproject.org/opkg-utils
-        git clone https://github.com/openwrt/usign.git
-        test -d "opkg-utils" && rm -rf opkg-utils/.git
-        ls
+        cd GitHub && git clone https://3wlh:${{ secrets.TOKEN_3WLH }}@github.com/3wlh/OpenWrt_Packages
+        test -d "OpenWrt_Packages" && cd "OpenWrt_Packages"
+        if [[ !-d "opkg-utils" ]]; then
+          git clone git://git.yoctoproject.org/opkg-utils
+          test -d "opkg-utils" && rm -rf opkg-utils/.git
+        fi
+        if [[ -f bin/usign ]]; then
+          cp -f bin/usign /usr/local/bin/usign
+        else
+          git clone https://github.com/openwrt/usign.git
+          sudo -E apt-get -qq -y install cmake
+          echo "usign=fail" >> $GITHUB_OUTPUT
+        fi
     
     - name: Install usign
+      if: steps.git_clone.outputs.usign == 'fail'
       run : |
-        chmod -R 755 "${{ github.workspace }}/GitHub/usign" && cd ${{ github.workspace }}/GitHub/usign && \
+        chmod -R 755 "${{ github.workspace }}/GitHub/OpenWrt_Packages/usign" && \
+        cd ${{ github.workspace }}/GitHub/OpenWrt_Packages/usign && \
         cmake . && make && sudo make install
-        find /bin -type f -name "*usign*"
-        find /usr/local/bin/ -type f -name "*usign*"
         test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/bin" || mkdir -p "${{ github.workspace }}/GitHub/OpenWrt_Packages/bin"
         cp -f /usr/local/bin/usign ${{ github.workspace }}/GitHub/OpenWrt_Packages/bin
+        rm -rf ${{ github.workspace }}/GitHub/OpenWrt_Packages/usign
         
-        
-    
     - name: Install opkg-utils
       run : |
         chmod -R 755 "${{ github.workspace }}/GitHub/opkg-utils" && cd ${{ github.workspace }}/GitHub/opkg-utils && \
