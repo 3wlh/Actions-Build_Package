@@ -35,7 +35,7 @@ jobs:
         test -d "GitHub" || mkdir -p "GitHub" 
         cd GitHub && git clone https://3wlh:${{ secrets.TOKEN_3WLH }}@github.com/3wlh/OpenWrt_Packages
         test -d "OpenWrt_Packages" && cd "OpenWrt_Packages"
-        if [[ !-d "opkg-utils" ]]; then
+        if [[ ! -d "opkg-utils" ]]; then
           git clone git://git.yoctoproject.org/opkg-utils
           test -d "opkg-utils" && rm -rf opkg-utils/.git
         fi
