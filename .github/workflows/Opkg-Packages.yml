@@ -21,7 +21,7 @@ jobs:
     - name: Initialization environment
       run: |
         #sudo -E apt-get -qq -y update
-        sudo -E apt-get -qq -y install python3 gzip
+        sudo -E apt-get -qq -y install python3 gzip cmake
     
     - name: Set Git identity
       run : |
@@ -42,7 +42,7 @@ jobs:
     - name: Install usign
       run : |
         chmod -R 755 "${{ github.workspace }}/GitHub/usign" && cd ${{ github.workspace }}/GitHub/usign && \
-        make && sudo make install
+        cmake .. && make && sudo make install
     
     - name: Install opkg-utils
       run : |
