@@ -43,6 +43,12 @@ jobs:
       run : |
         chmod -R 755 "${{ github.workspace }}/GitHub/usign" && cd ${{ github.workspace }}/GitHub/usign && \
         cmake . && make && sudo make install
+        find /bin -type f -name "*usign*"
+        find /usr/local/bin/ -type f -name "*usign*"
+        test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/bin" || mkdir -p "${{ github.workspace }}/GitHub/OpenWrt_Packages/bin"
+        cp -f /usr/local/bin/usign ${{ github.workspace }}/GitHub/OpenWrt_Packages/bin
+        
+        
     
     - name: Install opkg-utils
       run : |
