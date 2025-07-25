@@ -117,6 +117,7 @@ jobs:
         usign -S -m packages/x86_64/Packages -s /tmp/mime.key -x packages/x86_64/Packages.sig
         [[ -f packages/aarch64_generic/Packages ]] && gzip -9c packages/aarch64_generic/Packages > packages/aarch64_generic/Packages.gz
         [[ -f packages/x86_64/Packages ]] && gzip -9c packages/x86_64/Packages > packages/x86_64/Packages.gz
+        [[ -f Packages.stamps ]] && rm -f Packages.stamps
         
     - name: Git Erase Commits
       run : |
