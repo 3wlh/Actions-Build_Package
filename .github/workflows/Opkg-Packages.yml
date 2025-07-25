@@ -42,7 +42,7 @@ jobs:
     - name: Install usign
       run : |
         chmod -R 755 "${{ github.workspace }}/GitHub/usign" && cd ${{ github.workspace }}/GitHub/usign && \
-        cmake .. && make && sudo make install
+        cmake . && make && sudo make install
     
     - name: Install opkg-utils
       run : |
