@@ -21,7 +21,7 @@ jobs:
     - name: Initialization environment
       run: |
         #sudo -E apt-get -qq -y update
-        sudo -E apt-get -qq -y install python3 gzip cmake
+        sudo -E apt-get -qq -y install python3 gzip
     
     - name: Set Git identity
       run : |
@@ -59,7 +59,8 @@ jobs:
         
     - name: Install opkg-utils
       run : |
-        chmod -R 755 "${{ github.workspace }}/GitHub/opkg-utils" && cd ${{ github.workspace }}/GitHub/opkg-utils && \
+        chmod -R 755 "${{ github.workspace }}/GitHub/OpenWrt_Packages/opkg-utils" && \
+        cd ${{ github.workspace }}/GitHub/OpenWrt_Packages/opkg-utils && \
         make && sudo make install
         
     - name: Create Script
