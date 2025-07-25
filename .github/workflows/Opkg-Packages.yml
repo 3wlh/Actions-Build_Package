@@ -29,7 +29,6 @@ jobs:
         cd GitHub
         git clone https://3wlh:${{ secrets.TOKEN_3WLH }}@github.com/3wlh/OpenWrt_Packages
         git clone git://git.yoctoproject.org/opkg-utils
-        git clone https://git.openwrt.org/project/opkg-utils.git
         test -d "opkg-utils" && rm -rf opkg-utils/.git
         ls
         
