@@ -9,8 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  opkg:
-    name: Opkg
+  Feed_Repositories:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
