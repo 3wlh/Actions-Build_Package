@@ -1,9 +1,8 @@
 #!/bin/bash
 echo "$(date '+%Y-%m-%d %H:%M:%S') - 下载 luci-app-nikki ..."
 Data="$(curl -s https://api.github.com/repos/nikkinikki-org/OpenWrt-nikki/releases/latest)"
-gz_url="$(echo "${Data}" | grep -Eo '"browser_download_url":\s*".*'${1}'-openwrt-24.10.tar.gz"' | cut -d '"' -f 4  | tr -d '\n')"
-Check=$(Check "nikki" "${gz_url}" "${2}/${1}-")
-[[ -z ${Check} ]] && echo "【nikki】- 插件未更新" && exit 0 >/dev/null
+gz_url="$(echo "${Data}" | grep -Eo '"browser_download_url":\s*".*'${1}'-openwrt-24.10.tar.gz"' | cut -d '"' -f 4)"
+[[ -z "$(Check "nikki" "${gz_url}" "${2}/${1}-")" ]] echo "【nikki】- 插件未更新" && exit 0 >/dev/null
 echo "Downloading ${gz_url}"
 if [[ "$(du -b "$(pwd)/packages/diy_packages/$(basename ${gz_url})" 2>/dev/null | awk '{print $1}')" -ge "6000" ]]; then
 	echo "######################################################################## 100.0%"

@@ -1,15 +1,20 @@
 #!/bin/bash
 test -f "${3}releases.txt" || touch "${3}releases.txt"
+function modify(){
 cat "${3}releases.txt" | \
 while IFS= read -r LINE; do
-    [[ -z "${LINE}" ]] && echo ${2} && echo "${1} ${2}" >>${3}releases.txt && break
-    [[ -z "$(echo "${LINE}" | grep -Eo "${1}")" ]] && continue
-    [[ -n "${LINE}" ]] && name=$(echo "${data}" | cut -d " " -f 1)
-    [[ -n "${LINE}" ]] && url=$(echo "${data}" | cut -d " " -f 2)
-    if [[ -n "${LINE}" && "${2}" != "${url}" ]]; then
-        echo ${2}
+    [[ -z "$(echo "${LINE}" | grep -Eo "^Package:${1}.*")" ]] && continue
+    url=$(echo "${LINE}" | cut -d " " -f 2)
+    if [[ "${2}" != "${url}" ]]; then
+        echo "update"
         sed -i "s|${url}|${2}|" "${3}releases.txt"
         break
     fi
-done
-
+done   
+}
+Releases=$(cat "${3}releases.txt" 2>/dev/null)
+if [[ "${Releases}" =~ "Package:${1}" ]]; then
+    modify "Package:${1}" "${2}"
+else
+	echo "update" && echo "Package:${1} ${2}" >>"${3}releases.txt"
+fi
