@@ -84,9 +84,9 @@ jobs:
         "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" \
         "luci-app-unishare unishare webdav2 luci-app-v2ray-server sunpanel luci-app-sunpanel \
         taskd luci-lib-xterm luci-lib-taskd luci-app-store"
-        Passwall "aarch64_generic" "24.10" ${{ github.workspace }}/GitHub/OpenWrt_Packages
-        Openlist2 "aarch64_generic" ${{ github.workspace }}/GitHub/OpenWrt_Packages
-        Nikki "aarch64_generic" ${{ github.workspace }}/GitHub/OpenWrt_Packages
+        Passwall "aarch64_generic" "24.10" "${{ github.workspace }}/GitHub/OpenWrt_Packages"
+        Openlist2 "aarch64_generic" "${{ github.workspace }}/GitHub/OpenWrt_Packages"
+        Nikki "aarch64_generic" "${{ github.workspace }}/GitHub/OpenWrt_Packages"
         test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" || \
         mkdir -p "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic"
         find $(pwd) -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" \;
@@ -99,9 +99,9 @@ jobs:
         "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64" \
         "luci-app-unishare unishare webdav2 luci-app-v2ray-server sunpanel luci-app-sunpanel \
         taskd luci-lib-xterm luci-lib-taskd luci-app-store"
-        Passwall "x86_64" "24.10" ${{ github.workspace }}/GitHub/OpenWrt_Packages
-        Openlist2 "x86_64" ${{ github.workspace }}/GitHub/OpenWrt_Packages
-        Nikki "x86_64" ${{ github.workspace }}/GitHub/OpenWrt_Packages
+        Passwall "x86_64" "24.10" "${{ github.workspace }}/GitHub/OpenWrt_Packages"
+        Openlist2 "x86_64" "${{ github.workspace }}/GitHub/OpenWrt_Packages"
+        Nikki "x86_64" "${{ github.workspace }}/GitHub/OpenWrt_Packages"
         test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64" || \
         mkdir -p "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64"
         find $(pwd) -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64" \;      

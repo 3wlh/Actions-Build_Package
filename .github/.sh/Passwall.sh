@@ -14,9 +14,6 @@ if [[ "$(du -b "$(pwd)/packages/diy_packages/$(basename ${url})" 2>/dev/null | a
 else	
 	find $(pwd)/packages/diy_packages/ -type f -name "$(echo "$(basename ${url})")" -exec rm -f {} \;
 	curl -# -L --fail "${url}" -o "$(pwd)/packages/diy_packages/$(basename ${url})"
-    # #wget -qO "$(pwd)/packages/diy_packages/$(basename $Download_URL)" "${Download_URL}" --show-progress
-    # 删除 GitHub 缓存
-    echo "cache=delete" >> "$(pwd)/bin/.bashrc"
 fi
 done
 find $(pwd)/packages/diy_packages/ -type f -name "$(echo "$(basename ${Zip_url})")" -exec unzip -oq {} -d "$(pwd)/packages/diy_packages/" \;
