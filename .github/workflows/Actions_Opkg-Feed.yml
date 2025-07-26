@@ -1,4 +1,4 @@
-name: Actions_Opkg-Feed:repositories
+name: Actions_Opkg-Feed：Repositories
 
 on:
   workflow_call:
