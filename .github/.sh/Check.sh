@@ -10,6 +10,5 @@ while IFS= read -r LINE; do
         sed -i "s|${url}|${2}|" "${3}releases.txt"
         break
     fi
-    
 done
 
