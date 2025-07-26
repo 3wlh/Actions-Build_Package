@@ -1,4 +1,5 @@
 #!/bin/bash
+data=""
 cat "${3}releases.txt" | \
 while IFS= read -r LINE; do
     [[ -z "${1}" || -z "${2}" || -z "${LINE}" ]] && continue
