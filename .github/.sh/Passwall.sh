@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "$(date '+%Y-%m-%d %H:%M:%S') - 下载 luci-app-passwall ..."
 Data="$(curl -s https://api.github.com/repos/xiaorouji/openwrt-passwall/releases/latest)"
-Zip_url="$(echo "${Data}" | grep -Eo '"browser_download_url":\s*".*passwall_packages_ipk_'${1}'.zip"' | cut -d '"' -f 4)"
+Zip_url="$(echo "${Data}" | grep -Eo '"browser_download_url":\s*".*passwall_packages_ipk_'${1}'.zip"' | cut -d '"' -f 4  | tr -d '\n')"
 Check=$(Check "passwall" "${Zip_url}" "${3}/${1}-")
 [[ -z ${Check} ]] && echo "【passwall】- 插件未更新" && exit 0 >/dev/null
 luci_url="$(echo "${Data}" | grep -Eo '"browser_download_url":\s*".*luci-'${2}'.*\.ipk"' | head -1 | cut -d '"' -f 4)"
