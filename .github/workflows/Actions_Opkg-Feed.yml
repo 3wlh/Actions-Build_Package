@@ -1,4 +1,4 @@
-name: Actions opkg-utils
+name: Actions_Opkg-Feed:repositories
 
 on:
   workflow_call:
@@ -80,7 +80,7 @@ jobs:
       run : |
         mkdir -p "/tmp/aarch64_generic" && cd "/tmp/aarch64_generic"
         test -d "$(pwd)/packages/diy_packages" || mkdir -p "$(pwd)/packages/diy_packages"
-        chmod +x "${{ github.workspace }}/.github/.packages/aarch64_generic.sh"
+        chmod +x "${{ github.workspace }}/.github/.packages/aarch64_generic.sh" && \
         bash ${{ github.workspace }}/.github/.packages/aarch64_generic.sh \
         "${{ github.workspace }}/GitHub/OpenWrt_Packages"
         test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" || \
@@ -91,7 +91,7 @@ jobs:
       run : |
         mkdir -p "/tmp/x86_64" && cd "/tmp/x86_64"
         test -d "$(pwd)/packages/diy_packages" || mkdir -p "$(pwd)/packages/diy_packages"
-        chmod +x "${{ github.workspace }}/.github/.packages/aarch64_generic.sh"
+        chmod +x "${{ github.workspace }}/.github/.packages/x86_64.sh" && \
         bash ${{ github.workspace }}/.github/.packages/x86_64.sh \
         "${{ github.workspace }}/GitHub/OpenWrt_Packages"
         test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64" || \
