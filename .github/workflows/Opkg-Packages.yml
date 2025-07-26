@@ -66,8 +66,8 @@ jobs:
         
     - name: Create Script
       run : |
-        chmod -R 755 "$(pwd)/.github/.Shell"
-        for file in $(pwd)/.github/.Shell/* ;do
+        chmod -R 755 "$(pwd)/.github/.shell"
+        for file in $(pwd)/.github/.shell/* ;do
           if [[ -f ${file} ]];then
             # sudo chmod 755 "${file}"
             name=$(basename ${file} .sh)
