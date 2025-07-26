@@ -1,5 +1,5 @@
 #!/bin/bash
-cat "${3}releases.txt" | \
+cat "${3}releases.txt" 2>/dev/null | \
 while IFS= read -r LINE; do
     [[ -z "$(echo "${LINE}" | grep -Eo "${1}")" && -n "${LINE}" ]] && continue
     [[ -z "${LINE}" ]] && echo ${2} && echo "${1} ${2}" >>${3}releases.txt && break
@@ -8,6 +8,8 @@ while IFS= read -r LINE; do
     if [[ -n "${LINE}" && "${2}" != "${url}" ]]; then
         echo ${2}
         sed -i "s|${url}|${2}|" "${3}releases.txt"
+        break
     fi
+    
 done
 
