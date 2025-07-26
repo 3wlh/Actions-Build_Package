@@ -1,6 +1,6 @@
 #!/bin/bash
-PACKAGES_URL="${1}"
-PACKAGES_PATH="${2}"
+PACKAGES_PATH="${1}"
+PACKAGES_URL="${2}"
 PACKAGES_NAME=(${3})
 wget -qO- "${PACKAGES_URL}" | \
 while IFS= read -r LINE; do
