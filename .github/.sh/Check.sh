@@ -5,6 +5,7 @@ while IFS= read -r LINE; do
     [[ -z "$(echo "${LINE}" | grep -Eo "${1}")" ]] && continue
     data=${LINE} 
 done
+echo ${data}
 [[ -z "${data}" ]] && echo ${2} && echo "${1} ${2}" >>${3}releases.txt 
 [[ -n "${data}" ]] && name=$(echo "${data}" | cut -d " " -f 1)
 [[ -n "${data}" ]] && url=$(echo "${data}" | cut -d " " -f 2)
