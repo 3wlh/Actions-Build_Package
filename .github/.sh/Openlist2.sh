@@ -3,7 +3,7 @@ Data="$(curl -s https://api.github.com/repos/sbwml/luci-app-openlist2/releases/l
 gz_url="$(echo "${Data}" | grep -Eo '"browser_download_url":\s*".*openwrt-24.10-'${1}'.tar.gz"' | cut -d '"' -f 4)"
 Check=$(Check "openlist2" "${gz_url}" "${2}/${1}-")
 [[ -z ${Check} ]] && echo "【openlist2】- 插件未更新" && exit 0 >/dev/null
-echo "Downloading ${gz_url}"
+echo "Downloading ${Check}"
 if [[ "$(du -b "$(pwd)/packages/diy_packages/$(basename ${gz_url})" 2>/dev/null | awk '{print $1}')" -ge "20000" ]]; then
 	echo "######################################################################## 100.0%"
 else	
