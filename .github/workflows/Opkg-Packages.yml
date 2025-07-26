@@ -80,7 +80,7 @@ jobs:
       run : |
         mkdir -p "/tmp/aarch64_generic" && cd "/tmp/aarch64_generic"
         test -d "$(pwd)/packages/diy_packages" || mkdir -p "$(pwd)/packages/diy_packages"
-        chmod +x "$(github.workspace)/.github/.packages/aarch64_generic.sh"
+        chmod +x "${{ github.workspace }}/.github/.packages/aarch64_generic.sh"
         bash ${{ github.workspace }}/.github/.packages/aarch64_generic.sh \
         "${{ github.workspace }}/GitHub/OpenWrt_Packages"
         test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" || \
