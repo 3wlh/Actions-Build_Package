@@ -66,8 +66,8 @@ jobs:
         
     - name: Create Script
       run : |
-        chmod -R 755 "$(pwd)/.github/.sh"
-        for file in $(pwd)/.github/.sh/* ;do
+        chmod -R 755 "$(pwd)/.github/.Shell"
+        for file in $(pwd)/.github/.Shell/* ;do
           if [[ -f ${file} ]];then
             # sudo chmod 755 "${file}"
             name=$(basename ${file} .sh)
@@ -80,13 +80,9 @@ jobs:
       run : |
         mkdir -p "/tmp/aarch64_generic" && cd "/tmp/aarch64_generic"
         test -d "$(pwd)/packages/diy_packages" || mkdir -p "$(pwd)/packages/diy_packages"
-        Segmentation "https://dl.openwrt.ai/releases/24.10/packages/aarch64_generic/kiddin9/" \
-        "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" \
-        "luci-app-unishare unishare webdav2 luci-app-v2ray-server sunpanel luci-app-sunpanel \
-        taskd luci-lib-xterm luci-lib-taskd luci-app-store"
-        Passwall "aarch64_generic" "24.10" "${{ github.workspace }}/GitHub/OpenWrt_Packages"
-        Openlist2 "aarch64_generic" "${{ github.workspace }}/GitHub/OpenWrt_Packages"
-        Nikki "aarch64_generic" "${{ github.workspace }}/GitHub/OpenWrt_Packages"
+        chmod +x "$(github.workspace)/.github/.packages/aarch64_generic.sh"
+        bash ${{ github.workspace }}/.github/.packages/aarch64_generic.sh \
+        "${{ github.workspace }}/GitHub/OpenWrt_Packages"
         test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" || \
         mkdir -p "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic"
         find $(pwd) -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" \;
