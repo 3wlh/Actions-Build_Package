@@ -79,16 +79,14 @@ jobs:
         Packages_all "aarch64_generic" "${{ github.workspace }}/GitHub/OpenWrt_Packages"
         test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" || \
         mkdir -p "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic"
-        echo $(pwd)
-        find $(pwd) -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" \;
+        find "/tmp/packages/aarch64_generic" -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" \;
     
     - name: Download x86_64 Packages
       run : |
         Packages_all "x86_64" "${{ github.workspace }}/GitHub/OpenWrt_Packages"
         test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64" || \
         mkdir -p "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64"
-        echo $(pwd)
-        find $(pwd) -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64" \;      
+        find "/tmp/packages/x86_64" -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64" \;      
             
     - name: Create Repositories index 
       run : |  
