@@ -1,4 +1,5 @@
 #!/bin/bash
+[[ $(curl -o /dev/null -s --head -w "%{http_code}" "${1}") -ge 400 ]] && exit
 echo "Downloading ${1}"
 if [[ "$(du -b $(pwd)/$(basename ${1}) 2>/dev/null | awk '{print $1}')" -ge "512" ]]; then
     echo "######################################################################## 100.0%"
