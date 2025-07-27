@@ -1,5 +1,5 @@
 #!/bin/bash
-Time="$(date '+%Y-%m-%d %H:%M:%S')" & mkdir -p "$(pwd)/openlist2" && DIR="$(pwd)/openlist2"
+Time="$(date '+%Y-%m-%d %H:%M:%S')" && mkdir -p "$(pwd)/openlist2" && DIR="$(pwd)/openlist2"
 Data="$(curl -s https://api.github.com/repos/sbwml/luci-app-openlist2/releases/latest)"
 gz_url="$(echo "${Data}" | grep -Eo '"browser_download_url":\s*".*openwrt-24.10-'${1}'.tar.gz"' | cut -d '"' -f 4)"
 [[ -z "$(Check "openlist2" "${gz_url}" "${2}/.")" ]] && echo -e "${Time}\e[1;32m - 【openlist2】插件无更新.\e[0m" && exit

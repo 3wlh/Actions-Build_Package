@@ -1,5 +1,5 @@
 #!/bin/bash
-Time="$(date '+%Y-%m-%d %H:%M:%S')" & mkdir -p "$(pwd)/socat" && DIR="$(pwd)/socat"
+Time="$(date '+%Y-%m-%d %H:%M:%S')" && mkdir -p "$(pwd)/socat" && DIR="$(pwd)/socat"
 Data="$(curl -s https://api.github.com/repos/chenmozhijin/luci-app-socat/releases/latest)"
 luci_url="$(echo "${Data}" | grep -Eo '"browser_download_url":\s*".*luci-.*\.ipk"' | head -1 | cut -d '"' -f 4)"
 [[ -z "$(Check "socat" "${luci_url}" "${2}/.")" ]] && echo -e "${Time}\e[1;32m - 【socat】插件无更新.\e[0m" && exit
