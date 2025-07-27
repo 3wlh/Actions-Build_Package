@@ -15,7 +15,7 @@ while IFS= read -r LINE; do
             if [[ ! -f "${PACKAGES_PATH}/${FILE}" ]];then
                 Download "${Download_URL}" "${PACKAGES_PATH}"
             else
-                echo "$(date '+%Y-%m-%d %H:%M:%S') - 【${FILE}】插件无更新."
+                echo "$(date '+%Y-%m-%d %H:%M:%S')\e[1;32m - 【${FILE}】插件无更新.\e[0m"
             fi   
         fi
     done
