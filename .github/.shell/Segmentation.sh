@@ -2,11 +2,11 @@
 PACKAGES_PATH="${1}"
 PACKAGES_URL="${2}"
 PACKAGES_NAME=(${3})
-wget -qO- "${PACKAGES_URL}" | \
+wget -qO- "${PACKAGES_URL}/Packages" | \
 while IFS= read -r LINE; do
     for PREFIX in "${PACKAGES_NAME[@]}"; do
-        if [[ "$LINE" == *"$PREFIX"* ]]; then
-            FILE=$(echo "$LINE" | grep -Eo 'href="[^"]*' | sed 's/href="//')
+        if [[ "$LINE" == "Filename"*${PREFIX}* ]]; then
+            FILE=$(echo "$LINE" | grep -Eo ${PREFIX}'.*')
             if [[ -z "$FILE" ]]; then
                 # echo "No file found in line, skipping"
                 continue
