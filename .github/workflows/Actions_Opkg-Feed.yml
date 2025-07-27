@@ -66,7 +66,14 @@ jobs:
     - name: Create Script
       run : |
         chmod -R 755 "$(pwd)/.github/.shell" "$(pwd)/.github/.packages"
-        for file in $(pwd)/.github/*/*.sh ;do
+        for file in $(pwd)/.github/.shell/*.sh ;do
+          if [[ -f ${file} ]];then
+            name=$(basename ${file} .sh)
+            sudo ln -s ${file} /bin/${name}
+            echo "$(date '+%Y-%m-%d %H:%M:%S') - ${name} 创建OK."
+          fi
+        done
+        for file in $(pwd)/.github/.packages/*.sh ;do
           if [[ -f ${file} ]];then
             name=$(basename ${file} .sh)
             sudo ln -s ${file} /bin/${name}
