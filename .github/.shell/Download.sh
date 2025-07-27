@@ -5,5 +5,5 @@ find ${2} -type f -name "*$(echo "$(basename ${1})" | cut -d "_" -f1)*" -exec rm
 curl -# -L --fail "${1}" -o "$(pwd)/$(basename ${1})"
 # wget -qO "$(pwd)/$(basename ${1})" "${1}" --show-progress
 if [[ "$(du -b $(pwd)/$(basename ${1}) 2>/dev/null | awk '{print $1}')" -le "512" ]]; then
-    echo -e "${Time}\e[1;31m - 【$(basename ${url})】下载失败.\e[0m"
+    echo -e "$(date '+%Y-%m-%d %H:%M:%S')\e[1;31m - 【$(basename ${url})】下载失败.\e[0m"
 fi
