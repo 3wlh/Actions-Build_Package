@@ -1,18 +1,17 @@
 #!/bin/bash
-mkdir -p "$(pwd)/passwall" && DIR="$(pwd)/passwall"
+Time="$(date '+%Y-%m-%d %H:%M:%S')" & mkdir -p "$(pwd)/passwall" && DIR="$(pwd)/passwall"
 Data="$(curl -s https://api.github.com/repos/xiaorouji/openwrt-passwall/releases/latest)"
 Zip_url="$(echo "${Data}" | grep -Eo '"browser_download_url":\s*".*passwall_packages_ipk_'${1}'.zip"' | cut -d '"' -f 4)"
-[[ -z "$(Check "passwall" "${Zip_url}" "${3}/.")" ]] && echo "$(date '+%Y-%m-%d %H:%M:%S') - 【passwall】插件无更新" && exit
+[[ -z "$(Check "passwall" "${Zip_url}" "${3}/.")" ]] &&  -e "${Time}\e[1;32m - 【passwall】插件无更新.\e[0m" && exit
 luci_url="$(echo "${Data}" | grep -Eo '"browser_download_url":\s*".*luci-'${2}'.*\.ipk"' | head -1 | cut -d '"' -f 4)"
 i18n_url="$(echo "${Data}" | grep -Eo '"browser_download_url":\s*".*luci-'${2}'.*\.ipk"' | tail -1 | cut -d '"' -f 4)"
+echo "${Time} - 下载 luci-app-passwall ..."
 Download_url=(${Zip_url} ${luci_url} ${i18n_url})
-echo "$(date '+%Y-%m-%d %H:%M:%S') - 下载 luci-app-passwall ..."
 for url in "${Download_url[@]}"; do
 echo "Downloading ${url}"
-if [[ "$(du -b "${DIR}/$(basename ${url})" 2>/dev/null | awk '{print $1}')" -ge "10000" ]]; then
-	echo "######################################################################## 100.0%"
-else	
-	curl -# -L --fail "${url}" -o "${DIR}/$(basename ${url})"
+curl -# -L --fail "${url}" -o "${DIR}/$(basename ${url})"
+if [[ "$(du -b "${DIR}/$(basename ${url})" 2>/dev/null | awk '{print $1}')" -le "512" ]]; then
+	echo -e "${Time}\e[1;31m - 【$(basename ${url})】下载失败.\e[0m"
 fi
 done
 find "${DIR}" -type f -name "$(echo "$(basename ${Zip_url})")" -exec unzip -oq {} -d "${DIR}" \;
