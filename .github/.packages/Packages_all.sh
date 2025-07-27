@@ -1,6 +1,7 @@
 #!/bin/bash
-ARCH="aarch64_generic"
-PACKAGES_PATH="${1}/packages/${ARCH}"
+ARCH="${1}"
+PACKAGES_PATH="${2}/packages/${ARCH}"
+mkdir -p "/tmp/packages/${ARCH}" && cd "/tmp/packages/${ARCH}"
 Passwall "${ARCH}" "24.10" "${PACKAGES_PATH}"
 Openlist2 "${ARCH}" "${PACKAGES_PATH}"
 Nikki "${ARCH}" "${PACKAGES_PATH}"

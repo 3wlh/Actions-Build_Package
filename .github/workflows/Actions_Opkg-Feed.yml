@@ -65,10 +65,9 @@ jobs:
         
     - name: Create Script
       run : |
-        chmod -R 755 "$(pwd)/.github/.shell"
-        for file in $(pwd)/.github/.shell/* ;do
+        chmod -R 755 "$(pwd)/.github/.shell" "$(pwd)/.github/.packages"
+        for file in $(pwd)/.github/*/*.sh ;do
           if [[ -f ${file} ]];then
-            # sudo chmod 755 "${file}"
             name=$(basename ${file} .sh)
             sudo ln -s ${file} /bin/${name}
             echo "$(date '+%Y-%m-%d %H:%M:%S') - ${name} 创建OK."
@@ -77,24 +76,18 @@ jobs:
         
     - name: Download aarch64_generic Packages
       run : |
-        mkdir -p "/tmp/aarch64_generic" && cd "/tmp/aarch64_generic"
-        test -d "$(pwd)/packages/diy_packages" || mkdir -p "$(pwd)/packages/diy_packages"
-        chmod +x "${{ github.workspace }}/.github/.packages/aarch64_generic.sh" && \
-        bash ${{ github.workspace }}/.github/.packages/aarch64_generic.sh \
-        "${{ github.workspace }}/GitHub/OpenWrt_Packages"
+        Packages_all "aarch64_generic" "${{ github.workspace }}/GitHub/OpenWrt_Packages"
         test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" || \
         mkdir -p "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic"
+        echo $(pwd)
         find $(pwd) -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" \;
     
     - name: Download x86_64 Packages
       run : |
-        mkdir -p "/tmp/x86_64" && cd "/tmp/x86_64"
-        test -d "$(pwd)/packages/diy_packages" || mkdir -p "$(pwd)/packages/diy_packages"
-        chmod +x "${{ github.workspace }}/.github/.packages/x86_64.sh" && \
-        bash ${{ github.workspace }}/.github/.packages/x86_64.sh \
-        "${{ github.workspace }}/GitHub/OpenWrt_Packages"
+        Packages_all "x86_64" "${{ github.workspace }}/GitHub/OpenWrt_Packages"
         test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64" || \
         mkdir -p "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64"
+        echo $(pwd)
         find $(pwd) -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64" \;      
             
     - name: Create Repositories index 
