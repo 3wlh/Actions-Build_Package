@@ -7,7 +7,7 @@ while IFS= read -r LINE; do
     url=$(echo "${LINE}" | cut -d " " -f2)
     if [[ "${2}" != "${url}" ]]; then
         echo "update"
-        sed -i "s|${1}|${1} ${2}|g" "${3}"
+        sed -i "s|${1}.*|${1} ${2}|g" "${3}"
         break
     fi
 done   
