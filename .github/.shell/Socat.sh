@@ -13,5 +13,4 @@ if [[ "$(du -b "${DIR}/$(basename ${url})" 2>/dev/null | awk '{print $1}')" -le 
 	echo -e "${Time}\e[1;31m - 【$(basename ${url})】下载失败.\e[0m"
 fi
 done
-App_list=$(find "${DIR}" -type f -name "*.[ia]pk" -exec basename {} \;| cut -d '_' -f1)
-Delete "${2}" "${App_list}"
+Delete "${DIR}" "${2}"

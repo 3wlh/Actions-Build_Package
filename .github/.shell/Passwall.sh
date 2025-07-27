@@ -16,4 +16,4 @@ fi
 done
 find "${DIR}" -type f -name "$(echo "$(basename ${Zip_url})")" -exec unzip -oq {} -d "${DIR}" \;
 App_list=$(find "${DIR}" -type f -name "*.[ia]pk" -exec basename {} \;| cut -d '_' -f1)
-Delete "${3}" "${App_list}"
+Delete "${DIR}" "${3}"
