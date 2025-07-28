@@ -23,8 +23,8 @@ jobs:
         #sudo -E apt-get -qq -y install python3 gzip
         sudo timedatectl set-timezone "Asia/Shanghai"
         ls /etc
-        echo "alias INFO_RED='echo -e \"\e[1;32m\"[INFO]\"\e[0m\"'" >>/etc/bash.bashrc
-        echo "alias INFO_GREEN='echo -e \"\e[1;32m\"[INFO]\"\e[0m\"'" >>/etc/bash.bashrc
+        echo "alias INFO_RED='echo -e \"\e[1;32m\"[INFO]\"\e[0m\"'" >>/etc/profile.d/INFO.sh
+        echo "alias INFO_GREEN='echo -e \"\e[1;32m\"[INFO]\"\e[0m\"'" >>/etc/profile.d/INFO.sh
     
     - name: Set Git identity
       run : |
