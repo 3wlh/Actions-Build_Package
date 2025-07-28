@@ -22,8 +22,9 @@ jobs:
         #sudo -E apt-get -qq -y update
         #sudo -E apt-get -qq -y install python3 gzip
         sudo timedatectl set-timezone "Asia/Shanghai"
-        sudo echo "echo -e \"\e[1;32m[INFO]\e[0m\"" >>/bin/INFO_RED && chmod 755 /bin/INFO_RED
-        sudo echo "echo -e \"\e[1;32m[INFO]\e[0m\"" >>/bin/INFO_GREEN && chmod 755 /bin/INFO_GREEN
+        #ls /etc
+        sudo sed -i "$a alias INFO_RED='echo -e \"/\e[1;32m\"[INFO]\"/\e[0m\"'" /etc/bash.bashrc
+        sudo sed -i "$a alias INFO_GREEN='echo -e \"/\e[1;32m\"[INFO]\"/\e[0m\"'" /etc/bash.bashrc
     
     - name: Set Git identity
       run : |
