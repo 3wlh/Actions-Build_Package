@@ -103,12 +103,13 @@ jobs:
         
     - name: Git Erase Commits
       run : |
+        Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
         cd ${{ github.workspace }}/GitHub/OpenWrt_Packages
         # 添加所有文件
         # git add -A >/dev/unll
         git add -A
         # 提交更改
-        git commit -am "update $(date +%Y-%m-%d" "%H:%M:%S)"
+        git commit -am "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} update $(date +%Y-%m-%d" "%H:%M:%S)"
         # 清理优化Git仓库
         # git gc --prune=now --aggressive >/dev/unll
         # 强制提交到远程仓库
