@@ -97,8 +97,8 @@ jobs:
         usign -S -m packages/aarch64_generic/Packages -s /tmp/mime.key -x packages/aarch64_generic/Packages.sig
         [[ -d packages/x86_64 ]] && opkg-make-index packages/x86_64 > packages/x86_64/Packages
         usign -S -m packages/x86_64/Packages -s /tmp/mime.key -x packages/x86_64/Packages.sig
-        [[ -f packages/aarch64_generic/Packages ]] && gzip -9c packages/aarch64_generic/Packages > packages/aarch64_generic/Packages.gz
-        [[ -f packages/x86_64/Packages ]] && gzip -9c packages/x86_64/Packages > packages/x86_64/Packages.gz
+        [[ -f packages/aarch64_generic/Packages ]] && gzip -k9c packages/aarch64_generic/Packages > packages/aarch64_generic/Packages.gz
+        [[ -f packages/x86_64/Packages ]] && gzip -k9c packages/x86_64/Packages > packages/x86_64/Packages.gz
         [[ -f Packages.stamps ]] && rm -f Packages.stamps
         
     - name: Git Erase Commits
