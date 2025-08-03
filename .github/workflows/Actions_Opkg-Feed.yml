@@ -90,9 +90,10 @@ jobs:
     - name: Create Repositories index 
       run : |  
         # gzip -k9 Packages
+        Arch=(${{ env.Arch }})
         echo -e "${{ secrets.KEY }}" > /tmp/mime.key
         cd ${{ github.workspace }}/GitHub/OpenWrt_Packages/packages
-        for arch in "${{ env.Arch }}"; do
+        for arch in "${Arch[@]}"; do
           [[ -d "./${arch}" ]] && opkg-make-index ./${arch} > ./${arch}/Packages
           [[ -f "./${arch}/Packages" ]] && \
           gzip -fk9c ./${arch}/Packages > ./${arch}/Packages.gz && \
