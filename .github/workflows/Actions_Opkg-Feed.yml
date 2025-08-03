@@ -89,7 +89,7 @@ jobs:
         Arch="aarch64_generic x86_64"
         echo -e "${{ secrets.KEY }}" > /tmp/mime.key
         cd ${{ github.workspace }}/GitHub/OpenWrt_Packages/packages
-        for arch in ${Arch}; do
+        for arch in "${Arch}"; do
           [[ -d "$(pwd)/${arch}" ]] && opkg-make-index $(pwd)/${arch} > $(pwd)/${arch}/Packages
           [[ -f "$(pwd)/${arch}/Packages" ]] && \
           gzip -fk9c $(pwd)/${arch}/Packages > $(pwd)/${arch}/Packages.gz && \
