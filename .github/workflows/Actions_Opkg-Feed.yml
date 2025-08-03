@@ -8,6 +8,9 @@ on:
   repository_dispatch:
   workflow_dispatch:
 
+env:
+  Path: ${{ github.workspace }}/GitHub/OpenWrt_Packages
+
 jobs:
   Feed_Repositories:
     runs-on: ubuntu-latest
@@ -71,17 +74,17 @@ jobs:
         
     - name: Download aarch64_generic Packages
       run : |
-        Packages_all "aarch64_generic" "${{ github.workspace }}/GitHub/OpenWrt_Packages"
-        test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" || \
-        mkdir -p "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic"
-        find "/tmp/packages/aarch64_generic" -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/aarch64_generic" \;
+        Packages_all "aarch64_generic" "${{ env.Path }}"
+        test -d "${{ env.Path }}/packages/aarch64_generic" || \
+        mkdir -p "${{ env.Path }}/packages/aarch64_generic"
+        find "/tmp/packages/aarch64_generic" -type f -name "*.[ia]pk" -exec mv -f {} "${{ env.Path }}/packages/aarch64_generic" \;
     
     - name: Download x86_64 Packages
       run : |
-        Packages_all "x86_64" "${{ github.workspace }}/GitHub/OpenWrt_Packages"
-        test -d "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64" || \
-        mkdir -p "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64"
-        find "/tmp/packages/x86_64" -type f -name "*.[ia]pk" -exec mv -f {} "${{ github.workspace }}/GitHub/OpenWrt_Packages/packages/x86_64" \;      
+        Packages_all "x86_64" "${{ env.Path }}"
+        test -d "${{ env.Path }}/packages/x86_64" || \
+        mkdir -p "${{ env.Path }}/packages/x86_64"
+        find "/tmp/packages/x86_64" -type f -name "*.[ia]pk" -exec mv -f {} "${{ env.Path }}/packages/x86_64" \;      
             
     - name: Create Repositories index 
       run : |  
@@ -90,10 +93,10 @@ jobs:
         echo -e "${{ secrets.KEY }}" > /tmp/mime.key
         cd ${{ github.workspace }}/GitHub/OpenWrt_Packages/packages
         for arch in "${Arch[@]}"; do
-          [[ -d "$(pwd)/${arch}" ]] && opkg-make-index $(pwd)/${arch} > $(pwd)/${arch}/Packages
-          [[ -f "$(pwd)/${arch}/Packages" ]] && \
-          gzip -fk9c $(pwd)/${arch}/Packages > $(pwd)/${arch}/Packages.gz && \
-          usign -S -m $(pwd)/${arch}/Packages -s /tmp/mime.key -x $(pwd)/${arch}/Packages.sig && \
+          [[ -d "./${arch}" ]] && opkg-make-index ./${arch} > ./${arch}/Packages
+          [[ -f "./${arch}/Packages" ]] && \
+          gzip -fk9c ./${arch}/Packages > ./${arch}/Packages.gz && \
+          usign -S -m ./${arch}/Packages -s /tmp/mime.key -x ./${arch}/Packages.sig
         done
         [[ -f Packages.stamps ]] && rm -f Packages.stamps
         
