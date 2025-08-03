@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  Arch: ("aarch64_generic" "x86_64")
+  Arch: "aarch64_generic x86_64"
   Path: ${{ github.workspace }}/GitHub/OpenWrt_Packages
 
 jobs:
@@ -92,7 +92,7 @@ jobs:
         # gzip -k9 Packages
         echo -e "${{ secrets.KEY }}" > /tmp/mime.key
         cd ${{ github.workspace }}/GitHub/OpenWrt_Packages/packages
-        for arch in "${{ env.Arch[@] }}"; do
+        for arch in "${{ env.Arch }}"; do
           [[ -d "./${arch}" ]] && opkg-make-index ./${arch} > ./${arch}/Packages
           [[ -f "./${arch}/Packages" ]] && \
           gzip -fk9c ./${arch}/Packages > ./${arch}/Packages.gz && \
