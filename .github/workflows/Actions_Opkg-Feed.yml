@@ -90,10 +90,10 @@ jobs:
         echo -e "${{ secrets.KEY }}" > /tmp/mime.key
         cd ${{ github.workspace }}/GitHub/OpenWrt_Packages/packages
         for arch in ${Arch}; do
-          [[ -d "${arch}" ]] && opkg-make-index ./${arch} > ./${arch}/Packages
-          [[ -f "${arch}/Packages" ]] && \
-          gzip -fk9c ${arch}/Packages > ${arch}/Packages.gz && \
-          usign -S -m ${arch}/Packages -s /tmp/mime.key -x ${arch}/Packages.sig && \
+          [[ -d "$(pwd)/${arch}" ]] && opkg-make-index $(pwd)/${arch} > $(pwd)/${arch}/Packages
+          [[ -f "$(pwd)/${arch}/Packages" ]] && \
+          gzip -fk9c $(pwd)/${arch}/Packages > $(pwd)/${arch}/Packages.gz && \
+          usign -S -m $(pwd)/${arch}/Packages -s /tmp/mime.key -x $(pwd)/${arch}/Packages.sig && \
         done
         [[ -f Packages.stamps ]] && rm -f Packages.stamps
         
