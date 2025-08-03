@@ -3,7 +3,7 @@ function Del(){
 PACKAGES_PATH="${1}"
 PACKAGES_NAME=(${2})
 for PREFIX in "${PACKAGES_NAME[@]}"; do
-	file=$(find ${PACKAGES_PATH} -type f -name "^${PREFIX}*.[ia]pk")
+	file=$(find ${PACKAGES_PATH} -type f -name "*${PREFIX}*.[ia]pk")
 	for name in $file; do
 		[[ -f ${name} ]] && sudo rm -f ${name} && [[ -f ${name} ]] || \
 		echo -e "$(date '+%Y-%m-%d %H:%M:%S')\e[1;31m - 【$(basename ${name})】插件删除.\e[0m"
