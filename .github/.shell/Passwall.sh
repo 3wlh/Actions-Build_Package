@@ -10,7 +10,7 @@ Download_url=(${Zip_url} ${luci_url} ${i18n_url})
 for url in "${Download_url[@]}"; do
 echo "Downloading ${url}"
 curl -# -L --fail "${url}" -o "${DIR}/$(basename ${url} | sed 's/luci-24.10_//')"
-if [[ "$(du -b "${DIR}/$(basename ${url})" 2>/dev/null | awk '{print $1}')" -le "512" ]]; then
+if [[ "$(du -b "${DIR}/$(basename ${url} | sed 's/luci-24.10_//')" 2>/dev/null | awk '{print $1}')" -le "512" ]]; then
 	echo -e "${Time}\e[1;31m - 【$(basename ${url})】下载失败.\e[0m"
 fi
 done
