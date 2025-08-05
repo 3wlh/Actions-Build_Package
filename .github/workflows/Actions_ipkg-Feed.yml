@@ -57,9 +57,8 @@ jobs:
         
     - name: Install ipkg-make-index
       run : |
-        test -f "/bin/ipkg-make-index" || \
-        curl -# -L --fail "${{ env.IPKG }}" > /bin/ipkg-make-index && \
-        chmod 755 "/bin/ipkg-make-index"
+        test -f "$(pwd)/.github/.shell/ipkg-make-index.sh" || \
+        curl -# -L --fail "${{ env.IPKG }}" > /$(pwd)/.github/.shell/ipkg-make-index.sh && \
         
     - name: Create Script
       run : |
