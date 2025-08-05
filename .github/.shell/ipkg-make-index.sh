@@ -21,7 +21,7 @@ for pkg in `find $pkg_dir -name '*.ipk' | sort`; do
 	sha256sum=$(sha256sum $pkg | awk '{print $1}')
 	# Take pains to make variable value sed-safe
 	sed_safe_pkg=`echo $pkg | sed -e 's/^\.\///g' -e 's/\\//\\\\\\//g'`
-	tar -xzOf $pkg ./control.tar.gz | tar xzOf - ./control | sed -e "s/^Description:/Filename: $sed_safe_pkg\\
+	tar -xzOf $pkg ./control.tar.gz | tar xzOf - ./control | sed -e "s/^Description:/Filename: $(basename ${sed_safe_pkg})\\
 Size: $file_size\\
 SHA256sum: $sha256sum\\
 Description:/"
