@@ -99,7 +99,6 @@ jobs:
           gzip -fk9c $(pwd)/${arch}/Packages > $(pwd)/${arch}/Packages.gz && \
           usign -S -m $(pwd)/${arch}/Packages -s /tmp/mime.key -x $(pwd)/${arch}/Packages.sig
         done
-        [[ -f Packages.stamps ]] && rm -f Packages.stamps
         
     - name: Git Erase Commits
       run : |
