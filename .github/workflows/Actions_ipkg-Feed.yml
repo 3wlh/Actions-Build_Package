@@ -55,11 +55,6 @@ jobs:
         cp -f /usr/local/bin/usign ${{ github.workspace }}/GitHub/OpenWrt_Packages/bin
         rm -rf ${{ github.workspace }}/GitHub/OpenWrt_Packages/usign
         
-    - name: Install ipkg-make-index
-      run : |
-        test -f "$(pwd)/.github/.shell/ipkg-make-index.sh" || \
-        curl -# -L --fail "${{ env.IPKG }}" > /$(pwd)/.github/.shell/ipkg-make-index.sh
-        
     - name: Create Script
       run : |
         chmod -R 755 "$(pwd)/.github/.shell" "$(pwd)/.github/.packages"
