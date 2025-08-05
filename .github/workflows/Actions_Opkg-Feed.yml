@@ -2,9 +2,9 @@ name: Actions_Opkg-Feed
 
 on:
   workflow_call:
-  schedule:
+  #schedule:
     #- cron: '*/5 * * * *'  # 每5分钟一次
-    - cron: '0 8 */2 * *'  # 每2天运行一次
+    #- cron: '0 8 */2 * *'  # 每2天运行一次
   repository_dispatch:
   workflow_dispatch:
 
@@ -24,7 +24,7 @@ jobs:
     - name: Initialization environment
       run: |
         # sudo -E apt-get -qq -y update
-        # sudo -E apt-get -qq -y install python3 gzip
+        # sudo -E apt-get -qq -y install python3 gzip coreutils
         sudo timedatectl set-timezone "Asia/Shanghai"
          
     - name: Git Clone Repositories
