@@ -1,5 +1,5 @@
 
-config cifs
+config cifs2
 	option enabled '0'
 	option workgroup 'WORKGROUP'
 	option iocharset 'utf8'
