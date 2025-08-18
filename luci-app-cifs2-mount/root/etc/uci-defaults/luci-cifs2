@@ -3,7 +3,7 @@
 uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@cifs2[-1]
 	add ucitrack cifs2
-	set ucitrack.@cifs2[-1].init=cifs
+	set ucitrack.@cifs2[-1].init=cifs2
 	commit ucitrack
 EOF
 
