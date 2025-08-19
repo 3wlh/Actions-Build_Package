@@ -1,8 +1,8 @@
 local fs = require "nixio.fs"
 
-m = Map("cifs2", translate("Mount NetShare"), translate("Mount NetShare for OpenWrt"))
+m = Map("cifs", translate("Mount NetShare"), translate("Mount NetShare for OpenWrt"))
 
-s = m:section(TypedSection, "cifs2")
+s = m:section(TypedSection, "cifs")
 s.anonymous = true
 
 switch = s:option(Flag, "enabled", translate("Enable"))

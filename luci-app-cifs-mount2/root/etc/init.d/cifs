@@ -76,8 +76,8 @@ mount_davfs() {
 }
 
 start() {
-	config_load cifs2
-	config_foreach cifs_header cifs2
+	config_load cifs
+	config_foreach cifs_header cifs
 
 	if [ "$ENABLED" == 1 ]; then
 		config_foreach mount_natshare natshare

@@ -12,7 +12,7 @@ on:
         type: choice
         options:
           - all
-          - luci-app-cifs2-mount
+          - luci-app-cifs-mount2
           - luci-app-bypass
           - luci-app-unishare
           - luci-app-v2ray-server
