@@ -94,9 +94,9 @@ jobs:
           tag: GitHub-Actions_${{ inputs.package_name }}
           name: ${{ inputs.package_name }}
           artifacts: ${{ matrix.sdk }}-${{ matrix.arch }}.tar.gz
+          body: "## 编译时间：\`${{ env.Time }}\`"
           allowUpdates: true
           removeArtifacts: false
           replacesArtifacts: true
           makeLatest: true
           token: ${{ secrets.GITHUB_TOKEN }}
-          body: "## 编译时间：\`${{ env.Time }}\`"      
