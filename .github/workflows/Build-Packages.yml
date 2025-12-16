@@ -32,7 +32,13 @@ jobs:
           sudo timedatectl set-timezone "Asia/Shanghai"
           echo "time=$(date "+%Y.%m.%d_%H%M%S")" >> $GITHUB_OUTPUT
 
-
+      - name: Delete GitHub Release
+        uses: dev-drprasad/delete-tag-and-release@v1.1
+        with:
+          tag_name: GitHub-Actions_${{ inputs.package_name }}
+          delete_release: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      
   jobs_build:
     name: Build ${{ matrix.arch }}-${{ matrix.sdk }}
     needs: jod_time
@@ -71,20 +77,27 @@ jobs:
             bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
 
       - name: Create compress files
+        id: files
         continue-on-error: true
         run: |
           if [ "${{ matrix.arch }}" = "riscv64_riscv64" ] && [ "${{ matrix.sdk }}" = "SNAPSHOT" ]; then
             tar -zcvf ${{ matrix.sdk }}-${{ matrix.arch }}.tar.gz -C bin/packages/riscv64_generic/ packages_ci
           else
             tar -zcvf ${{ matrix.sdk }}-${{ matrix.arch }}.tar.gz -C bin/packages/${{ matrix.arch }}/ packages_ci
-          fi
+          fi 
+          echo "status=success" >> $GITHUB_OUTPUT
           
-      - name: Upload to Release packages
-        uses: softprops/action-gh-release@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload ${{ inputs.branch }} as release assets
+        if: steps.files.outputs.status == 'success'
+        uses: ncipollo/release-action@main
         with:
+          tag: GitHub-Actions_${{ inputs.package_name }}
           name: ${{ inputs.package_name }}
-          tag_name: ${{ env.Time }}
-          body: ${{ inputs.package_name }}
-          files: "${{ matrix.sdk }}-${{ matrix.arch }}.tar.gz"
+          artifacts: ${{ matrix.sdk }}-${{ matrix.arch }}.tar.gz
+          allowUpdates: true
+          removeArtifacts: false
+          replacesArtifacts: true
+          makeLatest: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: "## 编译时间：\`${{ env.Time }}\`"
+          
