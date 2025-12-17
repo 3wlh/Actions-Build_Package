@@ -14,7 +14,7 @@ PKG_VERSION:=1.0
 PKG_RELEASE:=6
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 PKG_SOURCE:=$(PKG_NAME).tar.gz
-PKG_SOURCE_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/api/
+PKG_SOURCE_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/api/$(PKG_SOURCE)
 PKG_HASH:=77384576aa59dbd90b35c41c3e22f2c79e8f03844367474fe293f6a0b4f492db
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
