@@ -18,6 +18,7 @@ on:
           - luci-app-v2ray-server
           - luci-app-sunpanel
           - sunpanel
+          - api
 
 jobs:
   jod_time:
