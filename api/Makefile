@@ -7,6 +7,8 @@
 
 include $(TOPDIR)/rules.mk
 
+PKG_CHECK_HASH:=0
+
 PKG_ARCH_api:=$(ARCH)
 
 PKG_NAME:=api
