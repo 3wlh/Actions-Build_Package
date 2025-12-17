@@ -26,9 +26,9 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
 	SECTION:=utils
-    CATEGORY:=Utilities
+	CATEGORY:=Utilities
 	TITLE:=openwrt api
-	DEPENDS:=@(x86_64||aarch64) +bash +libstdcpp6
+	DEPENDS:=@(x86_64||aarch64_generic) +bash +libstdcpp6
 	URL:=https://github.com/3wlh/
 endef
 
@@ -37,7 +37,9 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Configure
-	$(call Build/Configure/Default)
+endef
+
+define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
