@@ -11,7 +11,7 @@ PKG_ARCH_api:=$(ARCH)
 
 PKG_NAME:=api
 PKG_VERSION:=1.0
-PKG_RELEASE:=5
+PKG_RELEASE:=6
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 PKG_SOURCE:=$(PKG_NAME).tar.gz
 PKG_SOURCE_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/api/
@@ -25,22 +25,19 @@ PKG_USE_MIPS16:=0
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
+	SECTION:=utils
+    CATEGORY:=Utilities
 	TITLE:=openwrt api
 	DEPENDS:=@(x86_64||aarch64) +bash +libstdcpp6
 	URL:=https://github.com/3wlh/
 endef
 
 define Package/$(PKG_NAME)/description
-  openwrt api
-endef
-
-define Package/$(PKG_NAME)/conffiles
+  openwrt api.
 endef
 
 define Build/Configure
-endef
-
-define Build/Compile
+	$(call Build/Configure/Default)
 endef
 
 define Package/$(PKG_NAME)/install
