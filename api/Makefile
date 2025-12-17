@@ -39,7 +39,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/api.$(PKG_ARCH) $(1)/usr/sbin/api
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/api-$(PKG_ARCH) $(1)/usr/sbin/api
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
