@@ -17,7 +17,7 @@ PKG_SOURCE:=$(PKG_NAME).tar.gz
 PKG_SOURCE_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/api/
 PKG_HASH:=skip
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-binary-$(PKG_VERSION)
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
@@ -28,7 +28,7 @@ define Package/$(PKG_NAME)
 	SECTION:=utils
 	CATEGORY:=Utilities
 	TITLE:=openwrt api
-	DEPENDS:=@(x86_64||aarch64_generic) +bash +libstdcpp6
+	DEPENDS:=@(x86_64||aarch64) +bash
 	URL:=https://github.com/3wlh/
 endef
 
