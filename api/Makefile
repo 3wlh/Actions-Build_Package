@@ -7,7 +7,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_ARCH_api:=$(ARCH)
+PKG_ARCH:=$(ARCH)
 
 PKG_NAME:=api
 PKG_VERSION:=1.0
@@ -20,6 +20,7 @@ PKG_HASH:=77384576aa59dbd90b35c41c3e22f2c79e8f03844367474fe293f6a0b4f492db
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_BUILD_PARALLEL:=1
+PKG_INSTALL:=1
 PKG_USE_MIPS16:=0
 
 include $(INCLUDE_DIR)/package.mk
@@ -36,13 +37,8 @@ define Package/$(PKG_NAME)/description
   openwrt api.
 endef
 
-define Build/Configure
-endef
-
-define Build/Compile
-endef
-
 define Package/$(PKG_NAME)/install
+	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/api.$(PKG_ARCH) $(1)/usr/sbin/api
 endef
 
