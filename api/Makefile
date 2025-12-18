@@ -11,10 +11,8 @@ PKG_VERSION:=1.0
 # PKG_RELEASE:=6
 PKG_RELEASE:=20220422
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
-
-PKG_RELEASE:=1
-
-STRIP:=true
+#PKG_RELEASE:=1
+#STRIP:=true
 
 ifeq ($(ARCH),aarch64)
 	PKG_ARCH:=aarch64_generic
@@ -36,7 +34,7 @@ define Package/$(PKG_NAME)
 	CATEGORY:=Utilities
 	TITLE:=openwrt api
 	URL:=https://github.com/3wlh/
-	DEPENDS:=@(aarch64||x86_64)
+	# DEPENDS:=@(aarch64||x86_64)
 endef
 
 define Package/$(PKG_NAME)/description
@@ -52,11 +50,7 @@ define Build/Prepare
 	tar -zxvf $(DL_DIR)/$(PKG_FILE) -C $(PKG_BUILD_DIR)
 endef
 
-define Download/$(PKG_NAME)
-	URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/api/
-	URL_FILE:=$(PKG_NAME)-$(PKG_ARCH)
-	FILE:=$(PKG_NAME)-$(PKG_ARCH)
-	HASH:=$(PKG_HASH)
+define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
@@ -64,5 +58,4 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_NAME)-$(PKG_ARCH) $(1)/usr/sbin/$(PKG_NAME)
 endef
 
-# $(eval $(call Download,$(PKG_NAME)))
 $(eval $(call BuildPackage,$(PKG_NAME)))
