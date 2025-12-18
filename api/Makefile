@@ -8,7 +8,8 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=api
 PKG_VERSION:=1.0
-PKG_RELEASE:=6
+# PKG_RELEASE:=6
+PKG_RELEASE:=20220422
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 
 PKG_RELEASE:=2
@@ -17,13 +18,16 @@ STRIP:=true
 
 ifeq ($(ARCH),aarch64)
 	PKG_ARCH:=aarch64_generic
-	PKG_HASH:=7aae96431ddf60965d467462e3e4691b0914aa9f8ae8efa06fcec045d9a3dd88
 endif
 
 ifeq ($(ARCH),x86_64)
 	PKG_ARCH:=x86_64
-	PKG_HASH:=1e9b340eb3c122d2daa8cf97baac86febb3acfd7f046b2892c747e44b89e0552
 endif
+
+PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/api/api.tar.gz
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
+PKG_HASH:=skip
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -32,11 +36,20 @@ define Package/$(PKG_NAME)
 	CATEGORY:=Utilities
 	TITLE:=openwrt api
 	URL:=https://github.com/3wlh/
-	DEPENDS:=@(aarch64||x86_64) +bash
+	DEPENDS:=@(aarch64||x86_64)
 endef
 
 define Package/$(PKG_NAME)/description
   openwrt api.
+endef
+
+define Build/Prepare
+	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
+		wget -q $(PKG_URL) -O $(DL_DIR)/$(PKG_FILE); \
+	fi
+	rm -rf $(PKG_BUILD_DIR)
+	mkdir -p $(PKG_BUILD_DIR)
+	tar -zxvf $(DL_DIR)/$(PKG_FILE) -C $(PKG_BUILD_DIR)
 endef
 
 define Download/$(PKG_NAME)
@@ -46,17 +59,10 @@ define Download/$(PKG_NAME)
 	HASH:=$(PKG_HASH)
 endef
 
-define Build/Prepare
-	$(call Build/Prepare/Default)
-	ls $(DL_DIR)
-endef
-
-Build/Compile := :
-
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(DL_DIR)/$(PKG_NAME)-$(PKG_ARCH) $(1)/usr/sbin/$(PKG_NAME)
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_NAME)-$(PKG_ARCH) $(1)/usr/sbin/$(PKG_NAME)
 endef
 
-$(eval $(call Download,$(PKG_NAME)))
+# $(eval $(call Download,$(PKG_NAME)))
 $(eval $(call BuildPackage,$(PKG_NAME)))
