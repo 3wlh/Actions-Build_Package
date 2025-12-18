@@ -7,32 +7,11 @@ PKG_VERSION:=1.0
 PKG_RELEASE:=20220422
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 
+ifeq ($(ARCH),aarch64)
+	PKG_ARCH:=aarch64_generic
+endif
 ifeq ($(ARCH),x86_64)
 	PKG_ARCH:=x86_64
-endif
-ifeq ($(ARCH),i386)
-	PKG_ARCH:=i386
-endif
-ifeq ($(ARCH),mipsel)
-	PKG_ARCH:=mipsel
-endif
-ifeq ($(ARCH),mips)
-	PKG_ARCH:=mips
-endif
-ifeq ($(ARCH),armeb)
-	PKG_ARCH:=armeb
-endif
-ifeq ($(ARCH),arm)
-	PKG_ARCH:=arm
-endif
-ifeq ($(ARCH),arm64)
-	PKG_ARCH:=arm64
-endif
-ifeq ($(ARCH),powerpc)
-	PKG_ARCH:=powerpc
-endif
-ifeq ($(ARCH),powerpc64)
-	PKG_ARCH:=powerpc64le
 endif
 
 PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -55,7 +34,7 @@ openwrt api.
 endef
 
 define Build/Prepare
-	echo -e "\033[31mARCH：$(ARCH)\033[0m"
+	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
 	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
 		wget -q $(PKG_URL) -O $(DL_DIR)/$(PKG_FILE); \
 	fi
