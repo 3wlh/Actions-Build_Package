@@ -36,7 +36,7 @@ ifeq ($(ARCH),powerpc64)
 endif
 
 PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/api/$(PKG_NAME).tar.gz
+PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/api/api.tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 PKG_HASH:=skip
 
