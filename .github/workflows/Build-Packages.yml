@@ -44,7 +44,9 @@ jobs:
       - name: Cleanup
         run: |
           gh cache delete --all --repo Actions-Build_Package
-      
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
   jobs_build:
     name: Build ${{ matrix.arch }}-${{ matrix.sdk }}
     needs: jod_initial
