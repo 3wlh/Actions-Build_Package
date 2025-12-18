@@ -28,8 +28,8 @@ endif
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-	SECTION:=utils
-	CATEGORY:=Utilities
+	SECTION:=net
+	CATEGORY:=Network
 	TITLE:=openwrt api
 	DEPENDS:=@(aarch64||x86_64) +bash
 	URL:=https://github.com/3wlh/
@@ -40,15 +40,25 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Download/$(PKG_NAME)
+<<<<<<< HEAD
 	URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/api/
 	URL_FILE:=$(PKG_NAME)_$(PKG_ARCH)
 	FILE:=$(PKG_NAME)_$(PKG_ARCH)
+=======
+	URL:=https://github.com/userdocs/qbittorrent-nox-static/releases/download/release-$(PKG_FULL_VERSION)
+	URL_FILE:=$(PKG_ARCH)-qbittorrent-nox
+	FILE:=qbittorrent-nox-$(PKG_ARCH)-$(PKG_FULL_VERSION)
+>>>>>>> 1b1f3d374419bb24f3d122b7d5706bab3dbe2697
 	HASH:=$(PKG_HASH)
 endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
+<<<<<<< HEAD
 	$(INSTALL_BIN) $(DL_DIR)/$(PKG_NAME)_$(PKG_ARCH) $(1)/usr/sbin/$(PKG_NAME)
+=======
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/api-$(PKG_ARCH) $(1)/usr/sbin/api
+>>>>>>> 1b1f3d374419bb24f3d122b7d5706bab3dbe2697
 endef
 
 $(eval $(call Download,$(PKG_NAME)))
