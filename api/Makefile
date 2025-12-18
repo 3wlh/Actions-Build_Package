@@ -22,11 +22,12 @@ PKG_HASH:=skip
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-	SUBMENU:=Console
 	SECTION:=utils
 	CATEGORY:=Utilities
+	SUBMENU:=System
 	TITLE:=openwrt api
 	URL:=https://github.com/3wlh
+	DEPENDS:=@(aarch64||x86_64) +bash +libstdcpp
 endef
 
 define Package/$(PKG_NAME)/description
