@@ -27,7 +27,7 @@ define Package/$(PKG_NAME)
 	SUBMENU:=System
 	TITLE:=openwrt api
 	URL:=https://github.com/3wlh
-	DEPENDS:=@(aarch64||x86_64) +bash +libstdcpp
+	DEPENDS:=@(aarch64||x86_64) +libstdcpp
 endef
 
 define Package/$(PKG_NAME)/description
