@@ -37,9 +37,17 @@ define Package/$(PKG_NAME)/description
   openwrt api.
 endef
 
+define Download/$(PKG_NAME)
+	URL:=https://github.com/userdocs/qbittorrent-nox-static/releases/download/release-$(PKG_FULL_VERSION)
+	URL_FILE:=$(PKG_ARCH)-qbittorrent-nox
+	FILE:=qbittorrent-nox-$(PKG_ARCH)-$(PKG_FULL_VERSION)
+	HASH:=$(PKG_HASH)
+endef
+
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/api-$(PKG_ARCH) $(1)/usr/sbin/api
 endef
 
+$(eval $(call Download,$(PKG_NAME)))
 $(eval $(call BuildPackage,$(PKG_NAME)))
