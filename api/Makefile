@@ -1,26 +1,29 @@
 #
-# Copyright (C) 2015-2016 OpenWrt.org
-# Copyright (C) 2024 xiaobao@linkease.com
+# Copyright (C) 2017-2020
 #
-# This is free software, licensed under the GNU General Public License v3.
+# This is free software, licensed under the GNU General Public License v2.
 #
 
 include $(TOPDIR)/rules.mk
-
-PKG_ARCH:=$(ARCH)
 
 PKG_NAME:=api
 PKG_VERSION:=1.0
 PKG_RELEASE:=6
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
-PKG_SOURCE:=$(PKG_NAME).tar.gz
-PKG_SOURCE_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/api/
-PKG_HASH:=77384576aa59dbd90b35c41c3e22f2c79e8f03844367474fe293f6a0b4f492db
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_RELEASE:=1
 
-PKG_BUILD_PARALLEL:=1
-PKG_USE_MIPS16:=0
+STRIP:=true
+
+ifeq ($(ARCH),aarch64)
+	PKG_ARCH:=aarch64_generic
+	PKG_HASH:=7aae96431ddf60965d467462e3e4691b0914aa9f8ae8efa06fcec045d9a3dd88
+endif
+
+ifeq ($(ARCH),x86_64)
+	PKG_ARCH:=x86_64
+	PKG_HASH:=1e9b340eb3c122d2daa8cf97baac86febb3acfd7f046b2892c747e44b89e0552
+endif
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -28,7 +31,7 @@ define Package/$(PKG_NAME)
 	SECTION:=utils
 	CATEGORY:=Utilities
 	TITLE:=openwrt api
-	DEPENDS:=@(x86_64||aarch64) +bash
+	DEPENDS:=@(aarch64||x86_64) +bash
 	URL:=https://github.com/3wlh/
 endef
 
@@ -36,9 +39,17 @@ define Package/$(PKG_NAME)/description
   openwrt api.
 endef
 
-define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/api.$(PKG_ARCH) $(1)/usr/sbin/api
+define Download/$(PKG_NAME)
+	URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/api/
+	URL_FILE:=$(PKG_NAME)_$(PKG_ARCH)
+	FILE:=$(PKG_NAME)_$(PKG_ARCH)
+	HASH:=$(PKG_HASH)
 endef
 
+define Package/$(PKG_NAME)/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(DL_DIR)/$(PKG_NAME)_$(PKG_ARCH) $(1)/usr/sbin/$(PKG_NAME)
+endef
+
+$(eval $(call Download,$(PKG_NAME)))
 $(eval $(call BuildPackage,$(PKG_NAME)))
