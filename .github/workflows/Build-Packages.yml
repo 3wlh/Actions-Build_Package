@@ -21,8 +21,8 @@ on:
           - api
 
 jobs:
-  jod_time:
-    name: Acquisition Time
+  jod_initial:
+    name: Acquisition Initial
     runs-on: ubuntu-latest
     outputs:
       time: ${{steps.output_time.outputs.time}}
@@ -42,7 +42,7 @@ jobs:
       
   jobs_build:
     name: Build ${{ matrix.arch }}-${{ matrix.sdk }}
-    needs: jod_time
+    needs: jod_initial
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
