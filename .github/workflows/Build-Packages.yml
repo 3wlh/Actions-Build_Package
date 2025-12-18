@@ -26,8 +26,8 @@ on:
           - luci-app-sunpanel
           - sunpanel
           - api
-          - sub.cgi
-          - page.cgi
+          - sub
+          - page
 
 jobs:
   jod_initial:
