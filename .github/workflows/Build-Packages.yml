@@ -33,31 +33,17 @@ jobs:
         run: |
           sudo timedatectl set-timezone "Asia/Shanghai"
           echo "time=$(date "+%Y.%m.%d_%H%M%S")" >> $GITHUB_OUTPUT
-      
-      - name: Cleanup
-        run: |
-          echo "Fetching list of cache keys"
-          cacheKeysForPR=$(gh cache list --ref $BRANCH --limit 100 --json id --jq '.[].id')
-
-          ## Setting this to not fail the workflow while deleting cache keys.
-          set +e
-          echo "Deleting caches..."
-          for cacheKey in $cacheKeysForPR
-          do
-              gh cache delete $cacheKey
-          done
-          echo "Done"
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          BRANCH: refs/pull/${{ github.event.pull_request.number }}/merge
-      
+          
       - name: Delete GitHub Release
         uses: dev-drprasad/delete-tag-and-release@v1.1
         with:
           tag_name: GitHub-Actions_${{ inputs.package_name }}
           delete_release: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Cleanup
+        run: |
+          gh cache delete --all --repo Actions-Build_Package
       
   jobs_build:
     name: Build ${{ matrix.arch }}-${{ matrix.sdk }}
