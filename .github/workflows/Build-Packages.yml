@@ -4,6 +4,13 @@ on:
   repository_dispatch:
   workflow_dispatch:
     inputs:
+      cache:
+        description: |
+          是否清理缓存?
+        required: false
+        default: false
+        type: boolean
+        
       package_name:
         description: |
           选择编译插件
@@ -42,6 +49,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Cleanup
+        if: (inputs.ssh == true)
         run: |
           gh cache delete --all --repo 3wlh/Actions-Build_Package
         env:
