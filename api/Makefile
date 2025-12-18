@@ -31,8 +31,8 @@ define Package/$(PKG_NAME)
 	SECTION:=utils
 	CATEGORY:=Utilities
 	TITLE:=openwrt api
-	DEPENDS:=@(aarch64||x86_64) +bash
 	URL:=https://github.com/3wlh/
+	DEPENDS:=@(aarch64||x86_64) +bash
 endef
 
 define Package/$(PKG_NAME)/description
@@ -46,7 +46,9 @@ define Download/$(PKG_NAME)
 	HASH:=$(PKG_HASH)
 endef
 
-define Build/Compile
+define Build/Prepare
+	$(call Build/Prepare/Default)
+	ls $(DL_DIR)
 endef
 
 define Package/$(PKG_NAME)/install
