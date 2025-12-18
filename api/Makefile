@@ -43,6 +43,7 @@ PKG_HASH:=skip
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
+	SUBMENU:=Console
 	SECTION:=utils
 	CATEGORY:=Utilities
 	TITLE:=openwrt api
@@ -54,6 +55,7 @@ openwrt api.
 endef
 
 define Build/Prepare
+	echo -e "\033[31mARCH：$(ARCH)\033[0m"
 	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
 		wget -q $(PKG_URL) -O $(DL_DIR)/$(PKG_FILE); \
 	fi
