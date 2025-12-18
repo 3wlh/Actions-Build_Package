@@ -43,7 +43,7 @@ jobs:
       
       - name: Cleanup
         run: |
-          gh cache delete --all --repo Actions-Build_Package
+          gh cache delete --all --repo 3wlh/Actions-Build_Package
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
