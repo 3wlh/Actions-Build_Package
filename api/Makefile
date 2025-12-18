@@ -11,7 +11,7 @@ PKG_VERSION:=1.0
 PKG_RELEASE:=6
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 STRIP:=true
 
