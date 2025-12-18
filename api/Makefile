@@ -51,6 +51,10 @@ define Build/Prepare
 	ls $(DL_DIR)
 endef
 
+define Build/Compile
+    @true
+endef
+
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(DL_DIR)/$(PKG_NAME)-$(PKG_ARCH) $(1)/usr/sbin/$(PKG_NAME)
