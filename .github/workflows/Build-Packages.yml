@@ -49,7 +49,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Cleanup
-        if: (inputs.ssh == true)
+        if: (inputs.cache == true)
         run: |
           gh cache delete --all --repo 3wlh/Actions-Build_Package
         env:
