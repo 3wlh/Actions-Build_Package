@@ -52,7 +52,7 @@ define Build/Prepare
 endef
 
 define Build/Compile
-    @true
+    @echo -e "\n=== Build/Compile ==="
 endef
 
 define Package/$(PKG_NAME)/install
