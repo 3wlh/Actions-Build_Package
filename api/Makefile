@@ -51,9 +51,7 @@ define Build/Prepare
 	ls $(DL_DIR)
 endef
 
-define Build/Compile
-    @echo -e "\n=== Build/Compile ==="
-endef
+Build/Compile := :
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
