@@ -58,7 +58,6 @@ endef
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(DL_DIR)/$(PKG_NAME)-$(PKG_ARCH) $(1)/usr/sbin/$(PKG_NAME)
-	chmod +x $(1)/usr/sbin/$(PKG_NAME)
 endef
 
 $(eval $(call Download,$(PKG_NAME)))
