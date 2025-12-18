@@ -8,7 +8,7 @@ PKG_RELEASE:=20220422
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 
 ifeq ($(ARCH),x86_64)
-	PKG_ARCH:=amd64
+	PKG_ARCH:=x86_64
 endif
 ifeq ($(ARCH),i386)
 	PKG_ARCH:=i386
