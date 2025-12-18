@@ -19,6 +19,7 @@ on:
           - luci-app-sunpanel
           - sunpanel
           - api
+          - upx
 
 jobs:
   jod_initial:
