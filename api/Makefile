@@ -11,7 +11,7 @@ PKG_VERSION:=1.0
 PKG_RELEASE:=6
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 STRIP:=true
 
@@ -28,8 +28,8 @@ endif
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-	SECTION:=net
-	CATEGORY:=Network
+	SECTION:=utils
+	CATEGORY:=Utilities
 	TITLE:=openwrt api
 	DEPENDS:=@(aarch64||x86_64) +bash
 	URL:=https://github.com/3wlh/
@@ -44,6 +44,9 @@ define Download/$(PKG_NAME)
 	URL_FILE:=$(PKG_NAME)_$(PKG_ARCH)
 	FILE:=$(PKG_NAME)-$(PKG_ARCH)
 	HASH:=$(PKG_HASH)
+endef
+
+define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
