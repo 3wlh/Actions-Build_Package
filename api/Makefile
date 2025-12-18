@@ -11,7 +11,7 @@ PKG_VERSION:=1.0
 PKG_RELEASE:=6
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 
 STRIP:=true
 
@@ -41,7 +41,7 @@ endef
 
 define Download/$(PKG_NAME)
 	URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/api/
-	URL_FILE:=$(PKG_NAME)_$(PKG_ARCH)
+	URL_FILE:=$(PKG_NAME)-$(PKG_ARCH)
 	FILE:=$(PKG_NAME)-$(PKG_ARCH)
 	HASH:=$(PKG_HASH)
 endef
@@ -52,6 +52,7 @@ endef
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(DL_DIR)/$(PKG_NAME)-$(PKG_ARCH) $(1)/usr/sbin/$(PKG_NAME)
+	chmod +x $(1)/usr/sbin/$(PKG_NAME)
 endef
 
 $(eval $(call Download,$(PKG_NAME)))
