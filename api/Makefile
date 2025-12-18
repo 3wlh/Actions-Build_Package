@@ -1,25 +1,38 @@
-#
-# Copyright (C) 2017-2020
-#
-# This is free software, licensed under the GNU General Public License v2.
-#
+# Copyright (C) 2020-2022 3wlh <https://github.com/3wlh>
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=api
 PKG_VERSION:=1.0
-# PKG_RELEASE:=6
 PKG_RELEASE:=20220422
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
-#PKG_RELEASE:=1
-#STRIP:=true
-
-ifeq ($(ARCH),aarch64)
-	PKG_ARCH:=aarch64_generic
-endif
 
 ifeq ($(ARCH),x86_64)
-	PKG_ARCH:=x86_64
+	PKG_ARCH:=amd64
+endif
+ifeq ($(ARCH),i386)
+	PKG_ARCH:=i386
+endif
+ifeq ($(ARCH),mipsel)
+	PKG_ARCH:=mipsel
+endif
+ifeq ($(ARCH),mips)
+	PKG_ARCH:=mips
+endif
+ifeq ($(ARCH),armeb)
+	PKG_ARCH:=armeb
+endif
+ifeq ($(ARCH),arm)
+	PKG_ARCH:=arm
+endif
+ifeq ($(ARCH),arm64)
+	PKG_ARCH:=arm64
+endif
+ifeq ($(ARCH),powerpc)
+	PKG_ARCH:=powerpc
+endif
+ifeq ($(ARCH),powerpc64)
+	PKG_ARCH:=powerpc64le
 endif
 
 PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -33,12 +46,11 @@ define Package/$(PKG_NAME)
 	SECTION:=utils
 	CATEGORY:=Utilities
 	TITLE:=openwrt api
-	URL:=https://github.com/3wlh/
-	# DEPENDS:=@(aarch64||x86_64)
+	URL:=https://github.com/3wlh
 endef
 
 define Package/$(PKG_NAME)/description
-  openwrt api.
+openwrt api.
 endef
 
 define Build/Prepare
@@ -54,8 +66,8 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_NAME)-$(PKG_ARCH) $(1)/usr/sbin/$(PKG_NAME)
+	$(INSTALL_DIR) $(1)/sbin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_NAME)-$(PKG_ARCH) $(1)/sbin/$(PKG_NAME)
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
