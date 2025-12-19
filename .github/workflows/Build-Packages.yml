@@ -19,15 +19,16 @@ on:
         type: choice
         options:
           - all
+          - openwrt—api
+          - openwrt—sub
+          - openwrt—page
           - luci-app-cifs-mount2
           - luci-app-bypass
           - luci-app-unishare
           - luci-app-v2ray-server
           - luci-app-sunpanel
           - sunpanel
-          - api
-          - sub
-          - page
+          
 
 jobs:
   jod_initial:
