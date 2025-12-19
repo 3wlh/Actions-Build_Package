@@ -32,7 +32,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-Openwrt sub.cgi.
+Openwrt page.cgi.
 endef
 
 define Build/Prepare
