@@ -19,4 +19,4 @@ jobs:
           repository: ${{ github.repository }}
           delete_workflow_pattern: ipkg|workflow
           #retain_days: 1
-          #keep_minimum_runs: 1
+          keep_minimum_runs: 1
