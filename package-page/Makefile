@@ -2,7 +2,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=package—page
+PKG_NAME:=package-page
 BIN_NAME:=page.cgi
 PKG_VERSION:=1.0.0
 PKG_RELEASE:=$(shell date +%Y%m%d)
