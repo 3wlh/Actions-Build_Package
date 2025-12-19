@@ -44,7 +44,7 @@ jobs:
           echo "time=$(date "+%Y.%m.%d_%H%M%S")" >> $GITHUB_OUTPUT
           
       - name: Delete GitHub Release
-        uses: dev-drprasad/delete-tag-and-release@v1.1
+        uses: dev-drprasad/delete-tag-and-release@master
         with:
           tag_name: GitHub-Actions_${{ inputs.package_name }}
           delete_release: true
