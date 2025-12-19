@@ -71,7 +71,7 @@ jobs:
           - openwrt-24.10
           - SNAPSHOT
     env:
-      Time: ${{ needs.jod_time.outputs.time }}
+      Time: ${{ needs.jod_initial.outputs.time }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -83,7 +83,7 @@ jobs:
           ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
           FEEDNAME: packages_ci
           PACKAGES: ${{ inputs.package_name }}
-          NO_REFRESH_CHECK: true
+          # NO_REFRESH_CHECK: true
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
