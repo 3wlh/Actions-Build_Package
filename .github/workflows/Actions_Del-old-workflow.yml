@@ -20,4 +20,4 @@ jobs:
           delete_workflow_pattern: ipkg|workflow
           use_daily_retention: true
           #retain_days: 1
-          #keep_minimum_runs: 1
+          keep_minimum_runs: 1
