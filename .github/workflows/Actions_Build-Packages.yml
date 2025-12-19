@@ -83,7 +83,7 @@ jobs:
           ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
           FEEDNAME: packages_ci
           PACKAGES: ${{ inputs.package_name }}
-          # NO_REFRESH_CHECK: true
+          NO_REFRESH_CHECK: true
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
