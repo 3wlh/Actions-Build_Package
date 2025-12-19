@@ -29,9 +29,9 @@ on:
         type: choice
         options:
           - all
-          - package—api
-          - package—sub
-          - package—page
+          - package-api
+          - package-sub
+          - package-page
           - luci-app-cifs-mount
           - luci-app-bypass
           - luci-app-unishare
