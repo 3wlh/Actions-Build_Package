@@ -16,7 +16,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          delete_workflow_pattern: ipkg|Workflow
+          delete_workflow_pattern: ipkg|Workflow|pages
           #retain_days: 1
           keep_minimum_runs: 0
           use_daily_retention: true
