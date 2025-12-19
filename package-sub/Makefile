@@ -2,7 +2,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=sub
+PKG_NAME:=sub-static
 BIN_NAME:=sub.cgi
 PKG_VERSION:=1.0.0
 PKG_RELEASE:=$(shell date +%Y%m%d)
@@ -25,14 +25,13 @@ include $(INCLUDE_DIR)/package.mk
 define Package/$(PKG_NAME)
 	SECTION:=utils
 	CATEGORY:=Utilities
-	SUBMENU:=System
-	TITLE:=Openwrt sub.cgi.
+	TITLE:=System
 	URL:=https://github.com/3wlh
 	DEPENDS:=@(aarch64||x86_64) +libstdcpp
 endef
 
 define Package/$(PKG_NAME)/description
-Openwrt sub.cgi.
+Post a request to subscribe to the URL and return subscription data.
 endef
 
 define Build/Prepare

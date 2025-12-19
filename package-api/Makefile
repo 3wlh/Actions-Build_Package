@@ -2,7 +2,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=package-api
+PKG_NAME:=api-static
 BIN_NAME:=api
 PKG_VERSION:=1.0.0
 PKG_RELEASE:=$(shell date +%Y%m%d)
@@ -25,14 +25,13 @@ include $(INCLUDE_DIR)/package.mk
 define Package/$(PKG_NAME)
 	SECTION:=utils
 	CATEGORY:=Utilities
-	SUBMENU:=System
-	TITLE:=Openwrt api.
+	TITLE:=System
 	URL:=https://github.com/3wlh
 	DEPENDS:=@(aarch64||x86_64) +libstdcpp
 endef
 
 define Package/$(PKG_NAME)/description
-Openwrt api.
+Decrypt the online configuration and run it.
 endef
 
 define Build/Prepare
