@@ -69,7 +69,7 @@ jobs:
           - x86_64
         sdk:
           - openwrt-24.10
-          - SNAPSHOT
+          #- SNAPSHOT
     env:
       Time: ${{ needs.jod_initial.outputs.time }}
     steps:
