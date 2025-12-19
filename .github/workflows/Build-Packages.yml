@@ -19,9 +19,9 @@ on:
         type: choice
         options:
           - all
-          - openwrt—api
-          - openwrt—sub
-          - openwrt—page
+          - package—api
+          - package—sub
+          - package—page
           - luci-app-cifs-mount2
           - luci-app-bypass
           - luci-app-unishare
