@@ -2,8 +2,9 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=page.cgi
-PKG_VERSION:=1.0
+PKG_NAME:=openwrt—page
+BIN_NAME:=page.cgi
+PKG_VERSION:=1.0.0
 PKG_RELEASE:=$(shell date +%Y%m%d)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 
@@ -15,7 +16,7 @@ ifeq ($(ARCH),x86_64)
 endif
 
 PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(PKG_NAME)/$(PKG_NAME).tar.gz
+PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NAME)/$(BIN_NAME).tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 PKG_HASH:=skip
 
@@ -25,13 +26,13 @@ define Package/$(PKG_NAME)
 	SECTION:=utils
 	CATEGORY:=Utilities
 	SUBMENU:=System
-	TITLE:=Openwrt page.cgi.
+	TITLE:=Openwrt sub.cgi.
 	URL:=https://github.com/3wlh
 	DEPENDS:=@(aarch64||x86_64) +libstdcpp
 endef
 
 define Package/$(PKG_NAME)/description
-Openwrt page.cgi.
+Openwrt sub.cgi.
 endef
 
 define Build/Prepare
@@ -49,8 +50,8 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/www/cgi-bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_NAME)-$(PKG_ARCH) $(1)/www/cgi-bin/$(PKG_NAME)
-	chmod -R 755 $(1)/www/cgi-bin/$(PKG_NAME)
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_NAME)-$(PKG_ARCH) $(1)/www/cgi-bin/$(BIN_NAME)
+	chmod -R 755 $(1)/www/cgi-bin/$(BIN_NAME)
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
