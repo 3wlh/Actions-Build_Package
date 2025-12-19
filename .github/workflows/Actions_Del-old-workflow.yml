@@ -17,6 +17,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          delete_workflow_pattern: Actions_ipkg-Feed
+          delete_workflow_pattern: ipkg|workflow
           #retain_days: 1
           #keep_minimum_runs: 1
