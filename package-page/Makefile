@@ -2,9 +2,9 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=openwrt—api
-BIN_NAME:=api
-PKG_VERSION:=1.0
+PKG_NAME:=package—page
+BIN_NAME:=page.cgi
+PKG_VERSION:=1.0.0
 PKG_RELEASE:=$(shell date +%Y%m%d)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 
@@ -26,13 +26,13 @@ define Package/$(PKG_NAME)
 	SECTION:=utils
 	CATEGORY:=Utilities
 	SUBMENU:=System
-	TITLE:=Openwrt api.
+	TITLE:=Openwrt sub.cgi.
 	URL:=https://github.com/3wlh
 	DEPENDS:=@(aarch64||x86_64) +libstdcpp
 endef
 
 define Package/$(PKG_NAME)/description
-Openwrt api.
+Openwrt page.cgi.
 endef
 
 define Build/Prepare
@@ -49,9 +49,9 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_NAME)-$(PKG_ARCH) $(1)/usr/sbin/$(BIN_NAME)
-	chmod -R 755 $(1)/usr/sbin/$(BIN_NAME)
+	$(INSTALL_DIR) $(1)/www/cgi-bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_NAME)-$(PKG_ARCH) $(1)/www/cgi-bin/$(BIN_NAME)
+	chmod -R 755 $(1)/www/cgi-bin/$(BIN_NAME)
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
