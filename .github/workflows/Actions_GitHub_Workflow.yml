@@ -1,6 +1,6 @@
 name: Actions GitHub Workflow
 on:
-  schedule:
+  #schedule:
     #- cron: "0 16 * * 0"
   workflow_call:
     inputs:
