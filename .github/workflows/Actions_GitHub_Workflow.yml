@@ -1,23 +1,22 @@
-name: Actions Del old workflow
+name: Actions GitHub Workflow
 on:
-# Run weekly, at 00:00 on sunday.
   schedule:
     - cron: "0 16 * * 0"
   workflow_dispatch:
 
 jobs:
-  del_runs:
+  del_Workflow:
     runs-on: ubuntu-latest
     permissions:
       actions: write
       contents: read
     steps:
       - name: Delete workflow runs for current repo
-        uses: Mattraks/delete-workflow-runs@v2
+        uses: Mattraks/delete-workflow-runs@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          delete_workflow_pattern: ipkg|workflow
-          use_daily_retention: true
+          delete_workflow_pattern: ipkg|Workflow
           #retain_days: 1
           keep_minimum_runs: 0
+          use_daily_retention: true
