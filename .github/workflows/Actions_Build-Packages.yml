@@ -1,4 +1,4 @@
-name: Actions Build gh-action-sdk package
+name: Actions Build gh-action-sdk package ${{ inputs.package_name }}
 
 on:
   repository_dispatch:
