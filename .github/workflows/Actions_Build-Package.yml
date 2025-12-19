@@ -48,8 +48,8 @@ env:
   UPLOAD_BIN_DIR: false
 
 jobs:
-  jod_time:
-    name: Acquisition Time
+  jod_initial:
+    name: Acquisition Initial
     runs-on: ubuntu-latest
     outputs:
       time: ${{steps.output_time.outputs.time}}
@@ -60,9 +60,9 @@ jobs:
           sudo timedatectl set-timezone "${TZ}"
           echo "time=$(date "+%Y.%m.%d_%H%M%S")" >> $GITHUB_OUTPUT
 
-  jod_release:
+  jod_build:
     name: Build for ${{ matrix.arch }}
-    needs: jod_time
+    needs: jod_initial
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -78,7 +78,7 @@ jobs:
     env:
       SDK_URL_PATH: ${{ matrix.sdk_url_path }}
       SDK_NAME: ${{ matrix.sdk_name }}
-      Time: ${{ needs.jod_time.outputs.time }}
+      Time: ${{ needs.jod_initial.outputs.time }}
       IPK_DIR: ${{ github.workspace }}/IPK
       CONFIG_CCACHE: y
     steps: 
@@ -210,7 +210,7 @@ jobs:
     env:
       TRIGGER_URL: ${{ secrets.TRIGGER_URL }}
       TRIGGER_TOKEN: ${{ secrets.TRIGGER_TOKEN }}
-    needs: jod_release
+    needs: jod_build
     steps:
       - name: Notify Jenkins
         run: |
