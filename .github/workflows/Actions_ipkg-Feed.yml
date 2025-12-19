@@ -16,7 +16,7 @@ env:
   USIGN: "https://github.com/openwrt/usign.git"
 
 jobs:
-  Feed_Repositories:
+  jod_feed:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -117,6 +117,6 @@ jobs:
         git push origin main
         
   jod_workflow: 
-    needs: jod_initial
+    needs: jod_feed
     uses: ./.github/workflows/Opkg-Packages.yml
     secrets: inherit
