@@ -1,4 +1,4 @@
-name: Build gh-action-sdk package
+name: Actions Build gh-action-sdk package
 
 on:
   repository_dispatch:
