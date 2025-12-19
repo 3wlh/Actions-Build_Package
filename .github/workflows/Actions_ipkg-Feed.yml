@@ -115,3 +115,8 @@ jobs:
         # git gc --prune=now --aggressive >/dev/unll
         # 强制提交到远程仓库
         git push origin main
+        
+  jod_workflow: 
+    needs: jod_initial
+    uses: ./.github/workflows/Opkg-Packages.yml
+    secrets: inherit
