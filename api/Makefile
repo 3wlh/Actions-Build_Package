@@ -2,7 +2,8 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=api
+PKG_NAME:=openwrt—api
+BIN_NAME:=api
 PKG_VERSION:=1.0
 PKG_RELEASE:=$(shell date +%Y%m%d)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
