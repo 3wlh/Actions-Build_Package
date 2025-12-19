@@ -1,4 +1,4 @@
-name: Actions Delete old workflow
+name: Actions Del old workflow
 on:
 # Run weekly, at 00:00 on sunday.
   schedule:
