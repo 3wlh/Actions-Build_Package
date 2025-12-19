@@ -25,7 +25,8 @@ include $(INCLUDE_DIR)/package.mk
 define Package/$(PKG_NAME)
 	SECTION:=utils
 	CATEGORY:=Utilities
-	TITLE:=page-static
+	SUBMENU:=System
+	TITLE:=$(PKG_NAME)
 	URL:=https://github.com/3wlh
 	DEPENDS:=@(aarch64||x86_64) +libstdcpp
 endef
