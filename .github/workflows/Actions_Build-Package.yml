@@ -49,7 +49,7 @@ env:
 
 jobs:
   jod_initial:
-    name: Acquisition Initial
+    name: Actions Build ${{ inputs.package_name }}
     runs-on: ubuntu-latest
     outputs:
       time: ${{steps.output_time.outputs.time}}
