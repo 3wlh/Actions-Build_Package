@@ -53,12 +53,13 @@ define Package/$(PKG_NAME)/conffiles
 endef
 
 define Package/$(PKG_NAME)/install
-	#$(INSTALL_DIR) $(1)/etc/init.d
-	#$(INSTALL_BIN) $(CURDIR)/files/napcat-api.init $(1)/etc/init.d/napcat-api
-	#$(INSTALL_DIR) $(1)/etc/config
-	#$(INSTALL_CONF) $(CURDIR)/files/napcat-api.config $(1)/etc/config/napcat-api
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/napcat-api.init $(1)/etc/init.d/napcat-api
+	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_CONF) ./files/napcat-api.config $(1)/etc/config/napcat-api
 	#$(INSTALL_DIR) $(1)/etc/napcat-api
-	#$(INSTALL_CONF) $(CURDIR)/files/config.yaml $(1)/etc/napcat-api/config.yaml
+	#$(INSTALL_CONF) ./files/config.yaml $(1)/etc/napcat-api/config.yaml
+	$(CP) ./files/config.yaml $(1)/etc/napcat-api/
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_NAME)_$(PKG_ARCH) $(1)/usr/sbin/$(BIN_NAME)
 	chmod -R 755 $(1)/usr/sbin/$(BIN_NAME)
