@@ -92,7 +92,7 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Build Packages
+      - name: Build Output
         if: (inputs.out == true)
         env:
           Buildout: sc
