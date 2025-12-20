@@ -27,7 +27,7 @@ define Package/$(PKG_NAME)
 	CATEGORY:=Network
 	TITLE:=$(PKG_NAME)
 	URL:=https://github.com/3wlh
-	DEPENDS:=@(aarch64||x86_64) +libstdcpp
+	DEPENDS:=@(aarch64||x86_64)
 endef
 
 define Package/$(PKG_NAME)/description
