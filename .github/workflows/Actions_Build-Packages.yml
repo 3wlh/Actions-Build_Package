@@ -10,7 +10,14 @@ on:
         required: false
         default: false
         type: boolean
-        
+      
+      out:
+        description: |
+          是否详细输出?
+        required: false
+        default: false
+        type: boolean  
+      
       package_name:
         description: |
           选择编译插件
@@ -77,7 +84,12 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
+      
+      - name: Build Packages
+        if: (inputs.out == true)
+        env:
+          Buildout: sc
+      
       - name: Build Packages
         uses: openwrt/gh-action-sdk@main
         env:
@@ -86,7 +98,7 @@ jobs:
           PACKAGES: ${{ inputs.package_name }}
           #NO_DEFAULT_FEEDS: true
           NO_REFRESH_CHECK: true
-          V: sc
+          V: ${{ env.Buildout }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
