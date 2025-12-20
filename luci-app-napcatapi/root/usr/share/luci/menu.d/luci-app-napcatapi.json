@@ -1,0 +1,14 @@
+{
+	"admin/services/napcatapi": {
+		"title": "NapCat-API",
+		"action": {
+			"order": 30,
+			"type": "view",
+			"path": "napcat"
+		},
+		"depends": {
+			"acl": [ "luci-app-napcatapi" ],
+			"uci": { "napcat": true }
+		}
+	}
+}

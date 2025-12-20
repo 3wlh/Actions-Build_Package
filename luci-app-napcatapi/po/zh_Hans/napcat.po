@@ -1,0 +1,60 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: zh-Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:30
+msgid "Open Web Interface"
+msgstr "打开 Web 界面"
+
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:31
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:33
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:48
+#: applications/luci-app-napcatapi/root/usr/share/luci/menu.d/luci-app-napcatapi.json:3
+msgid "NapCat-API"
+msgstr "NapCat-API"
+
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:49
+msgid "NapCat Robot call the API.."
+msgstr "NapCat机器人调用api"
+
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:33
+msgid "NOT RUNNING"
+msgstr "未运行"
+
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:31
+msgid "RUNNING"
+msgstr "运行中"
+
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:62
+msgid "Collecting data..."
+msgstr "收集数据中..."
+
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:68
+msgid "Enable"
+msgstr "启用"
+
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:72
+msgid "Port"
+msgstr "监听端口"
+
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:77
+msgid "Config File Path"
+msgstr "配置文件"
+
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:85
+msgid "Decrypt KEY"
+msgstr "解密密码"
+
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:85
+msgid "Online Config URL"
+msgstr "在线配置网址"
+
+#: applications/luci-app-napcatapi/root/usr/share/rpcd/acl.d/luci-app-napcatapi.json:3
+msgid "Grant UCI access for luci-app-napcatapi"
+msgstr "授予 luci-app-napcatapi 访问 UCI 配置的权限"
