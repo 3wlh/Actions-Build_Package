@@ -16,16 +16,16 @@ start() {
 	[ "$enabled" -eq "1" ] || return 1
 
 	local port path_config pwd_config online_config
-	config_get port "config" "port" ""
-	config_get path_config "config" "path_config" ""
-	config_get pwd_config "config" "pwd_config" "$CONF_PATH"
-	config_get online_config "config" "online_config" ""
+	config_get port "config" "port" "5663"
+	config_get path_config "config" "path_config" "$CONF_PATH"
+	config_get pwd_config "config" "pwd_config" "123456"
+	config_get online_config "config" "online_config" "http://"
 	
 	# 创建配置目录
 	[[ -d ${path_config} ]] || mkdir -p "${path_config}"
 	echo "Starting $CONF..."
 	# 构建启动参数
-	start-stop-daemon -S -q -b -m -p "$PID_FILE" -x "$PROG" -- -p "$port" -c "$pwd_config"  -pwd "$pwd_config"  -url "$online_config"
+	start-stop-daemon -S -q -b -m -p "$PID_FILE" -x "$PROG" -- -p "$port" -c "$path_config"  -pwd "$pwd_config"  -url "$online_config"
 }
 
 stop() {

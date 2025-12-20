@@ -80,7 +80,7 @@ return view.extend({
 		o.rmempty = true;
 		
 		o = s.option(form.Value, 'online_config', _('Online Config URL'));
-		o.default = '';
+		o.default = 'http://';
 		o.rmempty = true;
 		o.datatype = 'or(url,empty)';
 
