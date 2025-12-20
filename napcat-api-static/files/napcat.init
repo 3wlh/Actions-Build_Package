@@ -1,0 +1,32 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+STOP=10
+
+CONF="napcat-api"
+PROG="/usr/sbin/$CONF"
+CONF_PATH="/etc/$CONF/config.yaml"
+PID_FILE="/var/run/$CONF.pid"
+
+start() {
+	config_load "$CONF"
+
+	local enabled
+	config_get_bool enabled "config" "enabled" "0"
+	[ "$enabled" -eq "1" ] || return 1
+
+	local port path_config pwd_config online_config
+	config_get port "config" "port" ""
+	config_get path_config "config" "path_config" "/"
+	config_get pwd_config "config" "pwd_config" ""
+	config_get online_config "config" "online_config" ""
+	
+	echo "Starting $CONF..."
+	start-stop-daemon -S -q -b -m -p "$PID_FILE" -x "$PROG" -- -p "$port" -c "$CONF_PATH"  -pwd "$pwd_config"  -url "$online_config"
+}
+
+stop() {
+		kill -9 `pidof $CONF | sed "s/$$//g"` 2>/dev/null
+		rm -f "$PID_FILE"
+		echo "$CONF stopped"
+}
