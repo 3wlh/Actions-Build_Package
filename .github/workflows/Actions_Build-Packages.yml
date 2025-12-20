@@ -95,7 +95,7 @@ jobs:
       - name: Set Variable
         run: |
           [[ ${{ inputs.out }} ]] && echo "Buildout=sc" >> $GITHUB_ENV
-          [[ ${{ inputs.out }} ]] && echo "feeds=true" >> $GITHUB_ENV
+          [[ ${{ inputs.feeds }} ]] && echo "feeds=true" >> $GITHUB_ENV
                 
       - name: Build Packages
         uses: openwrt/gh-action-sdk@main
