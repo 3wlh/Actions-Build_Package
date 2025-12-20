@@ -94,7 +94,7 @@ jobs:
       
       - name: Build Output
         if: (inputs.out == true)
-        env:
+        with:
           Buildout: sc
       
       - name: Build Packages
