@@ -35,9 +35,7 @@ NapCat Robot call the API.
 endef
 
 define Build/Prepare
-	@echo 123
-	$(info $(PKG_ARCH) )
-	@echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
+	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
 	if [ ! -f $(PKG_BUILD_DIR)/$(PKG_FILE) ] ; then \
