@@ -58,8 +58,8 @@ define Package/$(PKG_NAME)/install
 	chmod -R 755 $(1)/usr/sbin/$(BIN_NAME)
 	$(INSTALL_BIN) ./files/napcat-api.init $(1)/etc/init.d/napcat-api
 	$(INSTALL_CONF) ./files/napcat-api.config $(1)/etc/config/napcat-api
-	$(INSTALL_CONF) ./files/config.yaml $(1)/etc/napcat-api/config.yaml
-	#$(CP) ./files/config.yaml $(1)/etc/napcat-api/
+	#$(INSTALL_CONF) ./files/config.yaml $(1)/etc/napcat-api/config.yaml
+	$(CP) ./files/config.yaml $(1)/etc/napcat-api/
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
