@@ -31,7 +31,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-Decrypt the online configuration and run it.
+NapCat Robot call the API.
 endef
 
 define Build/Prepare
@@ -44,6 +44,11 @@ define Build/Prepare
 endef
 
 define Build/Compile
+endef
+
+define Package/$(PKG_NAME)/conffiles
+/etc/napcat/
+/etc/config/napcat
 endef
 
 define Package/$(PKG_NAME)/install
