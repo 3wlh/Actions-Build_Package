@@ -93,10 +93,9 @@ jobs:
           fetch-depth: 0
       
       - name: Build Output
-        if: (inputs.out == true)
-        with:
-          Buildout: sc
-      
+        run: |
+          [[ ${{ inputs.out }} ]] && echo "Buildout=sc" >> $GITHUB_ENV
+                
       - name: Build Packages
         uses: openwrt/gh-action-sdk@main
         env:
