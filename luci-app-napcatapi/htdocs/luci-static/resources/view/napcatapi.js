@@ -28,8 +28,8 @@ function renderStatus(isRunning, port) {
 return view.extend({
 	load: async function () {
 		const promises = await Promise.all([
-			L.resolveDefault(fs.stat('/var/run/napcat-api.pid'), null),
-			uci.load('napcat-api')
+			L.resolveDefault(fs.stat('/var/run/napcatapi.pid'), null),
+			uci.load('napcatapi')
 		]);
 	const data = {
 			isRunning: promises[0],
@@ -41,7 +41,7 @@ return view.extend({
 		let m, s, o;
 		let webport = (uci.get(data, 'config', 'port') || '5663');
 
-		m = new form.Map('napcat-api', _('NapCat-API'),
+		m = new form.Map('napcatapi', _('NapCat API'),
 			_('NapCat Robot call the API..'));
 
 		s = m.section(form.TypedSection);
@@ -59,7 +59,7 @@ return view.extend({
 			]);
 		}
 
-		s = m.section(form.NamedSection, 'config', 'napcat-api');
+		s = m.section(form.NamedSection, 'config', 'napcatapi');
 
 		o = s.option(form.Flag, 'enabled', _('Enable'));
 		o.default = o.disabled;
