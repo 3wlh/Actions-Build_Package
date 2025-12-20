@@ -85,7 +85,7 @@ jobs:
           ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
           FEEDNAME: packages_ci
           PACKAGES: ${{ inputs.package_name }}
-          NO_DEFAULT_FEEDS: true
+          #NO_DEFAULT_FEEDS: true
           NO_REFRESH_CHECK: true
           V: sc
 
