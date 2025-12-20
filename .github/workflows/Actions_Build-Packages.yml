@@ -94,9 +94,13 @@ jobs:
       
       - name: Set Variable
         run: |
-          [ "${{ inputs.out }}" == "true" ] && echo "Buildout=sc" >> $GITHUB_ENV
-          [ "${{ inputs.feeds }}" == "true" ] && echo "feeds=true" >> $GITHUB_ENV
-                
+          if [ "${{ inputs.out }}" == "true" ]; then
+            echo "Buildout=sc" >> $GITHUB_ENV
+          fi
+          if [ "${{ inputs.feeds }}" == "true" ]; then
+            echo "feeds=true" >> $GITHUB_ENV
+          fi
+          
       - name: Build Packages
         uses: openwrt/gh-action-sdk@main
         env:
