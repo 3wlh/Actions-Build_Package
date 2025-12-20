@@ -15,8 +15,8 @@ ifeq ($(ARCH),x86_64)
 	PKG_ARCH:=amd64
 endif
 
-PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION).file
-PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NAME)/$(BIN_NAME)_$(PKG_ARCH)
+PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NAME)/$(BIN_NAME).tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 PKG_HASH:=skip
 
@@ -41,7 +41,7 @@ define Build/Prepare
 	fi
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
-	cp -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
+	tar -zxvf $(DL_DIR)/$(PKG_FILE) -C $(PKG_BUILD_DIR)
 endef
 
 define Build/Compile
@@ -60,7 +60,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/napcat-api
 	$(INSTALL_CONF) $(CURDIR)/files/config.yaml $(1)/etc/napcat-api/config.yaml
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_FILE) $(1)/usr/sbin/$(BIN_NAME)
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_NAME)_$(PKG_ARCH) $(1)/usr/sbin/$(BIN_NAME)
 	chmod -R 755 $(1)/usr/sbin/$(BIN_NAME)
 endef
 
