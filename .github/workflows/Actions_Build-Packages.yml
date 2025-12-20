@@ -86,7 +86,6 @@ jobs:
           PACKAGES: ${{ inputs.package_name }}
           NO_DEFAULT_FEEDS: true
           NO_REFRESH_CHECK: true
-          INDEX: 1
           V: sc
 
       - name: Upload artifacts
