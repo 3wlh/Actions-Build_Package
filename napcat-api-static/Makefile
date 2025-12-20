@@ -15,7 +15,7 @@ ifeq ($(ARCH),x86_64)
 	PKG_ARCH:=amd64
 endif
 
-PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION).$(PKG_ARCH)
+PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION).file
 PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NAME)/$(BIN_NAME)_$(PKG_ARCH)
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 PKG_HASH:=skip
@@ -36,11 +36,12 @@ endef
 
 define Build/Prepare
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
+	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
+		wget -q $(PKG_URL) -O $(DL_DIR)/$(PKG_FILE); \
+	fi
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
-	if [ ! -f $(PKG_BUILD_DIR)/$(PKG_FILE) ] ; then \
-		wget -q $(PKG_URL) -O $(PKG_BUILD_DIR)/$(PKG_FILE); \
-	fi
+	cp -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
 endef
 
 define Build/Compile
