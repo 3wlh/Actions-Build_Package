@@ -95,6 +95,7 @@ jobs:
       - name: Build Output
         run: |
           [[ ${{ inputs.out }} ]] && echo "Buildout=sc" >> $GITHUB_ENV
+          [[ ${{ inputs.out }} ]] && echo "feeds=true" >> $GITHUB_ENV
                 
       - name: Build Packages
         uses: openwrt/gh-action-sdk@main
@@ -102,7 +103,7 @@ jobs:
           ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
           FEEDNAME: packages_ci
           PACKAGES: ${{ inputs.package_name }}
-          NO_DEFAULT_FEEDS: ${{ inputs.feeds }}
+          NO_DEFAULT_FEEDS: ${{ env.feeds }}
           NO_REFRESH_CHECK: true
           V: ${{ env.Buildout }}
 
