@@ -75,7 +75,7 @@ return view.extend({
 		o.rmempty = false;
 
 		o = s.option(form.Value, 'path_config', _('Config File Path'));
-		o.default = '/etc/napcatapi/napcatapi.yaml';
+		o.default = '/etc/napcat-api/config.yaml';
 		o.rmempty = true;
 		
 		o = s.option(form.Value, 'pwd_config', _('Decrypt KEY'));
