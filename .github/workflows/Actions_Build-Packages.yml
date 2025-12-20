@@ -23,6 +23,7 @@ on:
           - sub-static
           - page-static
           - napcat-api-static
+          - luci-app-napcatapi
           - luci-app-cifs-mount2
           - luci-app-bypass
           - luci-app-unishare
