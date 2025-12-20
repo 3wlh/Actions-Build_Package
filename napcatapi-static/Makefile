@@ -2,8 +2,8 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=napcat-api-static
-BIN_NAME:=napcat-api
+PKG_NAME:=napcatapi-static
+BIN_NAME:=napcatapi
 PKG_VERSION:=1.0.0
 PKG_RELEASE:=$(shell date +%Y%m%d)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
@@ -48,16 +48,16 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/conffiles
-/etc/napcat-api/
-/etc/config/napcat-api
+/etc/napcatapi/
+/etc/config/napcatapi
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/etc/config $(1)/etc/napcat-api
+	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/etc/config $(1)/etc/napcatapi
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_NAME)_$(PKG_ARCH) $(1)/usr/sbin/$(BIN_NAME)
 	chmod -R 755 $(1)/usr/sbin/$(BIN_NAME)
-	$(INSTALL_BIN) ./files/napcat-api.init $(1)/etc/init.d/napcat-api
-	$(INSTALL_CONF) ./files/napcat-api.config $(1)/etc/config/napcat-api
+	$(INSTALL_BIN) ./files/napcatapi.init $(1)/etc/init.d/napcatapi
+	$(INSTALL_CONF) ./files/napcatapi.config $(1)/etc/config/napcatapi
 	$(INSTALL_CONF) ./files/config.yaml $(1)/etc/napcat-api/config.yaml
 	#$(CP) ./files/config.yaml $(1)/etc/napcat-api/
 endef

@@ -8,46 +8,46 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:30
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:19
 msgid "Open Web Interface"
 msgstr "打开 Web 界面"
 
-#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:31
-#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:33
-#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:48
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:20
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:22
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:44
 #: applications/luci-app-napcatapi/root/usr/share/luci/menu.d/luci-app-napcatapi.json:3
 msgid "NapCat-API"
 msgstr "NapCat-API"
 
-#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:49
-msgid "NapCat Robot call the API.."
-msgstr "NapCat机器人调用api"
-
-#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:33
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:20
 msgid "NOT RUNNING"
 msgstr "未运行"
 
-#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:31
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:22
 msgid "RUNNING"
 msgstr "运行中"
 
-#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:62
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:45
+msgid "NapCat Robot call the API.."
+msgstr "NapCat机器人调用api"
+
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:58
 msgid "Collecting data..."
 msgstr "收集数据中..."
 
-#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:68
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:64
 msgid "Enable"
 msgstr "启用"
 
-#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:72
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:68
 msgid "Port"
 msgstr "监听端口"
 
-#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:77
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:73
 msgid "Config File Path"
 msgstr "配置文件"
 
-#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:85
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:82
 msgid "Decrypt KEY"
 msgstr "解密密码"
 

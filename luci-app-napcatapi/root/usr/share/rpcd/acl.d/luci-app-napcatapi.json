@@ -5,10 +5,10 @@
 			"ubus": {
 				"service": [ "list" ]
 			},
-			"uci": [ "napcat-api" ]
+			"uci": [ "napcatapi" ]
 		},
 		"write": {
-			"uci": [ "napcat-api" ]
+			"uci": [ "napcatapi" ]
 		}
 	}
 }

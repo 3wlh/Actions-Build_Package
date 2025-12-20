@@ -4,11 +4,11 @@
 		"action": {
 			"order": 30,
 			"type": "view",
-			"path": "napcat"
+			"path": "napcatapi"
 		},
 		"depends": {
 			"acl": [ "luci-app-napcatapi" ],
-			"uci": { "napcat": true }
+			"uci": { "napcatapi": true }
 		}
 	}
 }

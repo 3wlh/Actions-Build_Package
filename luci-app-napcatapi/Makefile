@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI app for NapCat
-LUCI_DEPENDS:=+napcat-api-static
+LUCI_DEPENDS:=+napcatapi-static
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
