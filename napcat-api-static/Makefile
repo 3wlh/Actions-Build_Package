@@ -48,8 +48,8 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/conffiles
-/etc/napcat-api/
-/etc/config/napcat-api
+#/etc/napcat-api/
+#/etc/config/napcat-api
 endef
 
 define Package/$(PKG_NAME)/install
