@@ -11,12 +11,19 @@ on:
         default: false
         type: boolean
       
+      feeds:
+        description: |
+          是否禁用feeds?
+        required: false
+        default: false
+        type: boolean  
+      
       out:
         description: |
           是否详细输出?
         required: false
-        default: false
-        type: boolean  
+        default: true
+        type: boolean
       
       package_name:
         description: |
@@ -96,7 +103,7 @@ jobs:
           ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
           FEEDNAME: packages_ci
           PACKAGES: ${{ inputs.package_name }}
-          #NO_DEFAULT_FEEDS: true
+          NO_DEFAULT_FEEDS: ${{ inputs.feeds }}
           NO_REFRESH_CHECK: true
           V: ${{ env.Buildout }}
 
