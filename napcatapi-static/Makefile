@@ -59,7 +59,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) ./files/napcatapi.init $(1)/etc/init.d/napcatapi
 	$(INSTALL_CONF) ./files/napcatapi.config $(1)/etc/config/napcatapi
 	#$(INSTALL_CONF) ./files/config.yaml $(1)/etc/napcatapi/config.yaml
-	#$(CP) ./files/config.yaml $(1)/etc/napcat-api/
+	#$(CP) ./files/config.yaml $(1)/etc/napcatapi/
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
