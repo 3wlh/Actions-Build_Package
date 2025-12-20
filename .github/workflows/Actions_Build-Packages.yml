@@ -22,7 +22,6 @@ on:
           - api-static
           - sub-static
           - page-static
-          - napcat-api-static
           - luci-app-napcatapi
           - luci-app-cifs-mount2
           - luci-app-bypass
@@ -30,7 +29,7 @@ on:
           - luci-app-v2ray-server
           - luci-app-sunpanel
           - sunpanel
-          
+          - napcatapi-static
 jobs:
   jod_initial:
     name: Actions Build ${{ inputs.package_name }}
