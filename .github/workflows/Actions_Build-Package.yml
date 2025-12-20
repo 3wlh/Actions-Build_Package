@@ -29,9 +29,10 @@ on:
         type: choice
         options:
           - all
-          - package-api
-          - package-sub
-          - package-page
+          - api-static
+          - sub-static
+          - page-static
+          - napcat-api-static
           - luci-app-cifs-mount
           - luci-app-bypass
           - luci-app-unishare
