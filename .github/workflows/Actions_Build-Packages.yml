@@ -92,7 +92,7 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Build Output
+      - name: Set Variable
         run: |
           [[ ${{ inputs.out }} ]] && echo "Buildout=sc" >> $GITHUB_ENV
           [[ ${{ inputs.out }} ]] && echo "feeds=true" >> $GITHUB_ENV
