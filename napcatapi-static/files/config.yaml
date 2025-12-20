@@ -1,11 +1,11 @@
 [Port]
-群晖=5000
+#如: 路由器=80
+路由器=80
 OPENWRT=8
-路由器=6
-ALIST=5244
+
 
 [Subscribe]
-Sub_domain=19970101.xyz
+Sub_domain=11121314.xyz
 
 [DDNS]
 AccessKeyID=XXXXXXXX

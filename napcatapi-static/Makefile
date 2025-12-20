@@ -58,7 +58,7 @@ define Package/$(PKG_NAME)/install
 	chmod -R 755 $(1)/usr/sbin/$(BIN_NAME)
 	$(INSTALL_BIN) ./files/napcatapi.init $(1)/etc/init.d/napcatapi
 	$(INSTALL_CONF) ./files/napcatapi.config $(1)/etc/config/napcatapi
-	$(INSTALL_CONF) ./files/config.yaml $(1)/etc/napcat-api/config.yaml
+	$(INSTALL_CONF) ./files/config.yaml $(1)/etc/napcatapi/config.yaml
 	#$(CP) ./files/config.yaml $(1)/etc/napcat-api/
 endef
 
