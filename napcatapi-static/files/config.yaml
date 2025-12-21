@@ -1,15 +1,25 @@
 [Port]
-#如: 路由器=80
-路由器=80
-OPENWRT=8
-
+#如: OPENWRT=80
+OPENWRT=80
 
 [Subscribe]
-Sub_domain=11121314.xyz
+Sub_DN=example.com
+Sub_Vless_Prot=4333
+Sub_Vmess_Prot=4334
+Sub_Socks_Prot=4335
+Sub_UUID=D(4x8VBfSLlFy3jvd8R3q5RQ==)
+Sub_Socks_PWD=D(4x8VBfSLlFy3jvd8R3q5RQ==)
+
+[Encryption]
+# 如果要用加密函数E() 如:E(123456)
+测试加密=E(123456)
+[Decryption]
+# 如果要用解密函数D() 如:D(4x8VBfSLlFy3jvd8R3q5RQ==)
+测试解密=D(4x8VBfSLlFy3jvd8R3q5RQ==)
 
 [DDNS]
-AccessKeyID=XXXXXXXX
-AccessKey=XXXXXXXXXXXXXX
+AccessKeyID=D(XXXXXXXX)
+AccessKey=D(XXXXXXXXXXXXXX)
 #如: example.com
 DomainName=<主域名>
 #如: www ,@

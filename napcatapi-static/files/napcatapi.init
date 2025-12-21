@@ -19,7 +19,7 @@ start() {
 	config_get port "config" "port" "5663"
 	config_get path_config "config" "path_config" "$CONF_PATH"
 	config_get pwd_config "config" "pwd_config" "123456"
-	config_get online_config "config" "online_config" "http://"
+	config_get online_config "config" "online_config" "http[s]://"
 	
 	# 创建配置目录
 	[[ -d ${path_config} ]] || mkdir -p "${path_config}"
