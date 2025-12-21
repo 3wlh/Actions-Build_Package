@@ -25,7 +25,7 @@ on:
         default: true
         type: boolean
       
-      package_name:
+      package:
         description: |
           选择编译插件
         required: false
