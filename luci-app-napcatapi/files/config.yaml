@@ -1,0 +1,33 @@
+[Port]
+#如: OPENWRT=80
+OPENWRT=80
+
+[Subscribe]
+Sub_DN=example.com
+Sub_Vless_Prot=4333
+Sub_Vmess_Prot=4334
+Sub_Socks_Prot=4335
+Sub_UUID=D(4x8VBfSLlFy3jvd8R3q5RQ==)
+Sub_Socks_PWD=D(4x8VBfSLlFy3jvd8R3q5RQ==)
+
+[Encryption]
+# 如果要用加密函数E() 如:E(123456)
+测试加密=E(123456)
+[Decryption]
+# 如果要用解密函数D() 如:D(4x8VBfSLlFy3jvd8R3q5RQ==)
+测试解密=D(4x8VBfSLlFy3jvd8R3q5RQ==)
+
+[DDNS]
+AccessKeyID=D(XXXXXXXX)
+AccessKey=D(XXXXXXXXXXXXXX)
+#如: example.com
+DomainName=<主域名>
+#如: www ,@
+RR=<子域名>
+
+【Wake-on-LAN]
+#局域网广播地址
+IP=10.10.10.255
+#唤醒MAC地址
+电脑=XX:XX:XX:XX:XX:XX
+NAS=XX:XX:XX:XX:XX:XX
