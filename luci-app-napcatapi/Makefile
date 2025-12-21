@@ -4,7 +4,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-myapp
+PKG_NAME:=luci-app-napcatapi
 PKG_VERSION:=1.0.0
 PKG_RELEASE:=$(shell date +%Y%m%d)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
