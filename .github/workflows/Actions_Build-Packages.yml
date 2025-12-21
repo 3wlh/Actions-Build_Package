@@ -46,7 +46,7 @@ on:
           - napcatapi-static
 jobs:
   jod_initial:
-    name: Actions Build ${{ inputs.package_name }}
+    name: Actions Build ${{ inputs.package }}
     runs-on: ubuntu-latest
     outputs:
       time: ${{steps.output_time.outputs.time}}
@@ -60,7 +60,7 @@ jobs:
       - name: Delete GitHub Release
         uses: dev-drprasad/delete-tag-and-release@master
         with:
-          tag_name: GitHub-Actions_${{ inputs.package_name }}
+          tag_name: GitHub-Actions_${{ inputs.package }}
           delete_release: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
       
@@ -86,7 +86,7 @@ jobs:
           #- SNAPSHOT
     env:
       Time: ${{ needs.jod_initial.outputs.time }}
-      GZ: ${{ inputs.package_name }}-${{ matrix.sdk }}-${{ matrix.arch }}_${{ needs.jod_initial.outputs.time }}.tar.gz
+      GZ: ${{ inputs.package }}-${{ matrix.sdk }}-${{ matrix.arch }}_${{ needs.jod_initial.outputs.time }}.tar.gz
     steps:
       - uses: actions/checkout@v3
         with:
@@ -97,7 +97,7 @@ jobs:
           if [ "${{ inputs.out }}" == "true" ]; then
             echo "Buildout=sc" >> $GITHUB_ENV
           fi
-          if [ "${{ inputs.feeds }}" == "true" ]; then
+          if [[ "${{ inputs.feeds }}" == "true"  || "${{ inputs.package }}" =~ "static" ]]; then
             echo "feeds=true" >> $GITHUB_ENV
           fi
           
@@ -106,7 +106,7 @@ jobs:
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
           FEEDNAME: packages_ci
-          PACKAGES: ${{ inputs.package_name }}
+          PACKAGES: ${{ inputs.package }}
           NO_DEFAULT_FEEDS: ${{ env.feeds }}
           NO_REFRESH_CHECK: true
           V: ${{ env.Buildout }}
@@ -135,8 +135,8 @@ jobs:
         if: steps.files.outputs.status == 'success'
         uses: ncipollo/release-action@main
         with:
-          tag: GitHub-Actions_${{ inputs.package_name }}
-          name: ${{ inputs.package_name }}
+          tag: GitHub-Actions_${{ inputs.package }}
+          name: ${{ inputs.package }}
           artifacts: ${{ env.GZ }}
           body: "## 编译时间：`${{ env.Time }}`"
           allowUpdates: true
