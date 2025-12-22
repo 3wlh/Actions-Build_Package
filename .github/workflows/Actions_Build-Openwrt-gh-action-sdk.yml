@@ -1,4 +1,4 @@
-name: Actions Build gh-action-sdk package
+name: Actions Build openwrt/gh-action-sdk
 
 on:
   repository_dispatch:
