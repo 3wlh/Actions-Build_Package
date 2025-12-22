@@ -15,8 +15,8 @@ ifeq ($(ARCH),x86_64)
 	PKG_ARCH:=amd64
 endif
 
-PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NAME)/$(BIN_NAME).tar.gz
+PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION)
+PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NAME)/$(BIN_NAME)_$(PKG_ARCH)
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 PKG_HASH:=skip
 
@@ -41,7 +41,7 @@ define Build/Prepare
 	fi
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
-	tar -zxvf $(DL_DIR)/$(PKG_FILE) -C $(PKG_BUILD_DIR)
+	cp -f $(DL_DIR)/$(PKG_FILE) -C $(PKG_BUILD_DIR)/
 endef
 
 define Build/Compile
@@ -54,7 +54,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/etc/config $(1)/etc/napcatapi
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_NAME)_$(PKG_ARCH) $(1)/usr/sbin/$(BIN_NAME)
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_FILE) $(1)/usr/sbin/$(BIN_NAME)
 	chmod -R 755 $(1)/usr/sbin/$(BIN_NAME)
 	$(INSTALL_BIN) ./files/napcatapi.init $(1)/etc/init.d/napcatapi
 	$(INSTALL_CONF) ./files/napcatapi.config $(1)/etc/config/napcatapi
