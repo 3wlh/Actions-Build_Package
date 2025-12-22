@@ -102,7 +102,7 @@ jobs:
           fi
           
       - name: Build Packages
-        uses: immortalwrt/gh-action-sdk@main
+        uses: immortalwrt/gh-action-sdk@master
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
           FEEDNAME: packages_ci
