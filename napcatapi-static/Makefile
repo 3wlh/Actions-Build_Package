@@ -37,11 +37,11 @@ endef
 define Build/Prepare
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
 	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
-		wget -q $(PKG_URL) -O $(DL_DIR)/$(PKG_FILE); \
+		wget $(PKG_URL) -O $(DL_DIR)/$(PKG_FILE); \
 	fi
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
-	cp -f $(DL_DIR)/$(PKG_FILE) -C $(PKG_BUILD_DIR)/
+	cp -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
 endef
 
 define Build/Compile
