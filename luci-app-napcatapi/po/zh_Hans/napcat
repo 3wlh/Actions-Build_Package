@@ -10,7 +10,11 @@ msgstr ""
 
 #: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:19
 msgid "Open Web Interface"
-msgstr "打开 Web 界面"
+msgstr "打开配置界面"
+
+#: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:21
+msgid "Open Web log"
+msgstr "打开日志界面"
 
 #: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:20
 #: applications/luci-app-napcatapi/htdocs/luci-static/resources/view/napcatapi.js:22

@@ -10,6 +10,7 @@ PKG_RELEASE:=$(shell date +%Y%m%d)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 LUCI_TITLE:=LuCI app for napcatapi
 LUCI_DEPENDS:=+napcatapi-static
+LUCI_LANG:=zh-cn
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
