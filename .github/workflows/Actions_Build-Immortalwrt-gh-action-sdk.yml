@@ -36,6 +36,7 @@ on:
           - api-static
           - sub-static
           - page-static
+          - luci-app-napcat
           - luci-app-napcatapi
           - luci-app-cifs-mount2
           - luci-app-bypass

@@ -1,0 +1,89 @@
+<%+header%>
+<script type="text/javascript">
+function refreshStatus() {
+    XHR.get('<%=luci.dispatcher.build_url("admin", "services", "napcat", "status_check")%>', null,
+        function(x, data) {
+            var res = JSON.parse(data);
+            var statusEl = document.getElementById('status');
+            if (res.status === 'running') {
+                statusEl.className = 'label label-success';
+                statusEl.innerText = '<%:Running%>';
+                document.getElementById('jump-section').style.display = 'block';
+                refreshJumpUrl();
+            } else {
+                statusEl.className = 'label label-danger';
+                statusEl.innerText = '<%:Stopped%>';
+                document.getElementById('jump-section').style.display = 'none';
+            }
+        }
+    );
+    refreshLogs();
+}
+
+function refreshLogs() {
+    XHR.get('<%=luci.dispatcher.build_url("admin", "services", "napcat", "logs")%>', null,
+        function(x, data) {
+            document.getElementById('logs').innerText = data;
+        }
+    );
+}
+
+function refreshJumpUrl() {
+    XHR.get('<%=luci.dispatcher.build_url("admin", "services", "napcat", "get_url")%>', null,
+        function(x, data) {
+            var res = JSON.parse(data);
+            var urlEl = document.getElementById('jump-url');
+            urlEl.innerText = res.url;
+            urlEl.href = res.url;
+        }
+    );
+}
+
+function doAction(action) {
+    var btn = document.getElementById(action + '-btn');
+    btn.disabled = true;
+    XHR.get('<%=luci.dispatcher.build_url("admin", "services", "napcat", action)%>', null,
+        function(x, data) {
+            btn.disabled = false;
+            var res = JSON.parse(data);
+            alert(res.msg);
+            refreshStatus();
+        }
+    );
+}
+
+window.onload = function() {
+    refreshStatus();
+    setInterval(refreshStatus, 5000);
+}
+</script>
+
+<div class="cbi-map">
+    <h2 name="content"><%:NapCat QQ Bot 状态%></h2>
+    <div class="cbi-section">
+        <p>
+            <%:容器状态%>: <span id="status" class="label label-danger"><%:Loading...%></span>
+        </p>
+        <div class="btn-group">
+            <button id="start-btn" class="btn btn-success" onclick="doAction('start')"><%:启动%></button>
+            <button id="stop-btn" class="btn btn-danger" onclick="doAction('stop')"><%:停止%></button>
+            <button id="restart-btn" class="btn btn-warning" onclick="doAction('restart')"><%:重启%></button>
+        </div>
+        
+        <!-- 快捷跳转区域 -->
+        <div id="jump-section" style="margin-top:15px; display:none;">
+            <div class="alert alert-info">
+                <strong><%:快捷访问%>：</strong>
+                <a id="jump-url" href="#" target="_blank" class="text-primary"></a>
+                <button class="btn btn-xs btn-default" onclick="refreshJumpUrl()"><%:刷新%></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="cbi-section" style="margin-top:20px;">
+        <h3><%:容器日志%> (<%:最后100行%>)</h3>
+        <pre id="logs" style="height:400px; overflow:auto; background:#f5f5f5; padding:10px;"><%:加载中...%></pre>
+        <button class="btn btn-default" onclick="refreshLogs()"><%:手动刷新%></button>
+    </div>
+</div>
+<%+footer%>

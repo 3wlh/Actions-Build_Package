@@ -1,0 +1,88 @@
+#!/bin/sh /etc/rc.common
+
+START=95
+STOP=15
+
+# 加载配置
+. /lib/functions.sh
+config_load napcat
+
+# 读取配置项
+get_config() {
+    local cfg=$1
+    local opt=$2
+    local def=$3
+    config_get val "$cfg" "$opt" "$def"
+    echo "$val"
+}
+
+start() {
+    # 读取基础配置
+    local enable=$(get_config main enable "0")
+    if [ "$enable" != "1" ]; then
+        echo "NapCat 服务已禁用，跳过启动"
+        return 1
+    fi
+    
+    echo "NapCat 服务启动" >/root/123456.txt
+    local image=$(get_config main image "docker.cnb.cool/3wlh/docker-sync/mlikiowa-napcat-docker")
+    local container_name=$(get_config main container_name "napcat")
+    local network_mode=$(get_config main network_mode "bridge")
+    local main_port=$(get_config main main_port "3000")
+    local api_port=$(get_config main api_port "3001")
+    local ws_port=$(get_config main ws_port "3002")
+    
+    # 从独立的 directory 段读取目录配置
+    local data_dir=$(get_config directory data_dir "/etc/napcat/data")
+    local config_dir=$(get_config directory config_dir "/etc/napcat/config")
+    
+    # 读取高级配置（仅环境变量）
+    local env=$(get_config advanced env "")
+
+    # 创建目录
+    mkdir -p $data_dir
+    mkdir -p $config_dir
+
+    # 停止旧容器
+    docker stop $container_name >/dev/null 2>&1
+    docker rm $container_name >/dev/null 2>&1
+
+    # 构建启动参数
+    local run_cmd="docker run -d --name $container_name --network $network_mode"
+    # 自动启动（仅启用时配置）
+    run_cmd="$run_cmd --restart unless-stopped"
+    
+    # 端口映射（仅桥接模式）
+    if [ "$network_mode" = "bridge" ]; then
+        run_cmd="$run_cmd -p $main_port:$main_port -p $api_port:$api_port -p $ws_port:$ws_port"
+    fi
+    
+    # 目录映射
+    run_cmd="$run_cmd -v $data_dir:/app/.config/QQ -v $config_dir:/app/napcat/config"
+    
+    # 环境变量（ash 兼容修复）
+    if [ -n "$env" ]; then
+        echo "$env" | IFS=',' read -ra envs
+        for e in "${envs[@]}"; do
+            run_cmd="$run_cmd -e $e"
+        done
+    fi
+    
+    # 镜像名称
+    run_cmd="$run_cmd $image"
+
+    # 启动容器
+    echo "启动命令：$run_cmd" >>/root/123456.txt
+    $run_cmd
+}
+
+stop() {
+    local container_name=$(get_config main container_name "napcat")
+    docker stop $container_name >/dev/null 2>&1
+    docker rm $container_name >/dev/null 2>&1
+}
+
+restart() {
+    stop
+    start
+}
