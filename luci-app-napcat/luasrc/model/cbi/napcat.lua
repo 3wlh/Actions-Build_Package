@@ -2,14 +2,35 @@
 local i18n = require "luci.i18n"
 local _ = i18n.translate
 
--- 导入 CBI 核心模块
+-- 导入核心模块（新增 sys 模块用于执行系统命令）
 local m, s, o
 local uci = require("luci.model.uci").cursor()
+local sys = require("luci.sys")
 
 -- 初始化 Map（指定翻译域）
 m = Map("napcat", _("NapCat QQ Bot 配置"), 
     _("基于 Docker 的 NapCat QQ 机器人配置，需提前安装 Docker 环境"))
-m:chain("luci")  -- 关联 LuCI 配置域，确保翻译生效
+m:chain("luci")
+
+-- 配置保存后触发服务启停（核心新增）
+function m.on_commit(map)
+    local enable = uci:get("napcat", "main", "enable") or "0"
+    local autostart = uci:get("napcat", "main", "autostart") or "0"
+    
+    -- 根据 enable 开关控制服务启停
+    if enable == "1" then
+        sys.exec("/etc/init.d/napcat start >/dev/null 2>&1")
+        -- 根据 autostart 开关控制开机自启
+        if autostart == "1" then
+            sys.exec("/etc/init.d/napcat enable >/dev/null 2>&1")
+        else
+            sys.exec("/etc/init.d/napcat disable >/dev/null 2>&1")
+        end
+    else
+        sys.exec("/etc/init.d/napcat stop >/dev/null 2>&1")
+        sys.exec("/etc/init.d/napcat disable >/dev/null 2>&1")
+    end
+end
 
 -- 基本配置段
 s = m:section(TypedSection, "main", _("基本配置"))
@@ -27,10 +48,13 @@ o = s:option(Value, "container_name", _("容器名称"))
 o.default = "napcat"
 o.rmempty = false
 
--- 独立启动开关
-o = s:option(Flag, "enable", _("启用 NapCat 服务"), _("关闭后将停止容器且开机不启动"))
+-- 独立启动开关（关联到 init.d 脚本）
+o = s:option(Flag, "enable", _("启用 NapCat 服务"), _("关闭后将停止容器且禁用开机自启"))
 o.default = "1"
 o.rmempty = false
+-- 显示当前服务状态（新增）
+o.description = o.description .. "<br/><strong>" .. _("当前状态") .. ":</strong> " .. 
+    (sys.call("/etc/init.d/napcat status >/dev/null 2>&1") == 0 and _("运行中") or _("已停止"))
 
 -- 3个端口变量
 o = s:option(Value, "main_port", _("主服务端口"), _("NapCat 核心服务端口"))
