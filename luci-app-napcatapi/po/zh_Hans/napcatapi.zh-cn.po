@@ -27,6 +27,8 @@ msgid "Open Web Interface"
 msgstr "打开 Web 界面"
 msgid "Open Web log"
 msgstr "打开 Web 日志"
+msgid "Open Web napcat"
+msgstr "打开 napcat 设置"
 
 # 配置项
 msgid "Basic Settings"

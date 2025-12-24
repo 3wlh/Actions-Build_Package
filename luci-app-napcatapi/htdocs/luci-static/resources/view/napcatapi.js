@@ -53,7 +53,11 @@ function renderStatus(isRunning, port) {
             '&#160;<a class="btn cbi-button" href="http://%s:%s/log" target="_blank" rel="noreferrer noopener">%s</a>',
             window.location.hostname, port, _('Open Web log')
         );
-        renderHTML = spanTemp.format('green', _('NapCat API'), _('RUNNING')) + buttonInterface + buttonLog;
+        const buttonNapcat = String.format(
+            '&#160;<a class="btn cbi-button" href="http://%s:%s/napcat" target="_blank" rel="noreferrer noopener">%s</a>',
+            window.location.hostname, port, _('Open Web napcat')
+        );
+        renderHTML = spanTemp.format('green', _('NapCat API'), _('RUNNING')) + buttonInterface + buttonLog + buttonNapcat;
     } else {
         renderHTML = spanTemp.format('red', _('NapCat API'), _('NOT RUNNING'));
     }
