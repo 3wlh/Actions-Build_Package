@@ -189,7 +189,7 @@ return view.extend({
         return m.render();
     },
 
-    // 保存配置时，自动携带token（确保修改其他配置时token不丢失）
+    // 保存配置时，自动携带token
     save: function(section_id, formvalue) {
         // 保留原有token值
         const token = uci.get('napcatapi', 'config', 'token') || generateRandomToken();
