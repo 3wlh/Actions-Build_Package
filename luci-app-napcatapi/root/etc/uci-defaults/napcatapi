@@ -1,0 +1,18 @@
+#!/bin/sh
+# UCITrack 配置脚本
+[ -f "/etc/config/ucitrack" ] &&{
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@napcatapi[-1]
+	add ucitrack napcatapi
+	set ucitrack.@napcatapi[-1].init=napcatapi
+	set ucitrack.@napcatapi[-1].config=napcatapi
+	commit ucitrack
+EOF
+}
+chmod +x /etc/init.d/napcatapi >/dev/null 2>&1
+
+rm -rf /tmp/luci-* /tmp/rpcd/*
+
+# 重启 UCITrack 服务
+/etc/init.d/ucitrack restart >/dev/null 2>&1
+exit 0
