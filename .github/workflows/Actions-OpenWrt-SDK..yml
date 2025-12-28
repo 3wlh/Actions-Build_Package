@@ -28,14 +28,12 @@ on:
         description: |
           选择编译插件
         required: false
-        default: "all"
         type: string
         
       package:
         description: |
           选择编译插件
         required: false
-        default: "all"
         type: string
 
           
