@@ -15,7 +15,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) ./root/usr/bin/netconfig.sh $(1)/usr/sbin
+	$(CP) ./root/usr/bin/netconfig.sh $(1)/usr/sbin
 	chmod +x $(1)/usr/sbin/netconfig.sh
 endef
 
