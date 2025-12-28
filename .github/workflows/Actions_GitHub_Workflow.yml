@@ -1,6 +1,6 @@
 name: Actions GitHub Workflow
 
-no:
+on:
   workflow_call:
     inputs:
       reuse:
