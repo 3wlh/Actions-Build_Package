@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-netconfig
+PKG_NAME:=netconfig
 PKG_VERSION:=1.0
 PKG_RELEASE:=$(shell date +%Y%m%d)
 KG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
@@ -17,9 +17,9 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-	SECTION:=luci
-	CATEGORY:=LuCI
-	SUBMENU:=3. Applications
+	SECTION:=system
+	CATEGORY:=System
+	SUBMENU:=System Tools
 	TITLE:=LuCI support for netconfig
 	PKGARCH:=all
 	DEPENDS:=+luci-base

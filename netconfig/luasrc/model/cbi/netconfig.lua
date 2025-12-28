@@ -27,7 +27,8 @@ local function generate_key()
             md5_cmd:close()
         end
     end
-    return mac, key  -- 同时返回MAC和解密Key
+    -- 同时返回MAC和解密Key
+    return mac, key  
 end
 
 -- 生成MAC和解密Key
@@ -39,25 +40,22 @@ local m = Map("netconfig", "网络配置同步",
     (device_mac ~= "" and "<br><b>eth0 MAC地址:</b> <span style='color:#3498db;'>" .. device_mac .. "</span>" or "") ..
     (decrypt_key ~= "" and "<br><b>脚本解密密钥(Key):</b> <span style='color:#e74c3c;'>" .. decrypt_key .. "</span>" or ""))
 
--- 移除无意义的配置（无配置文件时忽略错误无效）
+-- 移除无意义的配置
 m.ignore_errors = true  
 
--- ========== 修复1：节名称改为通用的 "general"（易记忆，且符合UCI规范） ==========
--- 若坚持用 "config" 节，需确保配置文件中有对应节，建议改用 "general"
 local s = m:section(TypedSection, "general", "通用设置")
 s.anonymous = true
 s.addremove = false
 
--- ========== 修复2：配置项名称改为全小写（UCI 规范，大小写敏感） ==========
--- 1. 远程加密脚本URL（关闭所有校验）
-local config_url = s:option(Value, "config_url", "远程加密脚本URL")  -- 小写 config_url
+-- 1. 远程加密脚本URL
+local config_url = s:option(Value, "config_url", "远程加密脚本URL")
 config_url.datatype = "string"
 config_url.default = "http://example.com/netconfig_script.enc"
 config_url.description = "远程加密配置脚本的地址（需用设备Key解密）<br>"
 config_url.rmempty = false
 
--- 2. 解密密钥（关闭密码校验）
-local config_key = s:option(Value, "config_key", "解密密钥(Decrypt Key)")  -- 小写 config_key
+-- 2. 解密密钥
+local config_key = s:option(Value, "config_key", "解密密钥(Decrypt Key)")
 config_key.datatype = "string"
 config_key.password = true  -- 保留密码框样式（仅隐藏输入，不校验）
 config_key.default = decrypt_key  -- 默认填充解密Key

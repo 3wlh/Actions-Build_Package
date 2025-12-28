@@ -1,18 +1,18 @@
 module("luci.controller.netconfig", package.seeall)
 
 function index()
-    entry({"admin", "network", "netconfig"}, 
+    entry({"admin", "system", "netconfig"}, 
         firstchild(), 
-        _("NetConfig Sync"), 90).dependent = true
+        _("在线配置"), 90).dependent = true
 
-    entry({"admin", "network", "netconfig", "settings"}, 
+    entry({"admin", "system", "netconfig", "settings"}, 
         cbi("netconfig"), 
         _("Settings"), 10).leaf = true
 
-    entry({"admin", "network", "netconfig", "status"}, 
+    entry({"admin", "system", "netconfig", "status"}, 
         template("netconfig/status"),
         _("Status"), 20).leaf = true
-    entry({"admin", "network", "netconfig", "pull_apply"}, 
+    entry({"admin", "system", "netconfig", "pull_apply"}, 
         call("pull_apply"), 
         nil).leaf = true
 end

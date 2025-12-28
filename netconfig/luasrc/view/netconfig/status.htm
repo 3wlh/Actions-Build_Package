@@ -1,5 +1,5 @@
 <%+header%>
-<h2>网络配置同步 - 状态</h2>
+<h2>网络配置 - 状态</h2>
 
 <div class="cbi-map">
     <div class="cbi-section">
@@ -35,7 +35,7 @@ document.getElementById('pull-apply-btn').onclick = function() {
     showOutput('=== 开始执行配置同步 ===');
 
     // 调用正确的路由：pull_apply（绑定 action_apply）
-    fetch('<%=luci.dispatcher.build_url("admin/network/netconfig_sync/pull_apply")%>')
+    fetch('<%=luci.dispatcher.build_url("admin/system/netconfig/pull_apply")%>')
         .then(res => res.json())
         .then(data => {
             showOutput('\n--- 执行结果 ---');
