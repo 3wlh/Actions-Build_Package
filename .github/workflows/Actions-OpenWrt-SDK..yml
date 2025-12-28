@@ -107,7 +107,7 @@ jobs:
 
       - name: Build Immortalwrt Packages
         if: inputs.sdk == 'Immortalwrt'
-        uses: immortalwrt/gh-action-sdk@master
+        uses: immortalwrt/gh-action-sdk@main
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
           FEEDNAME: packages_ci
