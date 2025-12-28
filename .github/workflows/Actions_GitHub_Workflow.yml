@@ -1,159 +1,38 @@
-name: Actions 
-on:
-  #schedule:
-    #- cron: "0 16 * * 0"
+name: Actions GitHub Workflow
+
+no:
   workflow_call:
     inputs:
-      cache:
-        description: |
-          是否清理缓存?
+      reuse:
         required: false
-        default: false
         type: boolean
-      
-      feeds:
-        description: |
-          是否禁用feeds?
-        required: false
-        default: false
-        type: boolean  
-      
-      out:
-        description: |
-          是否详细输出?
-        required: false
-        default: true
-        type: boolean
-      
-      SDK:
-        description: |
-          选择编译插件
-        required: false
-        default: "all"
-        type: choice
-        options:
-          - Openwrt
-          - Immortalwrt
-          
-      package:
-        description: |
-          选择编译插件
-        required: false
-        default: "all"
-        type: choice
-        options:
-          - all
-           
+        default: false  
+  workflow_dispatch:
 
 jobs:
-  jod_initial:
-    name: Actions Build ${{ inputs.package }}
+  jod_del:
     runs-on: ubuntu-latest
-    outputs:
-      time: ${{steps.output_time.outputs.time}}
-    steps: 
-      - name: output Time
-        id: output_time
-        run: |
-          sudo timedatectl set-timezone "Asia/Shanghai"
-          echo "time=$(date "+%Y.%m.%d_%H%M%S")" >> $GITHUB_OUTPUT
-          
-      - name: Delete GitHub Release
-        uses: dev-drprasad/delete-tag-and-release@master
-        with:
-          tag_name: GitHub-Actions_${{ inputs.package }}
-          delete_release: true
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Cleanup GitHub Cache
-        if: (inputs.cache == true)
-        run: |
-          gh cache delete --all --repo 3wlh/Actions-Build_Package
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-  jobs_build:
-    name: Build ${{ matrix.arch }}-${{ matrix.sdk }}
-    needs: jod_initial
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        arch:
-          - aarch64_generic
-          - x86_64
-        sdk:
-          - openwrt-24.10
-          #- SNAPSHOT
-    env:
-      Time: ${{ needs.jod_initial.outputs.time }}
-      GZ: ${{ inputs.package }}-${{ matrix.sdk }}-${{ matrix.arch }}_${{ needs.jod_initial.outputs.time }}.tar.gz
+    permissions:
+      actions: write
+      contents: read
     steps:
-      - uses: actions/checkout@v3
+      - name: Call Delete workflow
+        if: (inputs.reuse == true)
+        uses: Mattraks/delete-workflow-runs@main
         with:
-          fetch-depth: 0
-      
-      - name: Set Variable
-        run: |
-          if [ "${{ inputs.out }}" == "true" ]; then
-            echo "Buildout=sc" >> $GITHUB_ENV
-          fi
-          if [[ "${{ inputs.feeds }}" == "true"  || "${{ inputs.package }}" =~ "static" ]]; then
-            echo "feeds=true" >> $GITHUB_ENV
-          fi
-          
-      - name: Build Packages
-        if: inputs.SDK == 'Openwrt'
-        uses: openwrt/gh-action-sdk@main
-        env:
-          ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
-          FEEDNAME: packages_ci
-          PACKAGES: ${{ inputs.package }}
-          NO_DEFAULT_FEEDS: ${{ env.feeds }}
-          NO_REFRESH_CHECK: true
-          V: ${{ env.Buildout }}
-          
-      - name: Build Packages
-        if: inputs.SDK == 'Immortalwrt'
-        uses: immortalwrt/gh-action-sdk@main
-        env:
-          ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
-          FEEDNAME: packages_ci
-          PACKAGES: ${{ inputs.package }}
-          NO_DEFAULT_FEEDS: ${{ env.feeds }}
-          NO_REFRESH_CHECK: true
-          V: ${{ env.Buildout }}
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.arch }}-${{ matrix.sdk }}
-          path: |
-            bin/packages/${{ matrix.arch }}/packages_ci/*.apk
-            bin/packages/riscv64_generic/packages_ci/*.apk
-            bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
-
-      - name: Create compress files
-        id: files
-        continue-on-error: true
-        run: |
-          if [ "${{ matrix.arch }}" = "riscv64_riscv64" ] && [ "${{ matrix.sdk }}" = "SNAPSHOT" ]; then
-            tar -zcvf ${{ env.GZ }} -C bin/packages/riscv64_generic/ packages_ci
-          else
-            tar -zcvf ${{ env.GZ }} -C bin/packages/${{ matrix.arch }}/ packages_ci
-          fi 
-          echo "status=success" >> $GITHUB_OUTPUT
-          
-      - name: Upload ${{ inputs.branch }} as release assets
-        if: steps.files.outputs.status == 'success'
-        uses: ncipollo/release-action@main
-        with:
-          tag: GitHub-Actions_${{ inputs.package }}
-          name: ${{ inputs.package }}
-          artifacts: ${{ env.GZ }}
-          body: "## 编译时间：`${{ env.Time }}`"
-          allowUpdates: true
-          removeArtifacts: false
-          replacesArtifacts: true
-          makeLatest: true
           token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          delete_workflow_pattern: ipkg|Workflow|pages
+          #retain_days: 1
+          keep_minimum_runs: 0
+          use_daily_retention: true
+          
+      - name: Delete workflow
+        if: (inputs.reuse == false)
+        uses: Mattraks/delete-workflow-runs@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          retain_days: 1
+          keep_minimum_runs: 5
+          use_daily_retention: true
