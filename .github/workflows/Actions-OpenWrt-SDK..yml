@@ -31,9 +31,8 @@ on:
         default: "all"
         type: choice
         options:
-          - Openwrt
-          - Immortalwrt
-      
+          - all
+          
       package:
         description: |
           选择编译插件
