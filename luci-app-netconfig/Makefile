@@ -11,6 +11,8 @@ LUCI_PKGARCH:=all                          # 架构无关
 LUCI_DEPENDS:=+luci-base			     # 依赖
 LUCI_DESCRIPTION:=A demo for LuCI app dev  # 描述
 
+include $(INCLUDE_DIR)/package.mk
+
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) ./root/usr/bin/netconfig.sh $(1)/usr/sbin
