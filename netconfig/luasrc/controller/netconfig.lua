@@ -6,7 +6,7 @@ function index()
         _("在线配置"), 90).dependent = true
 
     entry({"admin", "system", "netconfig", "settings"}, 
-        cbi("netconfig"), 
+        cbi("netconfig/netconfig"), 
         _("Settings"), 10).leaf = true
 
     entry({"admin", "system", "netconfig", "status"}, 

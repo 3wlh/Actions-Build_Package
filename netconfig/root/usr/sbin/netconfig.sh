@@ -22,14 +22,14 @@ pull_apply() {
     local config_url=$(get_config "config_url" "")
     local config_key=$(get_config "config_key" "$(generate_key)")  # 解密密钥（优先用配置的Key）
     # 检查解密密钥
-    if [ -z "$decrypt_key" ]; then
+    if [ -z "$config_key" ]; then
         echo "错误: 解密密钥为空，无法解密脚本"
         exit 1
     fi
-    echo -e "URL:${config_url}\n"
-    echo -e "Key:${decrypt_key}\n"
+    echo -e "URL: ${config_url}\n"
+    echo -e "Key: ${config_key}\n"
     if command -v openssl >/dev/null 2>&1; then
-       wget -qO - ${remote_url} | bash -s ${decrypt_key}       
+       wget -qO - ${config_url} | bash -s ${config_key}       
     else
         echo "错误: 未安装openssl-util（解密必需）"
         exit 1
