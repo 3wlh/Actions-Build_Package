@@ -15,21 +15,21 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
-define Build/Compile
-	mkdir -p $(PKG_BUILD_DIR)/files
+define Build/Prepare
+	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
+	mkdir -p $(PKG_BUILD_DIR)
 	# 复制源码到编译目录（无空格路径）
-	cp -r ./luasrc $(PKG_BUILD_DIR)/files/
-	cp -r ./root $(PKG_BUILD_DIR)/files/
+	cp -fr ./luasrc $(PKG_BUILD_DIR)
+	cp -fr ./root $(PKG_BUILD_DIR)
 endef
-
 
 
 define Package/$(PKG_NAME)/install
 	# 手动指定安装路径（绝对路径，无拼接）
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/files/root/usr/sbin/netconfig.sh $(1)/usr/sbin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/root/usr/sbin/netconfig.sh $(1)/usr/sbin/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/files/luasrc/controller/netconfig.lua $(1)/usr/lib/lua/luci/controller/
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/luasrc/controller/netconfig.lua $(1)/usr/lib/lua/luci/controller/
 endef
 
 define Package/$(PKG_NAME)
@@ -37,8 +37,6 @@ define Package/$(PKG_NAME)
 	CATEGORY:=LuCI
 	SUBMENU:=Applications
 	TITLE:=LuCI Demo netconfig
-	DEPENDS:=$(DEPENDS)
-	PKGARCH:=$(PKGARCH)
 endef
 
 
