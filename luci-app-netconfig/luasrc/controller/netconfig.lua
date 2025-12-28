@@ -18,7 +18,7 @@ function index()
 end
 
 function pull_apply()
-    local cmd = "/usr/bin/netconfig.sh pull_apply 2>&1"
+    local cmd = "/usr/sbin/netconfig.sh pull_apply 2>&1"
     local handle = io.popen(cmd)
     local result = handle:read("*a")
     handle:close()
