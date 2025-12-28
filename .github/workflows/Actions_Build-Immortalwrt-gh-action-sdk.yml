@@ -59,7 +59,7 @@ on:
 jobs：
   jod_workflow: 
     needs: jod_feed
-    uses: ./.github/workflows/Actions-OpenWrt-SDK..yml
+    uses: ./.github/workflows/Actions-OpenWrt-SDK.yml
     secrets: inherit
     with:
       cache: ${{ inputs.cache }}
