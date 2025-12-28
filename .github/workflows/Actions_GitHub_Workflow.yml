@@ -1,4 +1,4 @@
-name: Actions GitHub Workflow
+name: Actions 
 on:
   #schedule:
     #- cron: "0 16 * * 0"
@@ -42,7 +42,8 @@ on:
         default: "all"
         type: choice
         options:
-          - all    
+          - all
+           
 
 jobs:
   jod_initial:
