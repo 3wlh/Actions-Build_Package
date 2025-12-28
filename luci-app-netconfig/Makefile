@@ -26,12 +26,10 @@ endef
 
 define Package/$(PKG_NAME)/install
 	# 手动指定安装路径（绝对路径，无拼接）
-	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/root/usr/sbin/netconfig.sh $(1)/usr/sbin/netconfig.sh
-	chmod -R 755 $(1)/usr/sbin/netconfig.sh
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/luasrc/controller/netconfig.lua $(1)/usr/lib/lua/luci/controller/netconfig.lua
-	chmod -R 755 $(1)/usr/sbin/netconfig.sh
+	$(INSTALL_DIR) -m755 $(1)/usr/sbin
+	$(INSTALL_BIN) -m755 $(PKG_BUILD_DIR)/root/usr/sbin/netconfig.sh $(1)/usr/sbin/netconfig.sh
+	$(INSTALL_DIR) -m755 $(1)/usr/lib/lua/luci/controller
+	$(INSTALL_DATA) -m644 $(PKG_BUILD_DIR)/luasrc/controller/netconfig.lua $(1)/usr/lib/lua/luci/controller/netconfig.lua
 endef
 
 define Package/$(PKG_NAME)
