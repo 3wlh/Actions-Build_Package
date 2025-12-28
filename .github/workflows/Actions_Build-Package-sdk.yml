@@ -1,4 +1,4 @@
-name: Actions Build immortalwrt/gh-action-sdk
+name: Actions Build Package SDK
 
 on:
   repository_dispatch:
