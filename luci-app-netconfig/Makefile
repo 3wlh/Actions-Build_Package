@@ -17,4 +17,6 @@ define Package/$(PKG_NAME)/install
 	chmod +x $(1)/usr/sbin/netconfig.sh
 endef
 
-include $(TOPDIR)/feeds/luci/luci.mk
+# include $(TOPDIR)/feeds/luci/luci.mk
+
+$(eval $(call BuildPackage,$(PKG_NAME)))
