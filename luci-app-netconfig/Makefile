@@ -8,26 +8,8 @@ KG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 
 LUCI_TITLE:=LuCI Demo netconfig          # 应用名称
 LUCI_PKGARCH:=all                          # 架构无关
-# LUCI_DEPENDS:=+luci-base			     # 依赖
+LUCI_DEPENDS:=+luci-base			     # 依赖
 LUCI_DESCRIPTION:=A demo for LuCI app dev  # 描述
-
-include $(INCLUDE_DIR)/package.mk
-
-define Package/$(PKG_NAME)
-  SECTION:=luci
-  CATEGORY:=LuCI
-  SUBMENU:=3. Applications
-  TITLE:=$(LUCI_TITLE)
-  PKGARCH:=$(LUCI_PKGARCH)
-  DEPENDS:=+luci-base
-  MAINTAINER:=$(PKG_MAINTAINER)
-endef
-
-define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/usr/sbin
-	$(CP) ./root/usr/bin/netconfig.sh $(1)/usr/sbin
-	chmod +x $(1)/usr/sbin/netconfig.sh
-endef
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
