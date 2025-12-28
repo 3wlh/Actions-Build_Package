@@ -13,7 +13,7 @@ LUCI_DESCRIPTION:=A demo for LuCI app dev  # 描述
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
-include $(TOPDIR)/feeds/luci/luci.mk
+include $(INCLUDE_DIR)/package.mk
 
 define Build/Prepare
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
@@ -27,16 +27,16 @@ endef
 
 define Package/$(PKG_NAME)/install
 	# 手动指定安装路径（绝对路径，无拼接）
-	$(INSTALL_DIR) -m755 $(1)/usr/sbin
-	$(INSTALL_BIN) -m755 $(PKG_BUILD_DIR)/root/usr/sbin/netconfig.sh $(1)/usr/sbin/netconfig.sh
-	$(INSTALL_DIR) -m755 $(1)/usr/lib/lua/luci/controller
-	$(INSTALL_DATA) -m644 $(PKG_BUILD_DIR)/luasrc/controller/netconfig.lua $(1)/usr/lib/lua/luci/controller/netconfig.lua
+	$(INSTALL_DIR) $(1)/usr/sbin/
+	$(CP) $(PKG_BUILD_DIR)/root/* $(1)/
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci
+	$(CP) $(PKG_BUILD_DIR)/luasrc/* $(1)/usr/lib/lua/luci/
 endef
 
 define Package/$(PKG_NAME)
 	SECTION:=luci
 	CATEGORY:=LuCI
-	SUBMENU:=Applications
+	SUBMENU:=3. Applications
 	TITLE:=LuCI Demo netconfig
 endef
 
