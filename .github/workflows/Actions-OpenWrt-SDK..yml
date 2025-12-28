@@ -29,7 +29,7 @@ on:
           选择编译插件
         required: false
         default: "all"
-        type: choice
+        type: string
         options:
           - all
           
@@ -38,7 +38,7 @@ on:
           选择编译插件
         required: false
         default: "all"
-        type: choice
+        type: string
         options:
           - all
           
