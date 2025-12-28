@@ -30,17 +30,14 @@ on:
         required: false
         default: "all"
         type: string
-        options:
-          - all
-          
+        
       package:
         description: |
           选择编译插件
         required: false
         default: "all"
         type: string
-        options:
-          - all
+
           
 jobs:
   jod_initial:
