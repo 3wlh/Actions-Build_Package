@@ -56,9 +56,8 @@ on:
           - sunpanel
           - napcatapi-static
 
-jobs：
-  jod_workflow: 
-    needs: jod_feed
+jobs:
+  jod_workflow:
     uses: ./.github/workflows/Actions-OpenWrt-SDK.yml
     secrets: inherit
     with:
