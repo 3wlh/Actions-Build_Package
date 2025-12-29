@@ -76,6 +76,18 @@ define Package/$(PKG_NAME)/conffiles
 	/etc/config/napcatapi
 endef
 
+define Package/$(PKG_NAME)/postinst
+#!/bin/sh
+	rm -rf /tmp/luci-* /tmp/rpcd/*
+	# 重启 UCITrack 服务
+	/etc/init.d/ucitrack restart >/dev/null 2>&1
+	exit 0
+endef
+
+define Package/$(PKG_NAME)/postinst
+
+endef
+
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_FILE) $(1)/usr/sbin/$(BIN_NAME)
