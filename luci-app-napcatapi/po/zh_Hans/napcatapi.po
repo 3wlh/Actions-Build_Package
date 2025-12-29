@@ -1,8 +1,12 @@
 msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
-"Language: zh-cn\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Last-Translator: 3wlh <3wlh.lh@gmail.com>\n\n"
+"Language-Team: Chinese (Simplified)\n"
+"Language: zh-Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 # 页面标题
 msgid "NapCat API"
