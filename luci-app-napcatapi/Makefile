@@ -47,14 +47,14 @@ define Build/Prepare
 	fi
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) root $(PKG_BUILD_DIR)
-	$(CP) po $(PKG_BUILD_DIR)
+	$(CP) -fr root $(PKG_BUILD_DIR)
+	$(CP) -fr po $(PKG_BUILD_DIR)
 	$(CP) -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
 	chmod -R 755 $(PKG_BUILD_DIR)
-	$(foreach po,$(wildcard $(PKG_BUILD_DIR)/po/zh-cn/*.po), \
+	$(foreach po,$(wildcard ${PKG_BUILD_DIR}/po/zh-cn/*.po), \
 		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
-	echo -e "\033[31mlmo：$(po)\033[0m"
-	ls $(PKG_BUILD_DIR)
+	echo -e "\033[31mlmo：${po})\033[0m"
+	ls $(PKG_BUILD_DIR)/po/zh-cn
 endef
 
 define Build/Compile
