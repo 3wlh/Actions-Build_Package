@@ -41,6 +41,7 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Prepare
+	rm -rf po2lmo
 	git clone https://github.com/openwrt-dev/po2lmo.git
 	make install po2lmo
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
