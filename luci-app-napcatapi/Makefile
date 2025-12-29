@@ -5,13 +5,71 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-napcatapi
+BIN_NAME:=napcatapi
 PKG_VERSION:=1.0.0
 PKG_RELEASE:=$(shell date +%Y%m%d)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 LUCI_TITLE:=LuCI app for napcatapi
-LUCI_DEPENDS:=+napcatapi-static
+# LUCI_DEPENDS:=+napcatapi-static
 LUCI_LANG:=zh-cn
 
-include $(TOPDIR)/feeds/luci/luci.mk
+ifeq ($(ARCH),aarch64)
+	PKG_ARCH:=arm64
+endif
+ifeq ($(ARCH),x86_64)
+	PKG_ARCH:=amd64
+endif
+
+PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION)
+PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NAME)/$(BIN_NAME)_$(PKG_ARCH)
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
+PKG_HASH:=skip
+
+include $(INCLUDE_DIR)/package.mk
+
+define Package/$(PKG_NAME)
+	SECTION:=luci
+	CATEGORY:=LuCI
+	SUBMENU:=Applications
+	TITLE:=$(PKG_NAME)
+	URL:=https://github.com/3wlh
+	DEPENDS:=@(aarch64||x86_64)
+endef
+
+define Package/$(PKG_NAME)/description
+	NapCat Robot call the API.
+endef
+
+define Build/Prepare
+	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
+	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
+		wget $(PKG_URL) -O $(DL_DIR)/$(PKG_FILE); \
+	fi
+	rm -rf $(PKG_BUILD_DIR)
+	mkdir -p $(PKG_BUILD_DIR)
+	chmod -R 755 ./luasrc ./root
+	$(CP) ./root $(PKG_BUILD_DIR)
+	$(CP) ./luasrc $(PKG_BUILD_DIR)
+	cp -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
+endef
+
+define Build/Compile
+	touch $(PKG_BUILD_DIR)/.built
+endef
+
+define Package/$(PKG_NAME)/conffiles
+	/etc/napcatapi/
+	/etc/config/napcatapi
+endef
+
+define Package/$(PKG_NAME)/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_FILE) $(1)/usr/sbin/$(BIN_NAME)
+	$(INSTALL_DIR) $(1)/usr/sbin/
+	$(CP) $(PKG_BUILD_DIR)/root/* $(1)/
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci
+	$(CP) $(PKG_BUILD_DIR)/luasrc/* $(1)/usr/lib/lua/luci/
+endef
 
 # call BuildPackage - OpenWrt buildroot signature
+$(eval $(call BuildPackage,$(PKG_NAME)))
