@@ -42,8 +42,8 @@ endef
 
 define Build/Prepare
 	git clone https://github.com/openwrt-dev/po2lmo.git && cd po2lmo
-	cd po2lmo && make clean && make && cd -
-	make -C ./ tools/po2lmo/compile V=s || true
+	cd po2lmo && make clean && make && make install && cd -
+	which po2lmo
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
 	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
 		wget $(PKG_URL) -O $(DL_DIR)/$(PKG_FILE); \
