@@ -51,13 +51,18 @@ define Build/Prepare
 	$(CP) -fr po $(PKG_BUILD_DIR)
 	$(CP) -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
 	chmod -R 755 $(PKG_BUILD_DIR)
+	
 	$(foreach po,$(wildcard ${PKG_BUILD_DIR}/po/zh-cn/*.po), \
 		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
-	echo -e "\033[31mlmo：${po})\033[0m"
+	echo -e "\033[31mlmo：${po}\033[0m"
 	ls $(PKG_BUILD_DIR)/po/zh-cn
 endef
 
 define Build/Compile
+	$(info PKG_BUILD_DIR下的PO文件：$(wildcard ${PKG_BUILD_DIR}/po/zh-cn/*.po))
+	$(foreach po,$(wildcard ${PKG_BUILD_DIR}/po/zh-cn/*.po), \
+		$(PO2LMO) $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po))); \
+	)
 	touch $(PKG_BUILD_DIR)/.built
 endef
 
