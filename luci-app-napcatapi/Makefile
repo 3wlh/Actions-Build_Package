@@ -40,17 +40,23 @@ define Package/$(PKG_NAME)/description
 	NapCat Robot call the API.
 endef
 
+define Build/Po2lmo
+    if [ ! -d "po2lmo" ]; then \
+        git clone https://github.com/openwrt-dev/po2lmo.git && cd po2lmo; \
+        make clean && make && sudo make install && cd - ;\
+    fi
+endef
+
 define Build/Prepare
-	git clone https://github.com/openwrt-dev/po2lmo.git && cd po2lmo
-	make clean && make && sudo make install && cd -
-	$(foreach po,$(wildcard ./po/zh-cn/*.po), \
-		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
+	$(call Build/Po2lmo)
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
 	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
 		wget $(PKG_URL) -O $(DL_DIR)/$(PKG_FILE); \
 	fi
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
+	$(foreach po,$(wildcard ./po/zh-cn/*.po), \
+		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
 	$(CP) -fr root $(PKG_BUILD_DIR)
 	#$(CP) -fr po $(PKG_BUILD_DIR)
 	$(CP) -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
