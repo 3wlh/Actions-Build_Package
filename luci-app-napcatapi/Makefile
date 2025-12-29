@@ -41,14 +41,13 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Prepare
-	rm -rf $(PKG_BUILD_DIR)
-	mkdir -p $(PKG_BUILD_DIR)
-	git clone https://github.com/openwrt-dev/po2lmo.git $(PKG_BUILD_DIR)
-	make -C $(PKG_BUILD_DIR) po2lmo/compile
+	make -C ./ tools/po2lmo/compile V=s || true
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
 	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
 		wget $(PKG_URL) -O $(DL_DIR)/$(PKG_FILE); \
 	fi
+	rm -rf $(PKG_BUILD_DIR)
+	mkdir -p $(PKG_BUILD_DIR)
 	$(CP) -fr root $(PKG_BUILD_DIR)
 	$(CP) -fr po $(PKG_BUILD_DIR)
 	$(CP) -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
