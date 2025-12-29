@@ -47,14 +47,9 @@ define Build/Prepare
 	fi
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
-	chmod -R 755 ./luasrc ./root
+	chmod -R 755 ./root
 	$(CP) ./root $(PKG_BUILD_DIR)
-	$(CP) ./luasrc $(PKG_BUILD_DIR)
 	cp -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
-endef
-
-define Build/Compile
-	touch $(PKG_BUILD_DIR)/.built
 endef
 
 define Package/$(PKG_NAME)/conffiles
@@ -62,13 +57,14 @@ define Package/$(PKG_NAME)/conffiles
 	/etc/config/napcatapi
 endef
 
+define Build/Compile
+	touch $(PKG_BUILD_DIR)/.built
+endef
+
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_FILE) $(1)/usr/sbin/$(BIN_NAME)
-	$(INSTALL_DIR) $(1)/usr/sbin/
 	$(CP) $(PKG_BUILD_DIR)/root/* $(1)/
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci
-	$(CP) $(PKG_BUILD_DIR)/luasrc/* $(1)/usr/lib/lua/luci/
 endef
 
 # call BuildPackage - OpenWrt buildroot signature
