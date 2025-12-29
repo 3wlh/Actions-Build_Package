@@ -53,7 +53,8 @@ define Build/Prepare
 	chmod -R 755 $(PKG_BUILD_DIR)
 	$(foreach po,$(wildcard $(PKG_BUILD_DIR)/po/zh-cn/*.po), \
 		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
-endef
+	echo -e "\033[31mlmo：$(po)\033[0m"
+	ls $(PKG_BUILD_DIR)
 
 define Package/$(PKG_NAME)/conffiles
 	/etc/napcatapi/
