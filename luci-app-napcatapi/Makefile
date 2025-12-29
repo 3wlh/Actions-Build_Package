@@ -55,14 +55,15 @@ define Build/Prepare
 		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
 	echo -e "\033[31mlmo：$(po)\033[0m"
 	ls $(PKG_BUILD_DIR)
-
-define Package/$(PKG_NAME)/conffiles
-	/etc/napcatapi/
-	/etc/config/napcatapi
 endef
 
 define Build/Compile
 	touch $(PKG_BUILD_DIR)/.built
+endef
+
+define Package/$(PKG_NAME)/conffiles
+	/etc/napcatapi/
+	/etc/config/napcatapi
 endef
 
 define Package/$(PKG_NAME)/install
@@ -72,6 +73,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/*.*.lmo $(1)/usr/lib/lua/luci/i18n/
 endef
+
 
 # call BuildPackage - OpenWrt buildroot signature
 $(eval $(call BuildPackage,$(PKG_NAME)))
