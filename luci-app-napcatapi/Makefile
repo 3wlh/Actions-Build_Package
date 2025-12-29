@@ -51,9 +51,7 @@ define Build/Prepare
 	$(CP) -fr po $(PKG_BUILD_DIR)
 	$(CP) -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
 	chmod -R 755 $(PKG_BUILD_DIR)
-	$(info PKG_BUILD_DIR下的PO文件：$(wildcard ${PKG_BUILD_DIR}/po/zh-cn/*.po))
-	$(foreach po,$(wildcard ${PKG_BUILD_DIR}/po/zh-cn/*.po), \
-		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
+	find "${PKG_BUILD_DIR}/po/zh-cn/" -name "*.po" -exec po2lmo {} "${PKG_BUILD_DIR}/napcatapi.zh-cn.lmo" \;
 	echo -e "\033[31mlmo：${po}\033[0m"
 	ls $(PKG_BUILD_DIR)/po/zh-cn
 	ls $(PKG_BUILD_DIR)
