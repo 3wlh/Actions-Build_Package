@@ -18,5 +18,5 @@ luci-app-argon-config luci-i18n-argon-config-zh-cn luci-theme-argon"
 Segmentation "${PACKAGES_PATH}" "https://istore.istoreos.com/repo/all/store/" \
 "taskd luci-lib-xterm luci-lib-taskd luci-app-store"
 Segmentation "${PACKAGES_PATH}" "https://downloads.openwrt.org/releases/24.10.4/packages/${ARCH}/packages/" \
-"docker"
+"docker_"
 
