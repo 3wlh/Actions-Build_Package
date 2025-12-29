@@ -15,7 +15,7 @@ on:
         description: |
           是否禁用feeds?
         required: false
-        default: false
+        default: true
         type: boolean  
       
       out:
