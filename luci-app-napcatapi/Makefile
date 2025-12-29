@@ -42,8 +42,8 @@ endef
 
 define Build/Prepare
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
-	$(foreach po,$(wildcard ${CURDIR}/po/zh-cn/*.po), \
-		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
+	#$(foreach po,$(wildcard ${CURDIR}/po/zh-cn/*.po), \
+		#po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
 	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
 		wget $(PKG_URL) -O $(DL_DIR)/$(PKG_FILE); \
 	fi
@@ -60,6 +60,7 @@ define Package/$(PKG_NAME)/conffiles
 endef
 
 define Build/Compile
+	$(call luci_compile_translations,zh-cn)
 	touch $(PKG_BUILD_DIR)/.built
 endef
 
