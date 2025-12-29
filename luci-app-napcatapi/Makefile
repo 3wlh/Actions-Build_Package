@@ -42,8 +42,9 @@ endef
 
 define Build/Prepare
 	git clone https://github.com/openwrt-dev/po2lmo.git && cd po2lmo
-	cd po2lmo && make clean && make && sudo make install && cd -
-	which po2lmo
+	make clean && make && sudo make install && cd -
+	$(foreach po,$(wildcard ./po/zh-cn/*.po), \
+		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
 	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
 		wget $(PKG_URL) -O $(DL_DIR)/$(PKG_FILE); \
@@ -51,12 +52,10 @@ define Build/Prepare
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
 	$(CP) -fr root $(PKG_BUILD_DIR)
-	$(CP) -fr po $(PKG_BUILD_DIR)
+	#$(CP) -fr po $(PKG_BUILD_DIR)
 	$(CP) -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
 	chmod -R 755 $(PKG_BUILD_DIR)
-	find "${PKG_BUILD_DIR}/po/zh-cn/" -name "*.po" -exec po2lmo {} "${PKG_BUILD_DIR}/napcatapi.zh-cn.lmo" \;
-	echo -e "\033[31mlmo：${po}\033[0m"
-	ls $(PKG_BUILD_DIR)/po/zh-cn
+	#find "${PKG_BUILD_DIR}/po/zh-cn/" -name "*.po" -exec po2lmo {} "${PKG_BUILD_DIR}/napcatapi.zh-cn.lmo" \;
 	ls $(PKG_BUILD_DIR)
 endef
 
