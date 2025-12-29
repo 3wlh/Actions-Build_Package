@@ -42,6 +42,8 @@ endef
 
 define Build/Prepare
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
+	$(foreach po,$(wildcard ${CURDIR}/po/zh-cn/*.po), \
+		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
 	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
 		wget $(PKG_URL) -O $(DL_DIR)/$(PKG_FILE); \
 	fi
@@ -65,6 +67,8 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_FILE) $(1)/usr/sbin/$(BIN_NAME)
 	$(CP) $(PKG_BUILD_DIR)/root/* $(1)/
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/*.*.lmo $(1)/usr/lib/lua/luci/i18n/
 endef
 
 # call BuildPackage - OpenWrt buildroot signature
