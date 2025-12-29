@@ -42,7 +42,7 @@ endef
 
 define Build/Prepare
 	git clone https://github.com/openwrt-dev/po2lmo.git && cd po2lmo
-	cd po2lmo && make clean && make && make install && cd -
+	cd po2lmo && make clean && make && sudo make install && cd -
 	which po2lmo
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
 	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
