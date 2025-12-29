@@ -35,7 +35,7 @@ end
 local device_mac, decrypt_key = generate_key()
 
 -- 全中文配置（无分栏 + 无校验）
-local m = Map("netconfig", "网络配置同步",
+local m = Map("runscript", "网络配置同步",
     "从远程服务器拉取SH配置脚本，使用设备Key解密后执行" .. 
     (device_mac ~= "" and "<br><b>MAC地址: </b> <span style='color:#3498db;'>" .. device_mac .. "</span>" or "") ..
     (decrypt_key ~= "" and "<br><b>密钥Key: </b> <span style='color:#e74c3c;'>" .. decrypt_key .. "</span>" or ""))
@@ -48,14 +48,14 @@ s.anonymous = true
 s.addremove = false
 
 -- 1. 远程加密脚本URL
-local config_url = s:option(Value, "config_url", "远程脚本URL")
+local config_url = s:option(Value, "script_url", "远程脚本URL")
 config_url.datatype = "string"
 config_url.default = "http://example.com/netconfig_script.sh"
 config_url.description = "远程加密配置脚本的地址（需用设备Key解密）<br>"
 config_url.rmempty = false
 
 -- 2. 解密密钥
-local config_key = s:option(Value, "config_key", "解密Key")
+local config_key = s:option(Value, "script_key", "解密Key")
 config_key.datatype = "string"
 config_key.password = true  -- 保留密码框样式（仅隐藏输入，不校验）
 config_key.default = decrypt_key  -- 默认填充解密Key

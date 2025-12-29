@@ -1,16 +1,9 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=netconfig
+PKG_NAME:=luci-app-runscript
 PKG_VERSION:=1.0
 PKG_RELEASE:=$(shell date +%Y%m%d)
 KG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
-
-ifeq ($(ARCH),aarch64)
-	PKG_ARCH:=arm64
-endif
-ifeq ($(ARCH),x86_64)
-	PKG_ARCH:=amd64
-endif
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
@@ -44,7 +37,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	# 手动指定安装路径（绝对路径，无拼接）
-	$(INSTALL_DIR) $(1)/usr/sbin/
+	$(INSTALL_DIR) $(1)/
 	$(CP) $(PKG_BUILD_DIR)/root/* $(1)/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci
 	$(CP) $(PKG_BUILD_DIR)/luasrc/* $(1)/usr/lib/lua/luci/

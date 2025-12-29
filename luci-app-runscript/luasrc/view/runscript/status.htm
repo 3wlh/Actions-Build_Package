@@ -1,0 +1,93 @@
+<%+header%>
+<h2>网络配置 - 状态</h2>
+
+<div class="cbi-map">
+    <div class="cbi-section">
+        <button id="exec-script-btn" class="cbi-button cbi-button-action">下载并运行配置脚本</button>
+        <br><br>
+        <div id="output-area" style="
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px;
+            height: 600px; 
+            width: 100%; 
+            box-sizing: border-box; 
+            overflow-y: auto; 
+            white-space: pre-wrap;
+            background: #f9f9f9;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        "></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+// 输出日志（带时间戳+自动滚动）
+function showOutput(text) {
+    const area = document.getElementById('output-area');
+    area.textContent += `[${new Date().toLocaleTimeString()}] ${text}\n`;
+    area.scrollTop = area.scrollHeight;
+}
+
+// 清空输出区域
+function clearOutput() {
+    document.getElementById('output-area').textContent = '';
+}
+
+// 通用请求方法（封装重复逻辑）
+async function requestLuciApi(action) {
+    const res = await fetch(`<%=luci.dispatcher.build_url("admin/system/runscript")%>/${action}`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (!res.ok) throw new Error(`请求失败 [${res.status}]：${res.statusText}`);
+    return await res.json();
+}
+
+// 核心逻辑：下载脚本 + 运行脚本
+document.getElementById('exec-script-btn').addEventListener('click', async function() {
+    const btn = this;
+    // 禁用按钮并更新状态文本
+    btn.disabled = true;
+    btn.textContent = '执行中...';
+    
+    clearOutput();
+    showOutput('=== 开始执行「下载+运行脚本」操作 ===');
+
+    try {
+        // ========== 第一步：下载脚本 ==========
+        showOutput('\n【步骤1/2】开始下载配置脚本...');
+        const downloadRes = await requestLuciApi('download_script');
+        if (downloadRes.error) {
+            throw new Error(`脚本下载失败：${downloadRes.error}`);
+        }
+        showOutput(`脚本下载成功：${downloadRes.output || '已获取最新脚本文件'}`);
+
+        // ========== 第二步：运行脚本 ==========
+        showOutput('\n【步骤2/2】开始运行配置脚本...');
+        const runRes = await requestLuciApi('run_script');
+        if (runRes.error) {
+            throw new Error(`脚本运行失败：${runRes.error}`);
+        }
+        showOutput(`脚本运行结果：${runRes.output || '脚本执行完成'}`);
+
+        // 全部完成
+        showOutput('\n=== 所有操作执行完成 ===');
+
+    } catch (err) {
+        // 任意步骤出错都终止并输出错误
+        showOutput(`\n=== 执行出错 ===`);
+        showOutput(`错误原因：${err.message}`);
+        showOutput('操作已终止，请排查问题后重试');
+    } finally {
+        // 恢复按钮状态
+        btn.disabled = false;
+        btn.textContent = '下载并运行配置脚本';
+    }
+});
+</script>
+
+<%+footer%>

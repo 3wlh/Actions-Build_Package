@@ -1,4 +1,0 @@
-
-config general
-    option config_url 'http://example.com/netconfig_script.sh'
-    option config_key ''
