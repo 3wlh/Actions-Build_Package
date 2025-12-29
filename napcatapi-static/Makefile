@@ -41,10 +41,11 @@ define Build/Prepare
 	fi
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
-	cp -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
+	$(CP) -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
 endef
 
 define Build/Compile
+	touch $(PKG_BUILD_DIR)/.built
 endef
 
 define Package/$(PKG_NAME)/conffiles
@@ -59,7 +60,6 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) ./files/napcatapi.init $(1)/etc/init.d/napcatapi
 	$(INSTALL_CONF) ./files/napcatapi.config $(1)/etc/config/napcatapi
 	$(INSTALL_CONF) ./files/config.yaml $(1)/etc/napcatapi/config.yaml
-	#$(CP) ./files/config.yaml $(1)/etc/napcatapi/
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
