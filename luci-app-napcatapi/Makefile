@@ -47,6 +47,11 @@ define Build/Po2lmo
     fi
 endef
 
+define Build/ZH-CN
+    $(foreach po,$(wildcard ./po/zh-cn/*.po), \
+		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
+endef
+
 define Build/Prepare
 	$(call Build/Po2lmo)
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
@@ -55,13 +60,10 @@ define Build/Prepare
 	fi
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
-	$(foreach po,$(wildcard ./po/zh-cn/*.po), \
-		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
+	$(call Build/ZH-CN)
 	$(CP) -fr root $(PKG_BUILD_DIR)
-	#$(CP) -fr po $(PKG_BUILD_DIR)
 	$(CP) -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
 	chmod -R 755 $(PKG_BUILD_DIR)
-	#find "${PKG_BUILD_DIR}/po/zh-cn/" -name "*.po" -exec po2lmo {} "${PKG_BUILD_DIR}/napcatapi.zh-cn.lmo" \;
 	ls $(PKG_BUILD_DIR)
 endef
 
