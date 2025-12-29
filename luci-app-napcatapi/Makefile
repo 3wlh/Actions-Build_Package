@@ -42,18 +42,21 @@ endef
 
 define Build/Prepare
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
-	$(foreach po,$(wildcard ./po/zh-cn/*.po), \
-		$(PO2LMO) $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
-	echo ${CURDIR}
-	echo $(po)
 	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
 		wget $(PKG_URL) -O $(DL_DIR)/$(PKG_FILE); \
 	fi
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
-	chmod -R 755 ./root
-	$(CP) ./root $(PKG_BUILD_DIR)
-	cp -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
+	$(CP) root $(PKG_BUILD_DIR)
+	$(CP) po $(PKG_BUILD_DIR)
+	$(CP) -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
+	chmod -R 755 $(PKG_BUILD_DIR)
+	
+	$(foreach po,$(wildcard $(PKG_BUILD_DIR)/po/zh-cn/*.po), \
+		$(PO2LMO) $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
+	echo ${PO2LMO}
+	echo ${CURDIR}
+	echo $(po)
 endef
 
 define Package/$(PKG_NAME)/conffiles
