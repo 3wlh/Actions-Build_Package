@@ -84,10 +84,6 @@ define Package/$(PKG_NAME)/postinst
 	exit 0
 endef
 
-define Package/$(PKG_NAME)/postinst
-
-endef
-
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_FILE) $(1)/usr/sbin/$(BIN_NAME)
