@@ -25,7 +25,7 @@ PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NA
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 PKG_HASH:=skip
 
-include $(TOPDIR)/feeds/luci/luci.mk
+include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
 	SECTION:=luci
