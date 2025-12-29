@@ -25,7 +25,7 @@ PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NA
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 PKG_HASH:=skip
 
-include $(INCLUDE_DIR)/package.mk
+include $(TOPDIR)/feeds/luci/luci.mk
 
 define Package/$(PKG_NAME)
 	SECTION:=luci
@@ -51,12 +51,6 @@ define Build/Prepare
 	$(CP) po $(PKG_BUILD_DIR)
 	$(CP) -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
 	chmod -R 755 $(PKG_BUILD_DIR)
-	
-	$(foreach po,$(wildcard $(PKG_BUILD_DIR)/po/zh-cn/*.po), \
-		$(PO2LMO) $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
-	echo ${PO2LMO}
-	echo ${CURDIR}
-	echo $(po)
 endef
 
 define Package/$(PKG_NAME)/conffiles
@@ -65,7 +59,6 @@ define Package/$(PKG_NAME)/conffiles
 endef
 
 define Build/Compile
-	#$(call luci_compile_translations,zh-cn)
 	touch $(PKG_BUILD_DIR)/.built
 endef
 
@@ -73,8 +66,6 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_FILE) $(1)/usr/sbin/$(BIN_NAME)
 	$(CP) $(PKG_BUILD_DIR)/root/* $(1)/
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/*.*.lmo $(1)/usr/lib/lua/luci/i18n/
 endef
 
 # call BuildPackage - OpenWrt buildroot signature
