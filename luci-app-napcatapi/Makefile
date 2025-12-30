@@ -42,11 +42,9 @@ endef
 
 define Compress/js
 	echo -e "\033[31mInstall:uglifyjs\033[0m"
-	sudo apt update >/dev/null&& sudo apt install -y npm >/dev/null
-	sudo npm install -g uglify-js >/dev/null
-	uglifyjs -v
+	sudo apt update && sudo apt install -y jsmin
 	cd root/www/luci-static/resources/view/napcatapi && \
-	uglifyjs napcatapi.js -o napcatapi.js -c -m --comments false && \
+	jsmin < napcatapi.js > napcatapi.min.js && mv napcatapi.min.js napcatapi.js && \
 	cd -
 endef
 
