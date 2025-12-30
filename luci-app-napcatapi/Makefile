@@ -29,11 +29,9 @@ include $(INCLUDE_DIR)/package.mk
 
 define find_js_compressor
 	echo -e "\033[31mfind_js_compressor\033[0m"
-	@which terser >/dev/null 2>&1 && echo "terser" || \
-	which uglifyjs >/dev/null 2>&1 && echo "uglify-js" || \
-	which fallback >/dev/null 2>&1 && echo "fallback" || \
-	which jsmin >/dev/null 2>&1 && echo "jsmin" || \
-	echo "错误"
+	sudo apt update && sudo apt install -y npm
+	sudo npm install -g uglify-js
+	uglifyjs -v
 endef
 
 define Package/$(PKG_NAME)
