@@ -1,0 +1,55 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# 页面标题
+msgid "NapCat API"
+msgstr "NapCat API"
+
+# 页面描述
+msgid "NapCat Robot call the API configuration page."
+msgstr "NapCat Robot API Call Configuration Page."
+
+# 服务状态
+msgid "Collecting data..."
+msgstr "Collecting data..."
+msgid "NapCat API: RUNNING"
+msgstr "NapCat API: RUNNING"
+msgid "NapCat API: NOT RUNNING"
+msgstr "NapCat API: NOT RUNNING"
+msgid "NapCat API：DETECT ERROR"
+msgstr "NapCat API: DETECT ERROR"
+
+# 按钮文本
+msgid "Open Web Interface"
+msgstr "Open Web Interface"
+msgid "Open Web log"
+msgstr "Open Web Log"
+
+# 配置项
+msgid "Basic Settings"
+msgstr "Basic Settings"
+msgid "Enable"
+msgstr "Enable"
+msgid "Port"
+msgstr "Port"
+msgid "NapCat API Web service port"
+msgstr "NapCat API Web Service Port"
+msgid "Config File Path"
+msgstr "Config File Path"
+msgid "NapCat API configuration file storage path"
+msgstr "NapCat API Configuration File Storage Path"
+msgid "Decrypt KEY"
+msgstr "Decrypt KEY"
+msgid "Decryption key for configuration file"
+msgstr "Decryption Key for Configuration File"
+msgid "Online Config URL"
+msgstr "Online Config URL"
+msgid "URL for online configuration pull"
+msgstr "URL for Online Configuration Pull"
+
+# 按钮（扩展）
+msgid "Restart Service"
+msgstr "Restart Service"

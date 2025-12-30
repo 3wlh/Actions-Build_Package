@@ -1,0 +1,20 @@
+{
+	"luci-app-napcatapi": {
+		"description": "Grant UCI access for luci-app-napcatapi",
+		"read": {
+			"uci": [ "napcatapi" ],
+			"ubus": {
+				"service": [ "list" ]
+			},
+			"file": {
+				"/usr/sbin/napcatapi": [ "exec" ],
+				"/*": [ "read" ]
+			}
+		},
+		"write": {
+			"file": {
+				"/*": [ "write" ]
+			}
+		}
+	}
+}

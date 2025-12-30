@@ -1,0 +1,108 @@
+<script type="text/javascript">
+// 自定义弹窗函数（保留增强版逻辑）
+function openCustomWindow(url, windowName, width = 800, height = 600) {
+    // 1. 入参校验
+    if (!url || !windowName) {
+        console.error('❌ URL和窗口名称为必填参数');
+        return null;
+    }
+    const validWidth = Math.max(300, typeof width === 'number' ? width : 800);
+    const validHeight = Math.max(200, typeof height === 'number' ? height : 600);
+
+    // 2. 计算居中位置（兼容任务栏）
+    const screenWidth = window.screen.availWidth;
+    const screenHeight = window.screen.availHeight;
+    const left = Math.max(0, (screenWidth - validWidth) / 2);
+    const top = Math.max(0, (screenHeight - validHeight) / 2);
+
+    // 3. 窗口特性配置
+    const features = [
+        `width=${validWidth}`,
+        `height=${validHeight}`,
+        `left=${left}`,
+        `top=${top}`,
+        'resizable=no',       // 禁止调整大小
+        'scrollbars=yes',     // 显示滚动条
+        'toolbar=no',         // 隐藏工具栏
+        'menubar=no',         // 隐藏菜单栏
+        'location=no',        // 隐藏地址栏（部分浏览器强制显示）
+        'status=no',          // 隐藏状态栏
+        'movable=no',         // 禁止拖动（仅Safari支持）
+        'directories=no'      // 兼容旧浏览器
+    ].join(',');
+
+    // 4. 打开窗口并处理拦截
+    try {
+        const newWindow = window.open(url, windowName, features);
+        if (!newWindow) {
+            alert('⚠️ 窗口打开失败，请允许浏览器弹窗权限后重试');
+            console.warn('🚫 弹窗被浏览器拦截，需开启弹窗权限');
+        }
+        return newWindow;
+    } catch (err) {
+        console.error('❌ 打开窗口出错：', err);
+        alert('⚠️ 打开窗口时发生错误，请稍后重试');
+        return null;
+    }
+}
+
+// 补全String.format函数
+if (!String.format) {
+    String.format = function(fmt) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        return fmt.replace(/%s/g, function() {
+            return args.shift() || '';
+        });
+    };
+}
+
+// 5秒轮询状态（修复所有问题）
+window.onload = function() {
+    // 修复接口路径：对应控制器的正确路径
+    XHR.poll(5, '<%=url("admin/services/napcatapi_status")%>', null, function(x, st) {
+        var tb = document.getElementById('status_id');
+        if (!tb) return;
+        // 兜底默认值（避免nil错误）
+        st = st || { running: false, port: 80, token: '' };
+        if (st.running) {
+            // 恢复URL拼接逻辑
+            const hostname = window.location.hostname;
+            const baseUrl = 'http://' + hostname + ':' + st.port;
+            const interfaceUrl = baseUrl + '?token=' + st.token;
+            const logUrl = baseUrl + '/log?token=' + st.token;
+            const napcatUrl = baseUrl + '/napcat?token=' + st.token;
+
+            // 状态文本（运行中-绿色）
+            const status = '<span style="color:green"><strong>' + _('NapCat API: RUNNING') + '</strong></span>';
+            
+            // 恢复按钮拼接逻辑
+            const buttonInterface = String.format(
+                '&#160;<a class="btn cbi-button" href="%s" target="_blank" rel="noreferrer noopener">%s</a>',
+                interfaceUrl, _('Open Web Interface')
+            );
+            const buttonLog = String.format(
+                '&#160;<a class="btn cbi-button" href="javascript:void(0);" onclick="openCustomWindow(\'%s\', \'logWindow\', 1200, 1050)">%s</a>',
+                logUrl, _('Open Web log')
+            );
+            const buttonNapcat = String.format(
+                '&#160;<a class="btn cbi-button" href="javascript:void(0);" onclick="openCustomWindow(\'%s\', \'napcatWindow\', 880, 980)">%s</a>',
+                napcatUrl, _('Open Web napcat')
+            );
+
+            // 更新状态（运行中显示按钮）
+            tb.innerHTML = status + buttonInterface + buttonLog + buttonNapcat;
+        } else {
+            // 服务未运行（红色提示）
+            tb.innerHTML = '<br/><em style="color:red"><strong>' + _('NapCat API: NOT RUNNING') + '</strong></em>';
+        }
+    });
+};
+</script>
+
+<!-- 状态显示区域（纯HTML，无模板语法） -->
+<fieldset class="cbi-section">
+    <legend><%:NapCat API Status%></legend>
+    <p id="status_id">
+        <em><%:Collecting data...%></em>
+    </p>
+</fieldset>
