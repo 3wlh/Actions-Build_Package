@@ -41,8 +41,10 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Compress/js
-	echo -e "\033[31mInstall:uglifyjs\033[0m"
-	sudo apt update && sudo apt install -y jsmin
+	echo -e "\033[31mInstall:jsmin\033[0m"
+	wget -O jsmin.c https://raw.githubusercontent.com/douglascrockford/JSMin/refs/heads/master/jsmin.c
+	sudo gcc -o /usr/local/bin/jsmin jsmin.c
+	jsmin --help
 	cd root/www/luci-static/resources/view/napcatapi && \
 	jsmin < napcatapi.js > napcatapi.min.js && mv napcatapi.min.js napcatapi.js && \
 	cd -
