@@ -29,7 +29,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define find_js_compressor
 	echo -e "\033[31mfind_js_compressor\033[0m"
-	sudo apt update && sudo apt install -y npm
+	sudo apt install -y npm
 	sudo npm install -g uglify-js
 	uglifyjs -v
 endef
