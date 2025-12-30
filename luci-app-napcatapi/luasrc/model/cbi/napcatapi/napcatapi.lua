@@ -59,20 +59,22 @@ local function init_config()
         section = uci:set("napcatapi", "config", "napcatapi")
     end
     -- 基础配置默认值
-    uci:set("napcatapi", section, "enabled", uci:get("napcatapi", section, "enabled") or 0)
-    uci:set("napcatapi", section, "port", uci:get("napcatapi", section, "port") or "5663")
-    uci:set("napcatapi", section, "path_config", uci:get("napcatapi", section, "path_config") or "/etc/napcatapi")
-    uci:set("napcatapi", section, "pwd_config", uci:get("napcatapi", section, "pwd_config") or generate_key())
-    uci:set("napcatapi", section, "online_config", uci:get("napcatapi", section, "online_config") or "http[s]://")
+    uci:set("napcatapi", "config", "enabled", uci:get("napcatapi", "config", "enabled") or 0)
+    uci:set("napcatapi", "config", "port", uci:get("napcatapi", "config", "port") or "5663")
+    uci:set("napcatapi", "config", "path_config", uci:get("napcatapi", "config", "path_config") or "/etc/napcatapi")
+    uci:set("napcatapi", "config", "pwd_config", uci:get("napcatapi", "config", "pwd_config") or generate_key())
+    uci:set("napcatapi", "config", "online_config", uci:get("napcatapi", "config", "online_config") or "http[s]://")
+    uci:set("napcatapi", "config", "token", uci:get("napcatapi", "config", "token") or generate_token())
     -- Token初始化
-    local token = uci:get("napcatapi", section, "token")
-    if not token or #token ~= 32 then
-        token = generate_token()
-        uci:set("napcatapi", section, "token", token)
-        pcall(function() uci:save("napcatapi") end)
-        pcall(function() uci:commit("napcatapi") end)
-    end
-    return section
+    -- local token = uci:get("napcatapi", "config", "token")
+    -- if not token or token ~= 32 then
+        -- token = generate_token()
+        -- uci:set("napcatapi", "config", "token", token)
+        -- pcall(function() uci:save("napcatapi") end)
+        -- pcall(function() uci:commit("napcatapi") end)
+    -- end
+
+    return
 end
 
 -- 初始化配置

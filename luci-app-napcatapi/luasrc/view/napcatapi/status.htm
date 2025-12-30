@@ -77,7 +77,7 @@ window.onload = function() {
             
             // 恢复按钮拼接逻辑
             const buttonInterface = String.format(
-                '&#160;<a class="btn cbi-button" href="%s" target="_blank" rel="noreferrer noopener">%s</a>',
+                '&#160;<a class="btn cbi-button" href="javascript:void(0);" onclick="openCustomWindow(\'%s\', \'logWindow\', 1200, 1100)">%s</a>',
                 interfaceUrl, _('Open Web Interface')
             );
             const buttonLog = String.format(
@@ -93,7 +93,7 @@ window.onload = function() {
             tb.innerHTML = status + buttonInterface + buttonLog + buttonNapcat;
         } else {
             // 服务未运行（红色提示）
-            tb.innerHTML = '<br/><em style="color:red"><strong>' + _('NapCat API: NOT RUNNING') + '</strong></em>';
+            tb.innerHTML = '<span style="color:red"><strong>' + _('NapCat API: NOT RUNNING') + '</strong></span>';
         }
     });
 };
