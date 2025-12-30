@@ -73,7 +73,6 @@ local function init_config()
         -- pcall(function() uci:save("napcatapi") end)
         -- pcall(function() uci:commit("napcatapi") end)
     -- end
-
     return
 end
 
