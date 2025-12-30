@@ -101,21 +101,21 @@ o = s:option(Value, "port", _("Port"))
 o.datatype = "port"
 o.default = "5663"
 o.rmempty = false
-o.description = _("NapCat API Web service port")
+o.description = _("Web Service Port")
 
 -- 配置文件路径
 o = s:option(Value, "path_config", _("Config path"))
 o.default = "/etc/napcatapi"
 o.rmempty = true
 o.datatype = "string"
-o.description = _('NapCat API configuration file storage path');
+o.description = _('Configuration File Storage Path');
 
 -- 解密密钥
 o = s:option(Value, "pwd_config", _("Decrypt KEY"))
 o.default = generate_key()
 o.password = true
 o.rmempty = true
-o.description = _('Decryption key for configuration file');
+o.description = _('Decryption Key[Auto MAC Generate]');
 
 -- 在线配置URL
 o = s:option(Value, "online_config", _("Online Config URL"))
