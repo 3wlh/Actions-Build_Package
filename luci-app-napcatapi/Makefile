@@ -40,7 +40,7 @@ define Package/$(PKG_NAME)/description
 	NapCat Robot call the API.
 endef
 
-define Install/uglify-js
+define Compress/js
 	echo -e "\033[31mInstall:uglifyjs\033[0m"
 	sudo apt update >/dev/null&& sudo apt install -y npm >/dev/null
 	sudo npm install -g uglify-js >/dev/null
@@ -63,7 +63,7 @@ define Build/ZH-CN
 endef
 
 define Build/Prepare
-	$(call Install/uglify-js)
+	$(call Compress/js)
 	$(call Build/Po2lmo)
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
 	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
