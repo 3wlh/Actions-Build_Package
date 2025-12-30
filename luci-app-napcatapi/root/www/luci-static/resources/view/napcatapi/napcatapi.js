@@ -43,6 +43,31 @@ function generateRandomToken() {
     return token;
 }
 
+/**
+ * 打开自定义尺寸的居中弹窗
+ * @param {string} url 要打开的URL
+ * @param {string} windowName 窗口名称
+ * @param {number} width 窗口宽度（默认800）
+ * @param {number} height 窗口高度（默认600）
+ */
+function openCustomWindow(url, windowName, width = 800, height = 600) {
+    // 计算居中位置
+    const left = (window.screen.width - width) / 2;
+    const top = (window.screen.height - height) / 2;
+    // 打开自定义窗口
+    // 禁止调整窗口大小 resizable=no,resizable=yes,
+    // 禁止拖动窗口   movable=no,
+    // 禁止滚动条    scrollbars=no,
+    // 隐藏工具栏    toolbar=no,
+    // 隐藏菜单栏    menubar=no,
+    // 隐藏地址栏    location=no,
+    // 隐藏状态栏    status=no 
+    window.open(
+        url,
+        windowName,
+        `width=${width},height=${height},left=${left},top=${top},resizable=no,scrollbars=yes,toolbar=no,menubar=no,`
+    );
+}
 
 /**
  * 渲染状态文本+按钮（带token参数）
@@ -56,18 +81,30 @@ function renderStatus(isRunning, port, token) {
     let renderHTML;
 
     if (isRunning) {
+        // 基础URL拼接
+        const baseUrl = `http://${window.location.hostname}:${port}`;
+        const interfaceUrl = `${baseUrl}?token=${token}`;
+        const logUrl = `${baseUrl}/log?token=${token}`;
+        const napcatUrl = `${baseUrl}/napcat?token=${token}`;
+
+        // 主界面按钮（保持原新标签页）
         const buttonInterface = String.format(
-            '&#160;<a class="btn cbi-button" href="http://%s:%s?token=%s" target="_blank" rel="noreferrer noopener">%s</a>',
-            window.location.hostname, port, token, _('Open Web Interface')
+            '&#160;<a class="btn cbi-button" href="%s" target="_blank" rel="noreferrer noopener">%s</a>',
+            interfaceUrl, _('Open Web Interface')
         );
+
+        // Log按钮（自定义弹窗）
         const buttonLog = String.format(
-            '&#160;<a class="btn cbi-button" href="http://%s:%s/log?token=%s" target="_blank" rel="noreferrer noopener">%s</a>',
-            window.location.hostname, port, token, _('Open Web log')
+            '&#160;<a class="btn cbi-button" href="javascript:void(0);" onclick="openCustomWindow(\'%s\', \'logWindow\', 1200, 1050)">%s</a>',
+            logUrl, _('Open Web log')
         );
+
+        // NapCat按钮（自定义弹窗，可调整尺寸）
         const buttonNapcat = String.format(
-            '&#160;<a class="btn cbi-button" href="http://%s:%s/napcat?token=%s" target="_blank" rel="noreferrer noopener">%s</a>',
-            window.location.hostname, port, token, _('Open Web napcat')
+            '&#160;<a class="btn cbi-button" href="javascript:void(0);" onclick="openCustomWindow(\'%s\', \'napcatWindow\', 880, 980)">%s</a>',
+            napcatUrl, _('Open Web napcat')
         );
+
         renderHTML = spanTemp.format('green', _('NapCat API'), _('RUNNING')) + buttonInterface + buttonLog + buttonNapcat;
     } else {
         renderHTML = spanTemp.format('red', _('NapCat API'), _('NOT RUNNING'));
@@ -129,6 +166,9 @@ return view.extend({
         s.anonymous = true;
         s.render = function () {
             const statusElement = E('p', { id: 'service_status' }, _('Collecting data...'));
+
+            // 将自定义弹窗函数挂载到window全局，确保HTML中能调用
+            window.openCustomWindow = openCustomWindow;
 
             const pollFunc = async () => {
                 try {
@@ -204,6 +244,10 @@ return view.extend({
             poll.remove(this.pollHandle);
             this.pollHandle = null;
             console.log('NapCat API 轮询已停止');
+        }
+        // 清理全局函数
+        if (window.openCustomWindow) {
+            delete window.openCustomWindow;
         }
     }
 });
