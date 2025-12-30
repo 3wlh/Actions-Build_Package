@@ -1,7 +1,4 @@
-# SPDX-License-Identifier: Apache-2.0
-#
-# Copyright (C) 2023 ImmortalWrt.org
-
+# Copyright (C) 2020-2022 3wlh <https://github.com/3wlh>
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-napcatapi
@@ -72,6 +69,7 @@ define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
 	$(call Build/ZH-CN)
 	$(CP) -fr root $(PKG_BUILD_DIR)
+	$(CP) -fr luasrc $(PKG_BUILD_DIR)
 	$(CP) -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
 	chmod -R 755 $(PKG_BUILD_DIR)
 	ls $(PKG_BUILD_DIR)
@@ -91,8 +89,8 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/conffiles
-	/etc/napcatapi/
-	/etc/config/napcatapi
+/etc/napcatapi/
+/etc/config/napcatapi
 endef
 
 define Package/$(PKG_NAME)/install
@@ -100,6 +98,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_FILE) $(1)/usr/sbin/$(BIN_NAME)
 	$(CP) $(PKG_BUILD_DIR)/root/* $(1)/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
+	$(CP) $(PKG_BUILD_DIR)/luasrc/* $(1)/usr/lib/lua/luci/
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/*.*.lmo $(1)/usr/lib/lua/luci/i18n/
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/napcatapi.init $(1)/etc/init.d/napcatapi
@@ -109,6 +108,8 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) ./files/config.yaml $(1)/etc/napcatapi/config.yaml
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/napcatapi.uci-default $(1)/etc/uci-defaults/napcatapi
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	
 endef
 
 
