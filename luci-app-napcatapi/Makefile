@@ -27,13 +27,6 @@ PKG_HASH:=skip
 
 include $(INCLUDE_DIR)/package.mk
 
-define find_js_compressor
-	echo -e "\033[31mfind_js_compressor\033[0m"
-	sudo apt install -y npm
-	sudo npm install -g uglify-js
-	uglifyjs -v
-endef
-
 define Package/$(PKG_NAME)
 	SECTION:=luci
 	CATEGORY:=LuCI
@@ -45,6 +38,16 @@ endef
 
 define Package/$(PKG_NAME)/description
 	NapCat Robot call the API.
+endef
+
+define Install/uglify-js
+	echo -e "\033[31mInstall:uglifyjs\033[0m"
+	sudo apt update >/dev/null&& sudo apt install -y npm >/dev/null
+	sudo npm install -g uglify-js >/dev/null
+	uglifyjs -v
+	cd root/www/luci-static/resources/view/napcatapi && \
+	uglifyjs napcatapi.js -o napcatapi.js -c -m --comments false && \
+	cd -
 endef
 
 define Build/Po2lmo
@@ -60,7 +63,7 @@ define Build/ZH-CN
 endef
 
 define Build/Prepare
-	$(call find_js_compressor)
+	$(call Install/uglify-js)
 	$(call Build/Po2lmo)
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
 	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
