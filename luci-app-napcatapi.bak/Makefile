@@ -1,13 +1,10 @@
-# SPDX-License-Identifier: Apache-2.0
-#
-# Copyright (C) 2023 ImmortalWrt.org
-
+# Copyright (C) 2020-2026 3wlh <https://github.com/3wlh>
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-napcatapi
 BIN_NAME:=napcatapi
-PKG_VERSION:=1.0.0
-PKG_RELEASE:=$(shell date +%Y%m%d)
+PKG_VERSION:=$(shell date +%y.%m.%d)
+PKG_RELEASE:=$(shell date +%H%M%S)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 LUCI_TITLE:=LuCI app for napcatapi
 # LUCI_DEPENDS:=+napcatapi-static

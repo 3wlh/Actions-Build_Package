@@ -1,11 +1,10 @@
-# Copyright (C) 2020-2022 3wlh <https://github.com/3wlh>
-
+# Copyright (C) 2020-2026 3wlh <https://github.com/3wlh>
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=sub-static
 BIN_NAME:=sub.cgi
-PKG_VERSION:=1.0.0
-PKG_RELEASE:=$(shell date +%Y%m%d)
+PKG_VERSION:=$(shell date +%y.%m.%d)
+PKG_RELEASE:=$(shell date +%H%M%S)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 
 ifeq ($(ARCH),aarch64)
