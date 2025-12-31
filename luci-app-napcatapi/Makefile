@@ -7,7 +7,6 @@ PKG_VERSION:=$(shell date +%y.%m.%d)
 PKG_RELEASE:=$(shell date +%H%M%S)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 LUCI_TITLE:=LuCI app for napcatapi
-# LUCI_DEPENDS:=+napcatapi-static
 LUCI_LANG:=zh-cn
 
 ifeq ($(ARCH),aarch64)
