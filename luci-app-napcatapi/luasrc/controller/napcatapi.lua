@@ -21,7 +21,7 @@ function Run_status()
 	local status = {
 		running = (sys.call("pidof napcatapi >/dev/null") == 0),
 		port = (port or 566),
-		token = (token or 123)
+		token = (token or "")
 	}
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(status)

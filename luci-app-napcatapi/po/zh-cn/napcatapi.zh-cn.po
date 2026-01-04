@@ -11,6 +11,14 @@ msgstr ""
 # 页面标题
 msgid "NapCat API"
 msgstr "NapCat API 配置"
+msgid "Settings"
+msgstr "设置"
+msgid "Edit"
+msgstr "编辑"
+msgid "NapCat"
+msgstr "NapCat"
+msgid "Log"
+msgstr "日志"
 
 # 页面描述
 msgid "NapCat Robot call the API configuration page."
