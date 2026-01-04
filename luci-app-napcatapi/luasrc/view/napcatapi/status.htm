@@ -90,7 +90,7 @@ window.onload = function() {
             );
 
             // 更新状态（运行中显示按钮）
-            tb.innerHTML = status + buttonInterface + buttonLog + buttonNapcat;
+            tb.innerHTML = status// + buttonInterface + buttonLog + buttonNapcat;
         } else {
             // 服务未运行（红色提示）
             tb.innerHTML = '<span style="color:red"><strong>' + _('NapCat API: NOT RUNNING') + '</strong></span>';

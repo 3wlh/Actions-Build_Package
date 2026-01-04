@@ -1,0 +1,66 @@
+<%+header%>
+<div class="cbi-section">
+    <div class="cbi-section">
+    <iframe id="logIframe" style="width:100%;height:80vh;border:none;"></iframe>
+</div>
+
+<script>
+window.onload = function() {
+    function updateLogUrl(st) {
+        st = st || { running: false, port: 80, token: '' };
+        const logIframe = document.getElementById('logIframe');
+        
+        if (st.running && st.token) {
+            const port = st.port && st.port !== 80 ? ':' + st.port : '';
+            const logUrl = 'http://' + window.location.hostname + port + '?token=' + st.token + '&_=' + Date.now();
+            if (logIframe.src !== logUrl) {
+                logIframe.src = logUrl;
+                console.log('更新日志地址：', logUrl);
+            }
+        } else {
+            logIframe.src = 'about:blank';
+            logLoading.textContent = 'NapcatAPI 服务未运行或配置为空';
+            console.warn('NapcatAPI 未运行，跳过日志地址更新');
+        }
+    }
+
+    // 修复核心：绕过 LuCI XHR 封装，用原生 XMLHttpRequest 发起请求
+    // 避免 LuCI 新版对响应的额外校验导致 200 OK 走失败回调
+    function getNapcatStatus() {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '<%=url("admin/services/napcatapi_status")%>', true);
+        
+        // 兼容 LuCI 认证（自动携带 Cookie）
+        xhr.withCredentials = true;
+        
+        xhr.onload = function() {
+            // 无论响应头如何，只要 HTTP 200 就解析数据
+            if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                    // 尝试解析 JSON（兼容非 JSON 格式）
+                    let st = {};
+                    if (xhr.responseText) {
+                        st = JSON.parse(xhr.responseText);
+                    }
+                    updateLogUrl(st);
+                } catch (e) {
+                    console.error('配置解析失败（非JSON格式）：', e, '响应内容：', xhr.responseText);
+                    document.getElementById('logLoading').textContent = '配置解析失败：非合法JSON格式';
+                }
+            } else {
+                console.error('请求失败：', xhr.status, xhr.statusText);
+                document.getElementById('logLoading').textContent = '获取配置失败：' + xhr.statusText;
+            }
+        };
+        // 网络错误回调
+        xhr.onerror = function() {
+            console.error('网络请求失败：', xhr.statusText);
+            document.getElementById('logLoading').textContent = '网络请求失败，请检查接口地址';
+        };   
+        xhr.send();
+    }
+    // 执行原生请求（替代 LuCI 封装的 XHR.get）
+    getNapcatStatus();
+};
+</script>
+<%+footer%>
