@@ -11,7 +11,7 @@ Releases "${ARCH}" "${PACKAGES_PATH}" "api-static page-static sub-static luci-ap
 Segmentation "${PACKAGES_PATH}" "https://dl.openwrt.ai/releases/24.10/packages/${ARCH}/kiddin9/" \
 "luci-app-unishare unishare webdav2 luci-app-v2ray-server"
 Segmentation "${PACKAGES_PATH}" "https://istore.istoreos.com/repo/all/nas_luci/" \
-"sunpanel luci-app-sunpanel luci-i18n-sunpanel-zh-cn luci-app-socat luci-i18n-socat-zh-cn"
+"luci-app-socat luci-i18n-socat-zh-cn luci-app-sunpanel luci-i18n-sunpanel-zh-cn"
 Segmentation "${PACKAGES_PATH}" "https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/packages/${ARCH}/luci/" \
 "luci-app-homeproxy luci-i18n-homeproxy-zh-cn luci-app-ramfree luci-i18n-ramfree-zh-cn 
 luci-app-argon-config luci-i18n-argon-config-zh-cn luci-theme-argon"
