@@ -59,7 +59,7 @@ define Build/ZH-CN
 endef
 
 define Build/Prepare
-	$(call Compress/js)
+	$(call Compress/jsmin)
 	$(call Build/Po2lmo)
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
 	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
