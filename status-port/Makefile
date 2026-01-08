@@ -26,7 +26,8 @@ define Compress/jsmin
 	wget -O jsmin.c https://raw.githubusercontent.com/douglascrockford/JSMin/refs/heads/master/jsmin.c
 	sudo gcc -o /usr/local/bin/jsmin jsmin.c
 	cd js && jsmin < port.js > port.min.js && mv port.min.js 29_port.js && \
-	cd -
+	rm -rf port.js && cd -
+	
 endef
 
 define Build/Prepare
