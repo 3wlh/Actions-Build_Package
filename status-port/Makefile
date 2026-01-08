@@ -30,11 +30,12 @@ define Compress/jsmin
 endef
 
 define Build/Prepare
-	$(call Compress/js)
+	$(call Compress/jsmin)
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
 	$(CP) -fr js $(PKG_BUILD_DIR)
-	chmod -R 644 $(PKG_BUILD_DIR)/js/29_port.js
+	chmod -R 644 $(PKG_BUILD_DIR)/js/*
+	
 endef
 
 define Package/$(PKG_NAME)/postinst
