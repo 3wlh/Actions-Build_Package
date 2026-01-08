@@ -55,6 +55,7 @@ on:
           - luci-app-sunpanel
           - sunpanel
           - napcatapi-static
+          - status-port
 
 jobs:
   jod_workflow:
