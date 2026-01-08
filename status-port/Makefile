@@ -36,12 +36,11 @@ define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
 	$(CP) -fr js $(PKG_BUILD_DIR)
 	chmod -R 644 $(PKG_BUILD_DIR)/js/*
-	
 endef
 
 define Package/$(PKG_NAME)/postinst
-[ -n "${IPKG_INSTROOT}" ] || { rm -rf /tmp/luci-*
-	/etc/init.d/uhttpd restart 2>/dev/null
+[ -n "${IPKG_INSTROOT}" ] || { rm -f /tmp/luci-indexcache.*
+	rm -rf /tmp/luci-modulecache/
 	exit 0
 }
 endef
