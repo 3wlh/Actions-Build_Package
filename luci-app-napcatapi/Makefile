@@ -36,15 +36,6 @@ define Package/$(PKG_NAME)/description
 	NapCat Robot call the API.
 endef
 
-define Compress/jsmin
-	echo -e "\033[31mInstall:jsmin\033[0m"
-	wget -O jsmin.c https://raw.githubusercontent.com/douglascrockford/JSMin/refs/heads/master/jsmin.c
-	sudo gcc -o /usr/local/bin/jsmin jsmin.c
-	cd root/www/luci-static/resources/view/napcatapi && \
-	jsmin < napcatapi.js > napcatapi.min.js && mv napcatapi.min.js napcatapi.js && \
-	cd -
-endef
-
 define Build/Po2lmo
     if [ ! -d "po2lmo" ]; then \
         git clone https://github.com/openwrt-dev/po2lmo.git && cd po2lmo; \
@@ -58,7 +49,6 @@ define Build/ZH-CN
 endef
 
 define Build/Prepare
-	$(call Compress/js)
 	$(call Build/Po2lmo)
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
 	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
