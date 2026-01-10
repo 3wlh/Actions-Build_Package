@@ -12,7 +12,7 @@ window.onload = function() {
         
         if (st.running && st.token) {
             const port = st.port && st.port !== 80 ? ':' + st.port : '';
-            const logUrl = 'http://' + window.location.hostname + port + '/log?token=' + st.token + '&_=' + Date.now();
+            const logUrl = 'http://' + window.location.hostname + port + '/logs?token=' + st.token + '&_=' + Date.now();
             if (logIframe.src !== logUrl) {
                 logIframe.src = logUrl;
                 console.log('更新日志地址：', logUrl);

@@ -10,20 +10,18 @@ function index()
 	entry({"admin", "services", "napcatapi", "settings"}, cbi("napcatapi/napcatapi"), _("Settings"), 10).leaf = true
 	entry({"admin", "services", "napcatapi", "edit"}, template("napcatapi/edit"), _("Edit"), 20).leaf = true
 	entry({"admin", "services", "napcatapi", "napcat"}, template("napcatapi/napcat"), _("NapCat"), 30).leaf = true
-	entry({"admin", "services", "napcatapi", "log"}, template("napcatapi/log"), _("Log"), 40).leaf = true
+	entry({"admin", "services", "napcatapi", "logs"}, template("napcatapi/logs"), _("Logs"), 40).leaf = true
 end
 
 function Run_status()
-	local sys  = require "luci.sys"
 	local uci  = require "luci.model.uci".cursor()
 	local port = tonumber(uci:get("napcatapi", "config", "port"))
 	local token = uci:get("napcatapi", "config", "token")
 	local status = {
-		running = (sys.call("pidof napcatapi >/dev/null") == 0),
-		port = (port or 566),
+		running = (luci.sys.call("pidof napcatapi >/dev/null") == 0),
+		port = (port or 5663),
 		token = (token or "")
 	}
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(status)
 end
-
