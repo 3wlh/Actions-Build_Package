@@ -80,6 +80,7 @@ jobs:
     env:
       Time: ${{ needs.jod_initial.outputs.time }}
       GZ: ${{ inputs.package }}-${{ matrix.sdk }}-${{ matrix.arch }}_${{ needs.jod_initial.outputs.time }}.tar.gz
+      Output: ${{ inputs.package }}/Output/
     steps:
       - uses: actions/checkout@v3
         with:
@@ -121,19 +122,20 @@ jobs:
         with:
           name: ${{ matrix.arch }}-${{ matrix.sdk }}
           path: |
-            bin/packages/${{ matrix.arch }}/packages_ci/*.apk
-            bin/packages/riscv64_generic/packages_ci/*.apk
-            bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
+            bin/packages/${{ matrix.arch }}/packages_ci/*.[ia]pk
+            bin/packages/riscv64_generic/packages_ci/*.[ia]pk
 
       - name: Create compress files
         id: files
         continue-on-error: true
         run: |
-          ls ${{ inputs.package }}/Output/
+          test -d ${{ env.Output }} || mkdir -p ${{ env.Output }}
           if [ "${{ matrix.arch }}" = "riscv64_riscv64" ] && [ "${{ matrix.sdk }}" = "SNAPSHOT" ]; then
-            tar -zcvf ${{ env.GZ }} -C bin/packages/riscv64_generic/ packages_ci
+            tar -zcvf ${{ env.Output }}/${{ env.GZ }} -C bin/packages/riscv64_generic/packages_ci/ --transform 's:.*/::' .
+            tar -zcvf ${{ env.Output }}${{ env.GZ }} -C bin/packages/riscv64_generic/ packages_ci
           else
-            tar -zcvf ${{ env.GZ }} -C bin/packages/${{ matrix.arch }}/ packages_ci
+            tar -zcvf ${{ env.Output }}/${{ env.GZ }} -C bin/packages/${{ matrix.arch }}/packages_ci/ --transform 's:.*/::' .
+            tar -zcvf ${{ env.Output }}/${{ env.GZ }} -C bin/packages/${{ matrix.arch }}/ packages_ci
           fi 
           echo "status=success" >> $GITHUB_OUTPUT
           
@@ -143,9 +145,7 @@ jobs:
         with:
           tag: GitHub-Actions_${{ inputs.package }}
           name: ${{ inputs.package }}
-          artifacts: |
-            ${{ env.GZ }}
-            ${{ inputs.package }}/Output/*
+          artifacts: ${{ env.Output }}/*
           body: "## 编译时间：`${{ env.Time }}`"
           allowUpdates: true
           removeArtifacts: false
