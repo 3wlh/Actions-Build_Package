@@ -98,7 +98,6 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/napcatapi.uci-default $(1)/etc/uci-defaults/napcatapi
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	
 endef
 
 

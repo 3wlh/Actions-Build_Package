@@ -129,6 +129,7 @@ jobs:
         id: files
         continue-on-error: true
         run: |
+          ls bin/packages/${{ matrix.arch }}/packages_ci
           if [ "${{ matrix.arch }}" = "riscv64_riscv64" ] && [ "${{ matrix.sdk }}" = "SNAPSHOT" ]; then
             tar -zcvf ${{ env.GZ }} -C bin/packages/riscv64_generic/ packages_ci
           else
