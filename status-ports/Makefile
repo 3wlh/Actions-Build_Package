@@ -27,17 +27,16 @@ define Compress/jsmin
 	sudo gcc -o /usr/local/bin/jsmin jsmin.c
 	cd js && jsmin < ports.js > ports.min.js && mv ports.min.js 29_ports.js && \
 	rm -rf ports.js && cd -
-	
 endef
 
 define Build/Prepare
 	$(call Compress/jsmin)
-	mkdir -p Output
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) -fr js/* Output/
 	$(CP) -fr js $(PKG_BUILD_DIR)
 	chmod -R 644 $(PKG_BUILD_DIR)/js/*
+	mkdir -p Output
+	$(CP) -f js/29_ports.js Output/ports.js
 endef
 
 define Package/$(PKG_NAME)/postinst
