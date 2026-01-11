@@ -32,8 +32,10 @@ endef
 
 define Build/Prepare
 	$(call Compress/jsmin)
+	mkdir -p Output
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
+	$(CP) -fr js/* Output/
 	$(CP) -fr js $(PKG_BUILD_DIR)
 	chmod -R 644 $(PKG_BUILD_DIR)/js/*
 endef
