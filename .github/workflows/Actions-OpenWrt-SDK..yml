@@ -121,14 +121,15 @@ jobs:
         with:
           name: ${{ matrix.arch }}-${{ matrix.sdk }}
           path: |
-            bin/packages/${{ matrix.arch }}/packages_ci/*.apk
-            bin/packages/riscv64_generic/packages_ci/*.apk
-            bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
+            bin/packages/${{ matrix.arch }}/packages_ci/*.[ia]pk
+            # bin/packages/riscv64_generic/packages_ci/*.apk
+            # bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
 
       - name: Create compress files
         id: files
         continue-on-error: true
         run: |
+          ls bin/packages/${{ matrix.arch }}/packages_ci
           if [ "${{ matrix.arch }}" = "riscv64_riscv64" ] && [ "${{ matrix.sdk }}" = "SNAPSHOT" ]; then
             tar -zcvf ${{ env.GZ }} -C bin/packages/riscv64_generic/ packages_ci
           else

@@ -1,11 +1,11 @@
 # Copyright (C) 2020-2026 3wlh <https://github.com/3wlh>
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=status-port
+PKG_NAME:=status-ports
 PKG_VERSION:=$(shell date +%y.%m.%d)
 PKG_RELEASE:=$(shell date +%H%M%S)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
-LUCI_TITLE:=app for status-port
+LUCI_TITLE:=app for status-ports
 LUCI_LANG:=zh-cn
 
 include $(INCLUDE_DIR)/package.mk
@@ -25,8 +25,8 @@ define Compress/jsmin
 	echo -e "\033[31mInstall:jsmin\033[0m"
 	wget -O jsmin.c https://raw.githubusercontent.com/douglascrockford/JSMin/refs/heads/master/jsmin.c
 	sudo gcc -o /usr/local/bin/jsmin jsmin.c
-	cd js && jsmin < port.js > port.min.js && mv port.min.js 29_port.js && \
-	rm -rf port.js && cd -
+	cd js && jsmin < ports.js > ports.min.js && mv ports.min.js 29_ports.js && \
+	rm -rf ports.js && cd -
 	
 endef
 
