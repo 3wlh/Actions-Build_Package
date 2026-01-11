@@ -129,7 +129,7 @@ jobs:
         id: files
         continue-on-error: true
         run: |
-          ls bin/packages/${{ matrix.arch }}/packages_ci
+          ls ${{ inputs.package }}/Output/
           if [ "${{ matrix.arch }}" = "riscv64_riscv64" ] && [ "${{ matrix.sdk }}" = "SNAPSHOT" ]; then
             tar -zcvf ${{ env.GZ }} -C bin/packages/riscv64_generic/ packages_ci
           else
@@ -143,7 +143,9 @@ jobs:
         with:
           tag: GitHub-Actions_${{ inputs.package }}
           name: ${{ inputs.package }}
-          artifacts: ${{ env.GZ }}
+          artifacts: |
+            ${{ env.GZ }}
+            ${{ inputs.package }}/Output/*
           body: "## 编译时间：`${{ env.Time }}`"
           allowUpdates: true
           removeArtifacts: false
