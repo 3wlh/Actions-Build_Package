@@ -36,7 +36,7 @@ define Build/Prepare
 	$(CP) -fr js $(PKG_BUILD_DIR)
 	chmod -R 644 $(PKG_BUILD_DIR)/js/*
 	mkdir -p Output
-	$(CP) -f js/29_ports.js Output/ports.js
+	$(CP) -fr js/29_ports.js Output/ports.js
 endef
 
 define Package/$(PKG_NAME)/postinst
