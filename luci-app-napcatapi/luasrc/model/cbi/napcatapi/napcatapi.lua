@@ -1,8 +1,7 @@
--- 核心依赖（全量容错）
 local uci = require "luci.model.uci".cursor()
 local fs = require "nixio.fs"
 
--- 翻译函数兜底
+-- 翻译函数
 local function _(s)
     return translate(s)
 end
@@ -31,7 +30,7 @@ local function generate_key()
         mac = ip_cmd:read("*a"):gsub("%s+", "")
         ip_cmd:close()
     end
-    -- 备用路径
+    -- 备用取 MAC
     if not mac or mac == "" then
         local mac_file = io.open("/sys/class/net/eth0/address", "r")
         if mac_file then
