@@ -24,20 +24,13 @@ window.onload = function() {
         }
     }
 
-    // 修复核心：绕过 LuCI XHR 封装，用原生 XMLHttpRequest 发起请求
-    // 避免 LuCI 新版对响应的额外校验导致 200 OK 走失败回调
     function getNapcatStatus() {
         const xhr = new XMLHttpRequest();
         xhr.open('GET', '<%=url("admin/services/napcatapi_status")%>', true);
-        
-        // 兼容 LuCI 认证（自动携带 Cookie）
         xhr.withCredentials = true;
-        
         xhr.onload = function() {
-            // 无论响应头如何，只要 HTTP 200 就解析数据
             if (xhr.status >= 200 && xhr.status < 300) {
                 try {
-                    // 尝试解析 JSON（兼容非 JSON 格式）
                     let st = {};
                     if (xhr.responseText) {
                         st = JSON.parse(xhr.responseText);
@@ -52,14 +45,12 @@ window.onload = function() {
                 document.getElementById('logLoading').textContent = '获取配置失败：' + xhr.statusText;
             }
         };
-        // 网络错误回调
         xhr.onerror = function() {
             console.error('网络请求失败：', xhr.statusText);
             document.getElementById('logLoading').textContent = '网络请求失败，请检查接口地址';
         };   
         xhr.send();
     }
-    // 执行原生请求（替代 LuCI 封装的 XHR.get）
     getNapcatStatus();
 };
 </script>
