@@ -45,14 +45,14 @@
   }
 
   .CodeMirror-linenumbers {
-    font-size: 14px !important;
+    font-size: 18px !important;
     padding: 0 10px !important;
   }
 
   /* CodeMirror容器 */
   .CodeMirror {
     font-family:
-      "Source Han Mono", Consolas, "Courier New", monospace !important;
+    "Source Han Mono", Consolas, "Courier New", monospace !important;
     padding: 2px;
     position: absolute !important;
     top: 0 !important;
@@ -157,6 +157,7 @@
       lineWrapping: true,
       spellcheck: false,
       cursorHeight: 1,
+      fontSize: "18px",
     });
     setTimeout(function() {
       editor.refresh();
@@ -233,9 +234,12 @@
       showToast('<%:Saving file...%>', 'warning');
       // 获取编辑器内容
       const configContent = editor.getValue() || "";
+      if (!configContent) {
+        showToast("<%:The content cannot be empty！%>", "error");
+        return;
+      }
       const formData = new FormData();
       formData.append('content', configContent);
-
       fetch('<%=luci.dispatcher.build_url("admin", "services", "vscode", "save")%>', {
           method: 'POST',
           body: formData
