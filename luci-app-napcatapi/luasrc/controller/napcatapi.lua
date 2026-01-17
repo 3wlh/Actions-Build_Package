@@ -17,8 +17,15 @@ function Run_status()
 	local uci  = require "luci.model.uci".cursor()
 	local port = tonumber(uci:get("napcatapi", "config", "port"))
 	local token = uci:get("napcatapi", "config", "token")
+	local file_bin = "napcatapi"
+	local find_cmd = "find /usr/sbin/ -maxdepth 1 -name napcatapi* -exec basename {} \\; | head -1"
+    local fp = io.popen(find_cmd, "r")
+    if fp then
+        file_bin = fp:read("*a"):gsub("^%s+", ""):gsub("%s+$", "")
+        fp:close()
+    end
 	local status = {
-		running = (luci.sys.call("pidof napcatapi >/dev/null") == 0),
+		running = (luci.sys.call("pidof "..file_bin.." >/dev/null") == 0),
 		port = (port or 5663),
 		token = (token or "")
 	}

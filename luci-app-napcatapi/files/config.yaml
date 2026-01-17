@@ -1,6 +1,14 @@
-# 密码123456
 # 如果要用加密函数E() 如:E(123456)
 # 如果要用解密函数D() 如:D(4x8VBfSLlFy3jvd8R3q5RQ==)
+NapCat: 
+#  url: "http://example.com/napcat.yaml"
+User:
+  xxxxxxxxxx: 
+    user: "admin"
+  xxxxxxxxxxx: 
+    user: "user"
+    url: "http://example.com/api" #可加密
+
 Subscribe: # 订阅配置
   Sub_DN: 'sub.example.com'
   Sub_Vless_Prot: 4333
