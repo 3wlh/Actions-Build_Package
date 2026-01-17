@@ -1,241 +1,260 @@
 <%+header%>
 <style>
-    /* 基础编辑器样式 */
-    .single-editor {
-        width: 100%;
-        height: calc(100vh - 200px); /* 移除底部区域后高度适配 */
-        display: flex;
-        flex-direction: column;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        margin-top: 20px;
-        box-sizing: border-box;
-    }
+  .cbi-map {
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 2px !important;
+    box-sizing: border-box;
+  }
 
-    /* 顶部操作区 */
-    .editor-header {
-        padding: 10px 15px;
-        border-bottom: 1px solid #ccc;
-        background: #f8f9fa;
-        display: flex;
-        justify-content: flex-end; /* 按钮右对齐 */
-        align-items: center;
-    }
+  .button {
+    background-color: #4caf50;
+    border: none;
+    color: white;
+    padding: 12px 45px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 10px 5px;
+    letter-spacing: 0.5px;
+  }
 
-    #file-content {
-        flex: 1;
-        width: 100%;
-        padding: 15px;
-        border: none;
-        resize: none;
-        font-family: "Consolas", "Monaco", monospace;
-        font-size: 14px;
-        line-height: 1.6;
-        box-sizing: border-box;
-        outline: none;
-        transition: all 0.2s ease;
-    }
+  .button:hover {
+    background-color: #45a049;
+  }
 
-    /* 编辑器聚焦状态 */
-    #file-content:focus {
-        box-shadow: inset 0 0 0 2px #007bff;
-    }
+  .button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
 
-    #save-btn {
-        padding: 8px 20px;
-        background: #28a745;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background 0.2s ease;
-    }
+  /* 编辑器容器元素 */
+  .editor-container {
+    width: 100% !important;
+    flex: 1 1 auto !important;
+    border: 1px solid #59acff;
+    border-radius: 8px;
+    box-shadow: 0 0 12px #719ece;
+    overflow: hidden;
+    position: relative;
+    min-height: 0;
+  }
 
-    #save-btn:hover:not(:disabled) {
-        background: #218838;
-    }
+  .CodeMirror-linenumbers {
+    font-size: 14px !important;
+    padding: 0 10px !important;
+  }
 
-    #save-btn:disabled {
-        background: #6c757d;
-        cursor: not-allowed;
-        opacity: 0.8;
-    }
+  /* CodeMirror容器 */
+  .CodeMirror {
+    font-family:
+      "Source Han Mono", Consolas, "Courier New", monospace !important;
+    padding: 2px;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+  }
 
-    /* 气泡通知样式 */
-    .toast-notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 12px 20px;
-        border-radius: 6px;
-        color: white;
-        font-size: 14px;
-        z-index: 9999;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        transform: translateX(120%);
-        transition: transform 0.3s ease, opacity 0.3s ease;
-        opacity: 0;
-        max-width: 350px;
-        word-wrap: break-word;
-    }
+  .legend {
+    color: #333;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    letter-spacing: 1px;
+  }
 
-    /* 显示气泡 */
-    .toast-notification.show {
-        transform: translateX(0);
-        opacity: 1;
-    }
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 24px;
+    max-width: 350px;
+    text-align: left;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    z-index: 99999;
+    opacity: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    pointer-events: none;
+    transform: translateX(120%);
+  }
 
-    /* 成功气泡 */
-    .toast-success {
-        background-color: #28a745;
-        border-left: 4px solid #1e7e34;
-    }
+  .toast.success {
+    background-color: rgba(27, 165, 59, 0.7);
+  }
 
-    /* 错误气泡 */
-    .toast-error {
-        background-color: #dc3545;
-        border-left: 4px solid #c82333;
-    }
+  .toast.error {
+    background-color: rgba(189, 44, 58, 0.9);
+  }
 
-    /* 加载中气泡 */
-    .toast-loading {
-        background-color: #007bff;
-        border-left: 4px solid #0069d9;
-    }
+  .toast.warning {
+    background-color: rgba(255, 193, 7, 0.7);
+  }
 
-    /* 响应式适配 */
-    @media (max-width: 768px) {
-        .single-editor {
-            height: calc(100vh - 150px);
-        }
-        #save-btn {
-            padding: 6px 15px;
-            font-size: 13px;
-        }
-        .toast-notification {
-            max-width: 80%;
-            left: 50%;
-            transform: translate(-50%, 0) scale(0.9);
-            top: 70px; /* 避开顶部按钮区域 */
-        }
-        .toast-notification.show {
-            transform: translate(-50%, 0) scale(1);
-        }
-    }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  fieldset {
+    border: 1px solid #ddd;
+    padding: 2px;
+    border-radius: 8px;
+    background-color: white;
+    flex: 1 1 auto !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100% !important;
+  }
 </style>
 
 <div class="cbi-map">
-    <h2><%:Single File Editor%></h2>
-    <div class="single-editor">
-        <!-- 顶部操作区（保存按钮右对齐） -->
-        <div class="editor-header">
-            <button id="save-btn" disabled><%:Save%></button>
-        </div>
-        
-        <!-- 编辑区域 -->
-        <textarea id="file-content" placeholder="Loading file content..."></textarea>
+  <fieldset>
+    <legend class="legend"><%:配置编辑器%></legend>
+    <div class="editor-container" id="editor-container"></div>
+    <div style="text-align: center; margin-top: 20px; flex-shrink: 0">
+      <input
+        class="button"
+        type="button"
+        value="<%:保存修改%>"
+        onclick="SaveFile()"
+      />
     </div>
+  </fieldset>
 </div>
 
-<!-- 气泡通知容器 -->
-<div id="toast-container" class="toast-notification"></div>
+<div id="toast" class="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/lib/codemirror.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/mode/yaml/yaml.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/mode/javascript/javascript.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/lib/codemirror.min.css"
+/>
 
 <script>
-    const contentEl = document.getElementById('file-content');
-    const saveBtn = document.getElementById('save-btn');
-    const toastContainer = document.getElementById('toast-container');
-    let toastTimer = null;
 
-    // 气泡通知核心函数
-    const showToast = (message, type = 'info', duration = 3000) => {
-        // 清除之前的定时器
-        if (toastTimer) clearTimeout(toastTimer);
-        
-        // 设置气泡类型和内容
-        toastContainer.textContent = message;
-        toastContainer.className = `toast-notification toast-${type}`;
-        
-        // 显示气泡
-        setTimeout(() => {
-            toastContainer.classList.add('show');
-        }, 10);
-        
-        // 自动隐藏
-        toastTimer = setTimeout(() => {
-            toastContainer.classList.remove('show');
-            // 延迟清除内容（避免动画闪烁）
-            setTimeout(() => {
-                toastContainer.textContent = '';
-            }, 300);
-        }, duration);
-    };
 
-    // 页面加载时读取文件内容
-    window.onload = function() {
-        // 编辑器自动聚焦（增强交互）
-        setTimeout(() => contentEl.focus(), 500);
-
-        fetch('<%=luci.dispatcher.build_url("admin", "services", "vscode", "read")%>')
-            .then(res => {
-                if (!res.ok) throw new Error('<%:Network response was not ok%>');
-                return res.json();
-            })
-            .then(data => {
-                if (data.code === 0) {
-                    contentEl.value = data.data;
-                    saveBtn.disabled = false;
-                    showToast('<%:File loaded successfully%>', 'success', 2000);
-                } else {
-                    contentEl.value = "";
-                    showToast(`<%:Error%>: ${data.msg}`, 'error', 4000);
-                }
-            })
-            .catch(err => {
-                showToast(`<%:Network error%>: ${err.message}`, 'error', 4000);
-            });
-    };
-
-    // 保存文件逻辑
-    saveBtn.onclick = function() {
-        saveBtn.disabled = true;
-        showToast('Saving file...', 'loading');
-
-        const formData = new FormData();
-        formData.append('content', contentEl.value);
-
-        fetch('<%=luci.dispatcher.build_url("admin", "services", "vscode", "save")%>', {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => {
-            if (!res.ok) throw new Error('<%:Save request failed%>');
-            return res.json();
-        })
-        .then(data => {
-            if (data.code === 0) {
-                showToast(data.msg || 'File saved successfully', 'success', 2000);
-            } else {
-                showToast(`<%:Save failed%>: ${data.msg}`, 'error', 4000);
-            }
-            saveBtn.disabled = false;
-        })
-        .catch(err => {
-            showToast(`<%:Save error%>: ${err.message}`, 'error', 4000);
-            saveBtn.disabled = false;
-        });
-    };
-
-    // 可选：添加输入防抖（避免频繁操作）
-    let inputTimer = null;
-    contentEl.addEventListener('input', () => {
-        clearTimeout(inputTimer);
-        inputTimer = setTimeout(() => {
-            // 输入停止后启用保存按钮（如果之前禁用）
-            if (saveBtn.disabled) {
-                saveBtn.disabled = false;
-            }
-        }, 300);
+  // 初始化编辑器函数
+  function initEditor() {
+    editor = CodeMirror(document.getElementById("editor-container"), {
+      mode: "yaml",
+      lineNumbers: true,
+      indentUnit: 2,
+      tabSize: 2,
+      lineWrapping: true,
+      spellcheck: false,
+      cursorHeight: 1,
     });
+    setTimeout(function() {
+      editor.refresh();
+    }, 100);
+  }
+
+  // 弹出框
+  function showToast(message, type, duration) {
+    type = type || "warning";
+    duration = duration || 3000;
+    toast.textContent = message;
+    toast.className = "toast " + type;
+    toast.classList.add("show");
+    setTimeout(function () {
+      toast.classList.remove("show");
+    }, duration);
+  }
+
+  // 保留编辑器位置
+  function saveEditorPosition() {
+    return {
+      cursor: editor.getCursor(),
+      scroll: editor.getScrollInfo()
+    };
+  }
+
+  function restoreEditorPosition(pos) {
+    if (!pos) return;
+    editor.scrollTo(pos.scroll.left, pos.scroll.top);
+    editor.setCursor(pos.cursor);
+    editor.focus();
+  }
+
+  // 获取数据
+  async function QueryFile(isFromSave = true) {
+    var editorPos = saveEditorPosition();
+    fetch("<%=luci.dispatcher.build_url("admin", "services", "vscode", "read")%>")
+    .then(res => {
+        if (!res.ok) throw new Error('<%:Network response was not ok%>');
+        return res.json();
+     })
+     .then(data => {
+      if (data.code === 0) {
+        editor.setValue(data.data || "");
+        if (isFromSave) {
+            showToast('<%:File loaded successfully%>', 'success', 3000);
+         }
+       } else {
+        editor.setValue("");
+         showToast(`<%:Error%>: ${data.msg || '<%:Unknown error%>'}`, 'error', 4000);
+       }
+     // 恢复编辑器位置
+      restoreEditorPosition(editorPos);
+    })
+    .catch(err => {
+       showToast(`<%:Network error%>: ${err.message}`, 'error', 4000);
+    });
+    }
+
+  window.onload = function () {
+    toast = document.getElementById("toast");
+    initEditor();
+    window.addEventListener("resize", function () {
+      editor.refresh();
+    });
+    editor.refresh();
+    setTimeout(function() {
+      editor.refresh();
+    }, 100);
+    QueryFile();
+  }
+    // 保存按钮点击事
+    async function SaveFile() {
+      showToast('<%:Saving file...%>', 'warning');
+      // 获取编辑器内容
+      const configContent = editor.getValue() || "";
+      const formData = new FormData();
+      formData.append('content', configContent);
+
+      fetch('<%=luci.dispatcher.build_url("admin", "services", "vscode", "save")%>', {
+          method: 'POST',
+          body: formData
+      })
+      .then(res => {
+          if (!res.ok) throw new Error('<%:Save request failed%>');
+          return res.json();
+      })
+      .then(data => {
+          if (data.code === 0) {
+              QueryFile(false);
+              showToast(data.msg || '<%:File saved successfully%>', 'success', 4000);
+          } else {
+              showToast(`<%:Save failed%>: ${data.msg || '<%:Unknown error%>'}`, 'error', 4000);
+          }
+      })
+      .catch(err => {
+          showToast(`<%:Save error%>: ${err.message}`, 'error', 4000);
+      });
+    }
 </script>
 <%+footer%>
