@@ -36,10 +36,10 @@ msgid "NapCat API：DETECT ERROR"
 msgstr "NapCat API：检测异常"
 
 # 按钮文本
-msgid "Open Web Interface"
-msgstr "打开 Web 界面"
+msgid "Open Web edit"
+msgstr "打开编辑页面"
 msgid "Open Web log"
-msgstr "打开 Web 日志"
+msgstr "打开日志页面"
 msgid "Open Web napcat"
 msgstr "打开 napcat 设置"
 
