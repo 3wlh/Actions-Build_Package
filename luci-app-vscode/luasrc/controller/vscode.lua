@@ -7,15 +7,15 @@ function index()
     -- 页面路由
     entry({"admin", "services", "vscode", "edit"}, template("vscode/edit"), _("VSCode配置"), 20).leaf = true
     -- 注册文件读写的 RPC 接口
-    entry({"admin", "services", "vscode", "read"}, call("action_read_single"), nil).leaf = true
-    entry({"admin", "services", "vscode", "save"}, call("action_save_single"), nil).leaf = true
+    entry({"admin", "services", "vscode", "read"}, call("Read_File"), nil).leaf = true
+    entry({"admin", "services", "vscode", "save"}, call("Save_File"), nil).leaf = true
 end
 
--- 定义要编辑的目标文件（可自行修改）
+-- 定义要编辑的目标文件
 local TARGET_FILE = "/root/vscode_config.txt"
 
 -- 读取单个文件内容
-function action_read_single()
+function Read_File()
     local fs = require "nixio.fs"
     local http = require "luci.http"
 
@@ -34,7 +34,7 @@ function action_read_single()
 end
 
 -- 保存单个文件内容
-function action_save_single()
+function Save_File()
     local fs = require "nixio.fs"
     local http = require "luci.http"
     local content = http.formvalue("content") or "456"
@@ -43,7 +43,6 @@ function action_save_single()
         http.write_json({ code = 1, msg = "Invalid content or file not writable" })
         return
     end
-
     -- 写入文件（先备份原文件，可选）
     -- fs.copy(TARGET_FILE, TARGET_FILE .. ".bak")
     local res = fs.writefile(TARGET_FILE, content)
