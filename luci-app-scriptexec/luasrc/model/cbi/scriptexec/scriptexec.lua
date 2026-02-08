@@ -1,7 +1,7 @@
 local io = require("io")
 local string = require("string")
 
--- 生成解密密钥（Key）的函数（保留原有逻辑，无错误）
+-- 生成解密密钥（Key）的函数
 local function generate_key()
     local mac = nil
     -- 获取eth0 MAC
@@ -34,30 +34,30 @@ end
 -- 生成MAC和解密Key
 local device_mac, decrypt_key = generate_key()
 
--- 全中文配置（无分栏 + 无校验）
-local m = Map("runscript", "网络配置同步",
+-- 全中文配置
+local m = Map("scriptexec", "同步配置",
     "从远程服务器拉取SH配置脚本，使用设备Key解密后执行" .. 
     (device_mac ~= "" and "<br><b>MAC地址: </b> <span style='color:#3498db;'>" .. device_mac .. "</span>" or "") ..
     (decrypt_key ~= "" and "<br><b>密钥Key: </b> <span style='color:#e74c3c;'>" .. decrypt_key .. "</span>" or ""))
 
--- 移除无意义的配置
+
 m.ignore_errors = true  
 
 local s = m:section(TypedSection, "general", "通用设置")
 s.anonymous = true
 s.addremove = false
 
--- 1. 远程加密脚本URL
-local config_url = s:option(Value, "script_url", "远程脚本URL")
+-- 远程加密脚本URL
+local config_url = s:option(Value, "exec_url", "远程脚本URL")
 config_url.datatype = "string"
 config_url.default = "http://example.com/netconfig_script.sh"
 config_url.description = "远程加密配置脚本的地址（需用设备Key解密）<br>"
 config_url.rmempty = false
 
--- 2. 解密密钥
-local config_key = s:option(Value, "script_key", "解密Key")
+-- 解密密钥
+local config_key = s:option(Value, "exec_key", "解密Key")
 config_key.datatype = "string"
-config_key.password = true  -- 保留密码框样式（仅隐藏输入，不校验）
+config_key.password = true  -- 密码框样式
 config_key.default = decrypt_key  -- 默认填充解密Key
 config_key.description = "用于解密远程加密脚本的密钥（自动填充基于eth0 MAC生成的密钥）<br>"
 config_key.rmempty = true

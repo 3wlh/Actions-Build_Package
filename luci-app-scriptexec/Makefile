@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-runscript
+PKG_NAME:=luci-app-scriptexec
 PKG_VERSION:=1.0
 PKG_RELEASE:=$(shell date +%Y%m%d)
 KG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>

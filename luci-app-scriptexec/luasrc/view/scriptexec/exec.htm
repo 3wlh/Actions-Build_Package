@@ -1,0 +1,159 @@
+<%+header%>
+<style>
+/* 主容器：占满父级空间，使用弹性布局，限制最大宽度防止溢出 */
+.cbi-map {
+    flex: 1; 
+    max-width: 100%;
+    min-height: 300px;
+    max-height: calc(100vh - 125px);
+    padding: 0px;
+}
+
+/* 输入和按钮行：水平排列，自动换行 */
+.input-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+/* 输入框：自适应宽度，最小宽度保证可用性 */
+.cmd-input {
+    flex: 1;
+    min-width: 250px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    display: none;  
+}
+
+/* 按钮组：保持按钮并排 */
+.btn-group {
+    display: flex;
+    gap: 8px;
+}
+
+/* 按钮样式 */
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn-run {
+    background-color: #28a745;
+}
+
+.btn-stop {
+    background-color: #dc3545;
+}
+
+#log {
+    flex: 1; 
+    min-height: 100px;
+    max-width: 100%;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 12px;
+    overflow-y: auto; 
+    overflow-x: auto;
+    font-family: monospace;
+    font-size: 16px;
+    line-height: 1.5;
+    white-space: pre-wrap; 
+    word-break: break-all;
+}
+
+</style>
+
+<div class="cbi-map">
+    <H3>命令执行</H3> 
+    <div class="input-row">
+        <input type="text" id="exec" class="cmd-input" placeholder="输入要执行的命令，如：ping baidu.com -c 10、opkg update">
+        <div class="btn-group">
+            <button class="btn btn-run" onclick="runCmd()">执行</button>
+            <button class="btn btn-stop" onclick="stopCmd()">停止</button>
+        </div>
+    </div>
+    <div id="log"></div>
+</div>
+<script>
+
+var timer = null;
+var logEl = document.getElementById("log");
+var lastLog = "";
+
+// 执行命令
+function runCmd() {
+    var exec = document.getElementById("exec").value.trim();
+    if (!exec) {
+        logEl.innerText = "错误：请输入要执行的命令！";
+        //return;
+    }
+    logEl.innerText = "命令执行中...\n";
+    clearInterval(timer);
+    fetch('/cgi-bin/luci/admin/system/scriptexec/run?cmd=' + encodeURIComponent(exec))
+    .then(r=> r.ok ? r.text() : Promise.reject("接口错误：" + r.status))
+    .then(d=>{
+        logEl.innerText = "";
+        lastLog = d;
+        pollLog();
+        timer = setInterval(pollLog, 500);
+    })
+    .catch(err=>{
+        logEl.innerText = "执行失败：" + err;
+    });
+}
+
+// 停止命令
+function stopCmd() {
+    fetch('/cgi-bin/luci/admin/system/scriptexec/stop')
+    .then(r=> r.ok ? r.text() : Promise.reject("接口错误：" + r.status))
+    .then(d=>{
+        //logEl.innerText = d;
+        clearInterval(timer);
+        timer = null;
+    })
+    .catch(err=>{
+        logEl.innerText = "停止失败：" + err;
+    });
+}
+
+// 核心轮询逻辑
+function pollLog() {
+    const statusPromise = fetch('/cgi-bin/luci/admin/system/scriptexec/status')
+        .then(r=> r.ok ? r.json() : Promise.reject("状态查询失败"))
+        .then(status=> status.running)
+        .catch(() => false);
+
+    const logPromise = fetch('/cgi-bin/luci/admin/system/scriptexec/log')
+        .then(r=> r.ok ? r.text() : Promise.reject("日志查询失败"))
+        .catch(err=> {
+            console.error("日志查询失败：", err);
+            return lastLog;
+        });
+
+    Promise.all([statusPromise, logPromise])
+    .then(([running, logContent]) => {
+        if (logContent !== lastLog) {
+            logEl.innerText = logContent;
+            lastLog = logContent;
+        }
+        
+        if (!running) {
+            clearInterval(timer);
+            timer = null;
+            logEl.innerText += "\n\n命令执行完成";
+        }
+        logEl.scrollTop = logEl.scrollHeight;
+    });
+}
+</script>
+<%+footer%>

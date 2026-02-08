@@ -1,0 +1,4 @@
+
+config general
+	option exec_url 'http://example.com/run_script.sh'
+	option exec_key ''
