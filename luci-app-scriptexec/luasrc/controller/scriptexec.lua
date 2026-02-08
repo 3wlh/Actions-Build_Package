@@ -52,15 +52,15 @@ local function get_key()
     return key  
 end
 
--- 读取runscript中的配置
+-- 读取scriptexec中的配置
 local function get_variable()
     local uci = require("luci.model.uci").cursor()
     -- 正确读取列表型配置节：@general[]（适配config general不带名称的场景）
     local config = {
-        url = uci:get("runscript", "@general[0]", "script_url") or "",
-        key = uci:get("runscript", "@general[0]", "script_key") or get_key()
+        url = uci:get("scriptexec", "@general[0]", "script_url") or "",
+        key = uci:get("scriptexec", "@general[0]", "script_key") or get_key()
     }
-    uci:unload("runscript")
+    uci:unload("scriptexec")
     return config
 end
 
