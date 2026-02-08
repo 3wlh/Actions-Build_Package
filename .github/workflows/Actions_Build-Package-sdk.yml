@@ -46,7 +46,7 @@ on:
           - api-static
           - sub-static
           - page-static
-          - luci-app-runscript
+          - luci-app-scriptexec
           - luci-app-napcatapi
           - luci-app-cifs-mount2
           - luci-app-bypass
