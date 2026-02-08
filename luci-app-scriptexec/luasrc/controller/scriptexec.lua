@@ -6,7 +6,7 @@ local EXEC_PID = "/tmp/scriptexec/exec.pid"
 local EXEC_LOG = "/tmp/scriptexec/exec.log"
 
 function index()
-    entry({"admin", "system", "scriptexec"}, firstchild(), _("在线配置"), 90).dependent = true
+    entry({"admin", "system", "scriptexec"}, firstchild(), _("同步配置"), 90).dependent = true
     entry({"admin", "system", "scriptexec", "settings"}, cbi("scriptexec/scriptexec"), _("Settings"), 10).leaf = true
     entry({"admin", "system", "scriptexec", "execute"}, template("scriptexec/exec"), _("执行命令"), 20).leaf = true
     entry({"admin", "system", "scriptexec", "run"}, call("exec_run"), nil).leaf = true
