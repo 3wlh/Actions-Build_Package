@@ -15,7 +15,7 @@ ifeq ($(ARCH),x86_64)
 endif
 
 PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NAME)/$(BIN_NAME)_$(PKG_ARCH)
+PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NAME)/$(BIN_NAME)-$(PKG_ARCH)
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 PKG_HASH:=skip
 
