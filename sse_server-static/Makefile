@@ -51,7 +51,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/share/sseserver
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_NAME)-$(PKG_ARCH) $(1)/usr/share/sseserver/sse
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_FILE) $(1)/usr/share/sseserver/sse
 	chmod -R 755 $(1)/usr/share/sseserver
 endef
 
