@@ -25,7 +25,6 @@ endef
 define Build/Prepare
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
 	mkdir -p $(PKG_BUILD_DIR)
-	# 复制源码到编译目录（无空格路径）
 	chmod -R 755 ./luasrc ./root
 	$(CP) ./root $(PKG_BUILD_DIR)
 	$(CP) ./luasrc $(PKG_BUILD_DIR)
@@ -36,7 +35,6 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
-	# 手动指定安装路径（绝对路径，无拼接）
 	$(INSTALL_DIR) $(1)/
 	$(CP) $(PKG_BUILD_DIR)/root/* $(1)/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci
