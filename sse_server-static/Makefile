@@ -27,7 +27,7 @@ define Package/$(PKG_NAME)
 	SUBMENU:=System
 	TITLE:=$(PKG_NAME)
 	URL:=https://github.com/3wlh
-	DEPENDS:=@(aarch64||x86_64) +libstdcpp
+	DEPENDS:=@(aarch64||x86_64) +libstdcpp +bash
 endef
 
 define Package/$(PKG_NAME)/description

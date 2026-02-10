@@ -15,7 +15,7 @@ define Package/$(PKG_NAME)
 	SUBMENU:=System Tools
 	TITLE:=LuCI support for netconfig
 	PKGARCH:=all
-	DEPENDS:=+luci-base
+	DEPENDS:=+luci-base +sse_server-static
 endef
 
 define Package/$(PKG_NAME)/description
