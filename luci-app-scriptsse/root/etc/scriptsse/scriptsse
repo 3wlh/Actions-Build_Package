@@ -1,0 +1,4 @@
+
+config general
+	option script_url 'http://example.com/script.sh'
+	option script_key ''

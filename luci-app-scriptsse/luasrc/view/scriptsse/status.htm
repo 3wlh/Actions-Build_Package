@@ -1,0 +1,184 @@
+<%+header%>
+<style>
+/* 保留原有样式，无需修改 */
+.cbi-map {
+    flex: 1; 
+    max-width: 100%;
+    min-height: 300px;
+    max-height: calc(100vh - 125px);
+    padding: 0px;
+}
+
+.input-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.cmd-input {
+    display: none;
+    flex: 1;
+    min-width: 250px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.btn-group {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn-run { background-color: #28a745; }
+.btn-stop { background-color: #dc3545; }
+.btn-run:disabled, .btn-stop:disabled { 
+    background-color: #6c757d; 
+    cursor: not-allowed;
+}
+
+#log {
+    flex: 1; 
+    min-height: 100px;
+    max-width: 100%;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+#sse-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+.loading-tip {
+    padding: 10px;
+    color: #666;
+    text-align: center;
+}
+</style>
+
+<div class="cbi-map">
+    <H3>命令执行</H3> 
+    <div class="input-row">
+        <input type="text" id="exec" class="cmd-input" placeholder="输入命令">
+        <div class="btn-group">
+            <button class="btn btn-run" onclick="runCmd()" disabled>执行</button>
+            <button class="btn btn-stop" onclick="stopCmd()" disabled>停止</button>
+        </div>
+    </div>
+    
+    <div id="log">
+        <div class="loading-tip" id="loading-tip">正在获取配置信息...</div>
+        <iframe id="sse-iframe" src="" style="display: none;"></iframe>
+    </div>
+</div>
+
+<script>
+// 初始化配置
+let CFG = {
+    sseUrl: "",
+    token: ""
+};
+
+// 异步获取LuCI配置接口的token和端口
+async function fetchConfig() {
+    try {
+        const response = await fetch('/cgi-bin/luci/admin/system/scriptexec/cfg', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`接口请求失败：${response.status} ${response.statusText}`);
+        }
+
+        const configData = await response.json();
+        if (!configData.port || !configData.token) {
+            throw new Error("配置接口返回参数不完整");
+        }
+
+        const protocol = window.location.protocol;
+        const openwrtIp = window.location.hostname;
+        
+        CFG = {
+            sseUrl: `${protocol}//${openwrtIp}:${configData.port}`,
+            token: configData.token
+        };
+
+        document.getElementById("loading-tip").style.display = "none";
+        const iframe = document.getElementById("sse-iframe");
+        iframe.src = CFG.sseUrl;
+        iframe.style.display = "block";
+        document.querySelector(".btn-run").disabled = false;
+        document.querySelector(".btn-stop").disabled = false;
+
+    } catch (error) {
+        document.getElementById("loading-tip").textContent = `配置获取失败：${error.message}`;
+        console.error("获取配置出错：", error);
+    }
+}
+
+// 执行命令
+function sendCmdToIframe() {
+    const cmd = document.getElementById("exec").value.trim();
+    //if (!cmd) return alert("请输入命令");
+    if (!CFG.token || !CFG.sseUrl) {
+        return alert("配置未加载完成，请稍后重试");
+    }
+
+    fetch(`${CFG.sseUrl}/exec`, {
+        method: 'POST',
+        headers: {
+            'X-Auth-Token': CFG.token,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: cmd
+    }).catch(err => alert("执行失败：" + err.message));
+}
+
+function runCmd() {
+    var exec = document.getElementById("exec").value.trim();
+    if (!exec) {
+        //return;
+    }
+    fetch('/cgi-bin/luci/admin/system/scriptexec/run?cmd=' + encodeURIComponent(exec))
+    .then(r=> r.ok ? r.json() :Promise.reject(`HTTP错误: ${r.status} (${r.statusText})`))
+    .then(status=> {console.log("✅ 执行成功:", status.msg);})
+    .catch(err => {
+        console.error("执行失败!");
+    });
+}
+
+function stopCmd() {
+    fetch('/cgi-bin/luci/admin/system/scriptexec/stop')
+        .then(r => r.ok ? r.json() : Promise.reject(`HTTP错误: ${r.status} (${r.statusText})`))
+        .then(status=> {console.log("✅ 执行成功:", status.msg);})
+        .catch(err => {
+            console.error("执行失败!");
+        });
+}
+
+// 页面加载完成后自动获取配置
+document.addEventListener('DOMContentLoaded', fetchConfig);
+</script>
+<%+footer%>
+
