@@ -115,7 +115,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/photopea.uci-default $(1)/etc/uci-defaults/photopea
 	$(INSTALL_DIR) $(1)/etc/photopea
-	$(CP) -fr $(PKG_BUILD_DIR)/www.photopea.com $(1)/etc/photopea
+	$(CP) $(PKG_BUILD_DIR)/www.photopea.com/* $(1)/etc/photopea/
 endef
 
 
