@@ -59,7 +59,7 @@ if (!String.format) {
 // 5秒轮询状态
 window.onload = function() {
     // 修复接口路径：对应控制器的正确路径
-    XHR.poll(5, '<%=url("admin/services/napcatapi_status")%>', null, function(x, st) {
+    XHR.poll(5, '<%=url("admin/services/photopea_status")%>', null, function(x, st) {
         var tb = document.getElementById('status_id');
         if (!tb) return;
         st = st || { running: false, port: 80, token: '' };
@@ -67,30 +67,37 @@ window.onload = function() {
             // 拼接URL
             const hostname = window.location.hostname;
             const baseUrl = 'http://' + hostname + ':' + st.port;
-            const interfaceUrl = baseUrl + '?token=' + st.token;
+            const editUrl = baseUrl + '/?token=' + st.token;
+            const filesUrl = baseUrl + '/files?token=' + st.token;
             const logUrl = baseUrl + '/logs?token=' + st.token;
-            const napcatUrl = baseUrl + '/napcat?token=' + st.token;
+            
 
             // 运行状态文本（运行中-绿色）
-            const status = '<span style="color:green"><strong>' + _('NapCat API: RUNNING') + '</strong></span>';
+            const status = '<span style="color:green"><strong>' + _('Photopea: RUNNING') + '</strong></span>';
             
             // 恢复按钮拼接
+            const app = String.format(
+                '&#160;<a class="btn cbi-button" href="%s" target="_blank" rel="noreferrer noopener">%s</a>',
+                baseUrl, _('Open Web app')
+            );
+            
             const buttonEdit = String.format(
                 '&#160;<a class="btn cbi-button" href="javascript:void(0);" onclick="openCustomWindow(\'%s\', \'Edit\', 1200, 1100)">%s</a>',
-                interfaceUrl, _('Open Web edit')
+                editUrl, _('Open Web edit')
             );
+            const buttonfiles = String.format(
+                '&#160;<a class="btn cbi-button" href="javascript:void(0);" onclick="openCustomWindow(\'%s\', \'Napcat\', 880, 980)">%s</a>',
+                filesUrl, _('Open Web files')
+            ); 
             const buttonLogs = String.format(
                 '&#160;<a class="btn cbi-button" href="javascript:void(0);" onclick="openCustomWindow(\'%s\', \'Logs\', 1200, 1050)">%s</a>',
                 logUrl, _('Open Web logs')
             );
-            const buttonNapcat = String.format(
-                '&#160;<a class="btn cbi-button" href="javascript:void(0);" onclick="openCustomWindow(\'%s\', \'Napcat\', 880, 980)">%s</a>',
-                napcatUrl, _('Open Web napcat')
-            );
-            tb.innerHTML = status// + buttonEdit + buttonLogs + buttonNapcat;
+            
+            tb.innerHTML = status + app //+ buttonEdit + buttonfiles + buttonLogs ;
         } else {
             // 服务未运行（红色提示）
-            tb.innerHTML = '<span style="color:red"><strong>' + _('NapCat API: NOT RUNNING') + '</strong></span>';
+            tb.innerHTML = '<span style="color:red"><strong>' + _('Photopea: NOT RUNNING') + '</strong></span>';
         }
     });
 };
@@ -98,7 +105,7 @@ window.onload = function() {
 
 <!-- 状态显示区域 -->
 <fieldset class="cbi-section">
-    <legend><%:NapCat API Status%></legend>
+    <legend><%:Photopea Status%></legend>
     <p id="status_id">
         <em><%:Collecting data...%></em>
     </p>

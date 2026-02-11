@@ -1,13 +1,13 @@
 {
-	"luci-app-napcatapi": {
-		"description": "Grant UCI access for luci-app-napcatapi",
+	"luci-app-photopea": {
+		"description": "Grant UCI access for luci-app-photopea",
 		"read": {
-			"uci": [ "napcatapi" ],
+			"uci": [ "photopea" ],
 			"ubus": {
 				"service": [ "list" ]
 			},
 			"file": {
-				"/usr/sbin/napcatapi": [ "exec" ],
+				"/usr/sbin/photopea": [ "exec" ],
 				"/*": [ "read" ]
 			}
 		},

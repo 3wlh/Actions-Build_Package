@@ -54,14 +54,14 @@ s.anonymous = true
 s:option(Flag, "enabled", _("Enable")).rmempty = false
 
 -- 端口配置
-o = s:option(Value, "port", _("Access port"))
+o = s:option(Value, "port", _("Port"))
 o.datatype = "port"
 o.default = "8887"
 o.rmempty = false
-o.description = _("Web Service Port")
+o.description = _("Access Service Port")
 
 -- 解密密钥
-o = s:option(Value, "token", _("Access token"))
+o = s:option(Value, "token", _("Token"))
 o.default = generate_token()
 o.password = true
 o.rmempty = true

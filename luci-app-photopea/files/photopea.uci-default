@@ -1,20 +1,20 @@
 #!/bin/sh
-[ ! -f "/usr/share/ucitrack/luci-app-napcatapi.json" ] && {
-    cat > /usr/share/ucitrack/luci-app-napcatapi.json << EEOF
+[ ! -f "/usr/share/ucitrack/luci-app-photopea.json" ] && {
+    cat > /usr/share/ucitrack/luci-app-photopea.json << EEOF
 {
-    "config": "napcatapi",
-    "init": "napcatapi"
+    "config": "photopea",
+    "init": "photopea"
 }
 EEOF
 }
 
 uci -q batch <<-EOF >/dev/null
-	delete ucitrack.@napcatapi[-1]
-	add ucitrack napcatapi
-	set ucitrack.@napcatapi[-1].init=napcatapi
+	delete ucitrack.@photopea[-1]
+	add ucitrack photopea
+	set ucitrack.@photopea[-1].init=photopea
 	commit ucitrack
 EOF
 
-/etc/init.d/napcatapi enable
+/etc/init.d/photopea enable
 
 exit 0

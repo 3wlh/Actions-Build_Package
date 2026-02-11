@@ -16,13 +16,13 @@ ifeq ($(ARCH),x86_64)
 	PKG_ARCH:=amd64
 endif
 
-PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_URL:=https://github.com/3wlh/Actions-Build_Docker-image/releases/download/photopea/photopea_$(PKG_ARCH)
-PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NAME)/$(BIN_NAME)_$(PKG_ARCH)
-PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NAME)/$(BIN_NAME)_$(PKG_ARCH)
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
+PKG_FILE:=$(PKG_NAME)
+PKG_URL:=https://github.com/3wlh/Actions-Build_Docker-image/releases/download/$(BIN_NAME)/$(BIN_NAME)_$(PKG_ARCH)
+WEB_FILE:=www.photopea.com.tar.gz
+WEB_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NAME)/www.photopea.com.tar.gz
+FONTS_FILE:=fonts.tar.gz
+FONTS_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NAME)/fonts.tar.gz
+PKG_BUILD_DIR:=$(BUILD_DIR)/PKG_BUILD_$(PKG_NAME)
 PKG_HASH:=skip
 
 include $(INCLUDE_DIR)/package.mk
@@ -40,32 +40,51 @@ define Package/$(PKG_NAME)/description
 	NapCat Robot call the API.
 endef
 
-define Build/Po2lmo
-    if [ ! -d "po2lmo" ]; then \
-        git clone https://github.com/openwrt-dev/po2lmo.git && cd po2lmo; \
-        make clean && make && sudo make install && cd - ;\
-    fi
+define Download/Files
+echo -e "\033[32m Download：$(PKG_ARCH) \033[0m"
+if [ ! -f $(PKG_BUILD_DIR)/$(PKG_FILE) ] ; then \
+	wget $(PKG_URL) -O $(PKG_BUILD_DIR)/$(PKG_FILE); \
+fi
+if [ ! -f $(PKG_BUILD_DIR)/$(WEB_FILE) ] ; then \
+	wget $(PKG_URL) -O $(PKG_BUILD_DIR)/$(WEB_FILE); \
+fi
+if [ ! -f $(PKG_BUILD_DIR)/$(FONTS_FILE) ] ; then \
+	wget $(PKG_URL) -O $(PKG_BUILD_DIR)/$(FONTS_FILE); \
+fi
+chmod -R 755 $(PKG_BUILD_DIR)
 endef
 
-define Build/ZH-CN
-    $(foreach po,$(wildcard ./po/zh-cn/*.po), \
-		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
+define Extract/Files
+echo -e "\033[32m Extract：Files \033[0m"
+cd $(PKG_BUILD_DIR)
+test -d www.photopea.com || mkdir -p www.photopea.com
+tar -zxf $(FONTS_FILE) -C www.photopea.com
+test -d fonts || mkdir -p fonts
+tar -zxf $(FONTS_FILE) -C fonts
+$(CP) -fr fonts www.photopea.com/rsrc/fonts
+cd -	
+endef
+
+define Build/Po2lmo
+if [ ! -d "po2lmo" ]; then \
+    git clone https://github.com/openwrt-dev/po2lmo.git && cd po2lmo; \
+    make clean && make && sudo make install && cd - ;\
+fi
+$(foreach po,$(wildcard ./po/zh-cn/*.po), \
+	po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
 endef
 
 define Build/Prepare
-	$(call Build/Po2lmo)
-	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
-	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
-		wget $(PKG_URL) -O $(DL_DIR)/$(PKG_FILE); \
-	fi
-	rm -rf $(PKG_BUILD_DIR)
-	mkdir -p $(PKG_BUILD_DIR)
-	$(call Build/ZH-CN)
-	$(CP) -fr root $(PKG_BUILD_DIR)
-	$(CP) -fr luasrc $(PKG_BUILD_DIR)
-	$(CP) -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)
-	chmod -R 755 $(PKG_BUILD_DIR)
-	ls $(PKG_BUILD_DIR)
+echo -e "\033[32m Process：Files \033[0m"
+rm -rf $(PKG_BUILD_DIR)
+mkdir -p $(PKG_BUILD_DIR)
+$(call Download/Files)
+$(call Extract/Files)
+$(call Build/Po2lmo)
+$(CP) -fr root $(PKG_BUILD_DIR)
+$(CP) -fr luasrc $(PKG_BUILD_DIR)
+chmod -R 755 $(PKG_BUILD_DIR)/$(PKG_NAME)
+ls $(PKG_BUILD_DIR)
 endef
 
 define Package/$(PKG_NAME)/postinst
@@ -82,26 +101,25 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/conffiles
-/etc/napcatapi/
-/etc/config/napcatapi
+/etc/photopea/
+/etc/config/photopea
 endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_FILE) $(1)/usr/sbin/$(BIN_NAME)
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_FILE) $(1)/usr/sbin/$(PKG_FILE)
 	$(CP) $(PKG_BUILD_DIR)/root/* $(1)/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
 	$(CP) $(PKG_BUILD_DIR)/luasrc/* $(1)/usr/lib/lua/luci/
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/*.*.lmo $(1)/usr/lib/lua/luci/i18n/
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./files/napcatapi.init $(1)/etc/init.d/napcatapi
+	$(INSTALL_BIN) ./files/photopea.init $(1)/etc/init.d/photopea
 	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) ./files/napcatapi.config $(1)/etc/config/napcatapi
-	$(INSTALL_DIR) $(1)/etc/napcatapi
-	$(INSTALL_BIN) ./files/config.yaml $(1)/etc/napcatapi/config.yaml
+	$(INSTALL_CONF) ./files/photopea.config $(1)/etc/config/photopea
+	$(INSTALL_DIR) $(1)/etc/photopea
+	$(CP) -fr $(PKG_BUILD_DIR)/www.photopea.com $(1)/etc/photopea/photopea
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_BIN) ./files/napcatapi.uci-default $(1)/etc/uci-defaults/napcatapi
-	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_BIN) ./files/photopea.uci-default $(1)/etc/uci-defaults/photopea	
 endef
 
 

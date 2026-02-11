@@ -36,6 +36,8 @@ msgid "Photopea：DETECT ERROR"
 msgstr "Photopea：检测异常"
 
 # 按钮文本
+msgid "Open Web app"
+msgstr "打开网页"
 msgid "Open Web edit"
 msgstr "打开编辑页面"
 msgid "Open Web files"

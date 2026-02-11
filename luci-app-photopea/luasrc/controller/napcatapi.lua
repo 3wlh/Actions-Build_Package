@@ -1,9 +1,6 @@
 module("luci.controller.photopea", package.seeall)
 
 function index()
-	if not nixio.fs.access("/etc/config/photopea") then
-		return
-	end
 	entry({"admin", "services", "photopea"}, firstchild(), _("Photopea"), 90).dependent = true
 	entry({"admin", "services","photopea_status"}, call("Run_status"))
 	-- 注册菜单 
