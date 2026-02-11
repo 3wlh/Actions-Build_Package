@@ -22,7 +22,7 @@ start() {
 	[[ -n "${token}" ]] && intoken="-token $token"
 	echo "Starting $FILE..."
 	# 构建启动参数
-	start-stop-daemon -S -q -b -x "$PROG" -- -p "$port" $intoken
+	start-stop-daemon -S -q -b -x "$PROG" -- -p "$port" -d "$CONF_PATH" $intoken
 }
 
 stop() {
