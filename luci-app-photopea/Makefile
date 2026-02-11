@@ -75,7 +75,7 @@ $(foreach po,$(wildcard ./po/zh-cn/*.po), \
 endef
 
 define Build/Prepare
-echo -e "\033[32m Process：Files \033[0m"
+	echo -e "\033[32m Process：Files \033[0m"
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
 	$(call Download/Files)
