@@ -26,7 +26,7 @@ window.onload = function() {
     
     function getNapcatStatus() {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', '<%=url("admin/services/napcatapi_status")%>', true);
+        xhr.open('GET', '<%=url("admin/services/photopea_status")%>', true);
         xhr.withCredentials = true;
         xhr.onload = function() {
             if (xhr.status >= 200 && xhr.status < 300) {

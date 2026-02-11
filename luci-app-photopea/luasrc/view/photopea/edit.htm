@@ -18,14 +18,14 @@ window.onload = function() {
             }
         } else {
             logIframe.src = 'about:blank';
-            logLoading.textContent = 'NapcatAPI 服务未运行或配置为空';
-            console.warn('NapcatAPI 未运行，跳过日志地址更新');
+            logLoading.textContent = 'Photopea 服务未运行或配置为空';
+            console.warn('Photopea 未运行，跳过日志地址更新');
         }
     }
 
     function getNapcatStatus() {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', '<%=url("admin/services/napcatapi_status")%>', true);
+        xhr.open('GET', '<%=url("admin/services/photopea_status")%>', true);
         xhr.withCredentials = true;
         xhr.onload = function() {
             if (xhr.status >= 200 && xhr.status < 300) {

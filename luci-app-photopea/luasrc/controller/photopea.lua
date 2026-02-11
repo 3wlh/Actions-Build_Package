@@ -6,7 +6,7 @@ function index()
 	-- 注册菜单 
 	entry({"admin", "services", "photopea", "settings"}, cbi("photopea/settings"), _("Settings"), 10).leaf = true
 	entry({"admin", "services", "photopea", "edit"}, template("photopea/edit"), _("Edit"), 20).leaf = true
-	entry({"admin", "services", "photopea", "file"}, template("photopea/file"), _("File"), 30).leaf = true
+	entry({"admin", "services", "photopea", "file"}, template("photopea/files"), _("Files"), 30).leaf = true
 	entry({"admin", "services", "photopea", "logs"}, template("photopea/logs"), _("Logs"), 40).leaf = true
 end
 
