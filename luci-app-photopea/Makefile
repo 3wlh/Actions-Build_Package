@@ -16,7 +16,7 @@ ifeq ($(ARCH),x86_64)
 	PKG_ARCH:=amd64
 endif
 
-BIN_FILE:=$(PKG_NAME)
+BIN_FILE:=$(BIN_NAME)
 BIN_URL:=https://github.com/3wlh/Actions-Build_Docker-image/releases/download/$(BIN_NAME)/$(BIN_NAME)_$(PKG_ARCH)
 WEB_FILE:=www.photopea.com.tar.gz
 WEB_URL:=https://github.com/3wlh/Actions-Build_Docker-image/releases/download/$(BIN_NAME)/www.photopea.com.tar.gz
@@ -56,13 +56,9 @@ endef
 
 define Extract/Files
 	echo -e "\033[1;32m Extract：Files \033[0m"
-	cd $(PKG_BUILD_DIR)
-	test -d www.photopea.com || mkdir -p www.photopea.com
-	tar -zxf $(WEB_FILE) -C www.photopea.com
-	test -d fonts || mkdir -p fonts
-	tar -zxf $(FONTS_FILE) -C fonts
-	$(CP) -fr fonts www.photopea.com/rsrc/fonts
-	cd -	
+	test -d $(PKG_BUILD_DIR)/www.photopea.com || mkdir -p $(PKG_BUILD_DIR)/www.photopea.com
+	tar -zxf $(WEB_FILE) -C $(PKG_BUILD_DIR)/www.photopea.com
+	tar -zxf $(FONTS_FILE) -C $(PKG_BUILD_DIR)/www.photopea.com/rsrc/fonts	
 endef
 
 define Build/Po2lmo
