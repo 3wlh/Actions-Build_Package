@@ -2,7 +2,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-photopea
-BIN_NAME:=photopea
+BIN_NAME:=www.photopea.com
 PKG_VERSION:=$(shell date +%y.%m.%d)
 PKG_RELEASE:=$(shell date +%H%M%S)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
@@ -22,7 +22,7 @@ WEB_FILE:=www.photopea.com.tar.gz
 WEB_URL:=https://github.com/3wlh/Actions-Build_Docker-image/releases/download/$(BIN_NAME)/www.photopea.com.tar.gz
 FONTS_FILE:=fonts.tar.gz
 FONTS_URL:=https://github.com/3wlh/Actions-Build_Docker-image/releases/download/$(BIN_NAME)/fonts.tar.gz
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
+PKG_BUILD_DIR:=$(BUILD_DIR)/PKG_BUILD_$(BIN_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -82,7 +82,7 @@ define Build/Prepare
 	$(call Build/ZH-CN)
 	$(CP) -fr root $(PKG_BUILD_DIR)
 	$(CP) -fr luasrc $(PKG_BUILD_DIR)
-	chmod -R 755 $(PKG_BUILD_DIR)/$(PKG_NAME)
+	chmod -R 755 $(PKG_BUILD_DIR)
 	ls $(PKG_BUILD_DIR)
 endef
 
