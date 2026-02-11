@@ -16,14 +16,13 @@ ifeq ($(ARCH),x86_64)
 	PKG_ARCH:=amd64
 endif
 
-PKG_FILE:=$(PKG_NAME)
-PKG_URL:=https://github.com/3wlh/Actions-Build_Docker-image/releases/download/$(BIN_NAME)/$(BIN_NAME)_$(PKG_ARCH)
+BIN_FILE:=$(PKG_NAME)
+BIN_URL:=https://github.com/3wlh/Actions-Build_Docker-image/releases/download/$(BIN_NAME)/$(BIN_NAME)_$(PKG_ARCH)
 WEB_FILE:=www.photopea.com.tar.gz
 WEB_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NAME)/www.photopea.com.tar.gz
 FONTS_FILE:=fonts.tar.gz
 FONTS_URL:=https://github.com/3wlh/Actions-Build_Source/releases/download/$(BIN_NAME)/fonts.tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/PKG_BUILD_$(PKG_NAME)
-PKG_HASH:=skip
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -41,41 +40,41 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Download/Files
-echo -e "\033[32m Download：$(PKG_ARCH) \033[0m"
-if [ ! -f $(PKG_BUILD_DIR)/$(PKG_FILE) ] ; then \
-	wget $(PKG_URL) -O $(PKG_BUILD_DIR)/$(PKG_FILE); \
-fi
-if [ ! -f $(PKG_BUILD_DIR)/$(WEB_FILE) ] ; then \
-	wget $(PKG_URL) -O $(PKG_BUILD_DIR)/$(WEB_FILE); \
-fi
-if [ ! -f $(PKG_BUILD_DIR)/$(FONTS_FILE) ] ; then \
-	wget $(PKG_URL) -O $(PKG_BUILD_DIR)/$(FONTS_FILE); \
-fi
-chmod -R 755 $(PKG_BUILD_DIR)
+	echo -e "\033[32m Download：$(PKG_ARCH) \033[0m"
+	if [ ! -f $(PKG_BUILD_DIR)/$(BIN_FILE) ] ; then \
+		wget $(BIN_URL) -O $(PKG_BUILD_DIR)/$(BIN_FILE); \
+	fi
+	if [ ! -f $(PKG_BUILD_DIR)/$(WEB_FILE) ] ; then \
+		wget $(WEB_URL) -O $(PKG_BUILD_DIR)/$(WEB_FILE); \
+	fi
+	if [ ! -f $(PKG_BUILD_DIR)/$(FONTS_FILE) ] ; then \
+		wget $(FONTS_URL) -O $(PKG_BUILD_DIR)/$(FONTS_FILE); \
+	fi
+	chmod -R 755 $(PKG_BUILD_DIR)
 endef
 
 define Extract/Files
-echo -e "\033[32m Extract：Files \033[0m"
-cd $(PKG_BUILD_DIR)
-test -d www.photopea.com || mkdir -p www.photopea.com
-tar -zxf $(WEB_FILE) -C www.photopea.com
-test -d fonts || mkdir -p fonts
-tar -zxf $(FONTS_FILE) -C fonts
-$(CP) -fr fonts www.photopea.com/rsrc/fonts
-cd -	
+	echo -e "\033[1;32m Extract：Files \033[0m"
+	cd $(PKG_BUILD_DIR)
+	test -d www.photopea.com || mkdir -p www.photopea.com
+	tar -zxf $(WEB_FILE) -C www.photopea.com
+	test -d fonts || mkdir -p fonts
+	tar -zxf $(FONTS_FILE) -C fonts
+	$(CP) -fr fonts www.photopea.com/rsrc/fonts
+	cd -	
 endef
 
 define Build/Po2lmo
-if [ ! -d "po2lmo" ]; then \
-	git clone https://github.com/openwrt-dev/po2lmo.git && cd po2lmo; \
-	make clean && make && sudo make install && cd - ;\
-fi
-$(foreach po,$(wildcard ./po/zh-cn/*.po), \
-	po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
+	if [ ! -d "po2lmo" ]; then \
+		git clone https://github.com/openwrt-dev/po2lmo.git && cd po2lmo; \
+		make clean && make && sudo make install && cd - ;\
+	fi
+	$(foreach po,$(wildcard ./po/zh-cn/*.po), \
+		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
 endef
 
 define Build/Prepare
-	echo -e "\033[32m Process：Files \033[0m"
+	echo -e "\033[1;32m Prepare：$(PKG_ARCH)\033[0m"
 	rm -rf $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
 	$(call Download/Files)
