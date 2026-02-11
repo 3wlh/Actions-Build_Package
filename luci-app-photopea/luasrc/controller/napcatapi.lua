@@ -1,24 +1,24 @@
-module("luci.controller.napcatapi", package.seeall)
+module("luci.controller.photopea", package.seeall)
 
 function index()
-	if not nixio.fs.access("/etc/config/napcatapi") then
+	if not nixio.fs.access("/etc/config/photopea") then
 		return
 	end
-	entry({"admin", "services", "napcatapi"}, firstchild(), _("NapCat Api"), 90).dependent = true
-	entry({"admin", "services","napcatapi_status"}, call("Run_status"))
+	entry({"admin", "services", "photopea"}, firstchild(), _("Photopea"), 90).dependent = true
+	entry({"admin", "services","photopea_status"}, call("Run_status"))
 	-- 注册菜单 
-	entry({"admin", "services", "napcatapi", "settings"}, cbi("napcatapi/napcatapi"), _("Settings"), 10).leaf = true
-	entry({"admin", "services", "napcatapi", "edit"}, template("napcatapi/edit"), _("Edit"), 20).leaf = true
-	entry({"admin", "services", "napcatapi", "napcat"}, template("napcatapi/napcat"), _("NapCat"), 30).leaf = true
-	entry({"admin", "services", "napcatapi", "logs"}, template("napcatapi/logs"), _("Logs"), 40).leaf = true
+	entry({"admin", "services", "photopea", "settings"}, cbi("photopea/settings"), _("Settings"), 10).leaf = true
+	entry({"admin", "services", "photopea", "edit"}, template("photopea/edit"), _("Edit"), 20).leaf = true
+	entry({"admin", "services", "photopea", "file"}, template("photopea/file"), _("File"), 30).leaf = true
+	entry({"admin", "services", "photopea", "logs"}, template("photopea/logs"), _("Logs"), 40).leaf = true
 end
 
 function Run_status()
 	local uci  = require "luci.model.uci".cursor()
-	local port = tonumber(uci:get("napcatapi", "config", "port"))
-	local token = uci:get("napcatapi", "config", "token")
-	local file_bin = "napcatapi"
-	local find_cmd = "find /usr/sbin/ -maxdepth 1 -name napcatapi* -exec basename {} \\; | head -1"
+	local port = tonumber(uci:get("photopea", "config", "port"))
+	local token = uci:get("photopea", "config", "token")
+	local file_bin = "photopea"
+	local find_cmd = "find /usr/sbin/ -maxdepth 1 -name photopea* -exec basename {} \\; | head -1"
     local fp = io.popen(find_cmd, "r")
     if fp then
         file_bin = fp:read("*a"):gsub("^%s+", ""):gsub("%s+$", "")
@@ -26,7 +26,7 @@ function Run_status()
     end
 	local status = {
 		running = (luci.sys.call("pidof "..file_bin.." >/dev/null") == 0),
-		port = (port or 5663),
+		port = (port or 8887),
 		token = (token or "")
 	}
 	luci.http.prepare_content("application/json")
