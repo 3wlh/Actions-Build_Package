@@ -58,7 +58,7 @@ define Extract/Files
 echo -e "\033[32m Extract：Files \033[0m"
 cd $(PKG_BUILD_DIR)
 test -d www.photopea.com || mkdir -p www.photopea.com
-tar -zxf $(FONTS_FILE) -C www.photopea.com
+tar -zxf $(WEB_FILE) -C www.photopea.com
 test -d fonts || mkdir -p fonts
 tar -zxf $(FONTS_FILE) -C fonts
 $(CP) -fr fonts www.photopea.com/rsrc/fonts
