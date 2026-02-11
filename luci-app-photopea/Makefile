@@ -51,6 +51,7 @@ define Download/Files
 		wget $(FONTS_URL) -O $(PKG_BUILD_DIR)/$(FONTS_FILE); \
 	fi
 	chmod -R 755 $(PKG_BUILD_DIR)
+	ls $(PKG_BUILD_DIR)
 endef
 
 define Extract/Files
