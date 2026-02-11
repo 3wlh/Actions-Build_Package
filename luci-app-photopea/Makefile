@@ -2,7 +2,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-photopea
-BIN_NAME:=www.photopea.com
+BIN_NAME:=photopea
 PKG_VERSION:=$(shell date +%y.%m.%d)
 PKG_RELEASE:=$(shell date +%H%M%S)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
