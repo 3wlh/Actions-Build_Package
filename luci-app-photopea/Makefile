@@ -50,7 +50,6 @@ define Download/Files
 	if [ ! -f $(PKG_BUILD_DIR)/$(FONTS_FILE) ] ; then \
 		wget $(FONTS_URL) -O $(PKG_BUILD_DIR)/$(FONTS_FILE); \
 	fi
-	chmod -R 755 $(PKG_BUILD_DIR)
 	ls $(PKG_BUILD_DIR)
 endef
 
@@ -62,11 +61,14 @@ define Extract/Files
 endef
 
 define Build/Po2lmo
-	if [ ! -d "po2lmo" ]; then \
-		git clone https://github.com/openwrt-dev/po2lmo.git && cd po2lmo; \
-		make clean && make && sudo make install && cd - ;\
-	fi
-	$(foreach po,$(wildcard ./po/zh-cn/*.po), \
+    if [ ! -d "po2lmo" ]; then \
+        git clone https://github.com/openwrt-dev/po2lmo.git && cd po2lmo; \
+        make clean && make && sudo make install && cd - ;\
+    fi
+endef
+
+define Build/ZH-CN
+    $(foreach po,$(wildcard ./po/zh-cn/*.po), \
 		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
 endef
 
@@ -77,6 +79,7 @@ define Build/Prepare
 	$(call Download/Files)
 	$(call Extract/Files)
 	$(call Build/Po2lmo)
+	$(call Build/ZH-CN)
 	$(CP) -fr root $(PKG_BUILD_DIR)
 	$(CP) -fr luasrc $(PKG_BUILD_DIR)
 	chmod -R 755 $(PKG_BUILD_DIR)/$(PKG_NAME)
