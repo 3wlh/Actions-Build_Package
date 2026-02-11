@@ -56,9 +56,9 @@ endef
 
 define Extract/Files
 	echo -e "\033[1;32m Extract：Files \033[0m"
-	test -d $(PKG_BUILD_DIR)/www.photopea.com || mkdir -p $(PKG_BUILD_DIR)/www.photopea.com
-	tar -zxf $(WEB_FILE) -C $(PKG_BUILD_DIR)/www.photopea.com
-	tar -zxf $(FONTS_FILE) -C $(PKG_BUILD_DIR)/www.photopea.com/rsrc/fonts	
+	mkdir -p $(PKG_BUILD_DIR)/www.photopea.com/rsrc/fonts
+	tar -zxf $(PKG_BUILD_DIR)/$(WEB_FILE) -C $(PKG_BUILD_DIR)/www.photopea.com
+	tar -zxf $(PKG_BUILD_DIR)/$(FONTS_FILE) -C $(PKG_BUILD_DIR)/www.photopea.com/rsrc/fonts
 endef
 
 define Build/Po2lmo
