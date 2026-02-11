@@ -48,6 +48,7 @@ on:
           - page-static
           - sse_server-static
           - luci-app-scriptsse
+          - luci-app-photopea
           - luci-app-napcatapi
           - luci-app-cifs-mount2
           - luci-app-bypass
