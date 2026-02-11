@@ -67,8 +67,8 @@ endef
 
 define Build/Po2lmo
 if [ ! -d "po2lmo" ]; then \
-    git clone https://github.com/openwrt-dev/po2lmo.git && cd po2lmo; \
-    make clean && make && sudo make install && cd - ;\
+	git clone https://github.com/openwrt-dev/po2lmo.git && cd po2lmo; \
+	make clean && make && sudo make install && cd - ;\
 fi
 $(foreach po,$(wildcard ./po/zh-cn/*.po), \
 	po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
@@ -76,15 +76,15 @@ endef
 
 define Build/Prepare
 echo -e "\033[32m Process：Files \033[0m"
-rm -rf $(PKG_BUILD_DIR)
-mkdir -p $(PKG_BUILD_DIR)
-$(call Download/Files)
-$(call Extract/Files)
-$(call Build/Po2lmo)
-$(CP) -fr root $(PKG_BUILD_DIR)
-$(CP) -fr luasrc $(PKG_BUILD_DIR)
-chmod -R 755 $(PKG_BUILD_DIR)/$(PKG_NAME)
-ls $(PKG_BUILD_DIR)
+	rm -rf $(PKG_BUILD_DIR)
+	mkdir -p $(PKG_BUILD_DIR)
+	$(call Download/Files)
+	$(call Extract/Files)
+	$(call Build/Po2lmo)
+	$(CP) -fr root $(PKG_BUILD_DIR)
+	$(CP) -fr luasrc $(PKG_BUILD_DIR)
+	chmod -R 755 $(PKG_BUILD_DIR)/$(PKG_NAME)
+	ls $(PKG_BUILD_DIR)
 endef
 
 define Package/$(PKG_NAME)/postinst
@@ -97,7 +97,7 @@ define Package/$(PKG_NAME)/postinst
 endef
 
 define Build/Compile
-	touch $(PKG_BUILD_DIR)/.built
+	touch $(BUILD_DIR)/$(PKG_NAME).built
 endef
 
 define Package/$(PKG_NAME)/conffiles
