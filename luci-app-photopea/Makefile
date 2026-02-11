@@ -22,7 +22,7 @@ WEB_FILE:=www.photopea.com.tar.gz
 WEB_URL:=https://github.com/3wlh/Actions-Build_Docker-image/releases/download/$(BIN_NAME)/www.photopea.com.tar.gz
 FONTS_FILE:=fonts.tar.gz
 FONTS_URL:=https://github.com/3wlh/Actions-Build_Docker-image/releases/download/$(BIN_NAME)/fonts.tar.gz
-PKG_BUILD_DIR:=$(BUILD_DIR)/PKG_BUILD_$(BIN_NAME)
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -73,7 +73,7 @@ endef
 define Build/Prepare
 	echo -e "\033[1;32m Prepare：$(PKG_ARCH)\033[0m"
 	rm -rf $(PKG_BUILD_DIR)
-	mkdir -p $(PKG_BUILD_DIR)
+	mkdir -pm 775 $(PKG_BUILD_DIR)
 	$(call Download/Files)
 	$(call Extract/Files)
 	$(call Build/Po2lmo)
