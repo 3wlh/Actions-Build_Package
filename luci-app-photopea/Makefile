@@ -101,8 +101,9 @@ define Package/$(PKG_NAME)/conffiles
 endef
 
 define Package/$(PKG_NAME)/install
+	echo -e "\033[1;32m install \033[0m"
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_FILE) $(1)/usr/sbin/$(PKG_FILE)
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_FILE) $(1)/usr/sbin/
 	$(CP) $(PKG_BUILD_DIR)/root/* $(1)/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
 	$(CP) $(PKG_BUILD_DIR)/luasrc/* $(1)/usr/lib/lua/luci/
@@ -111,10 +112,10 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) ./files/photopea.init $(1)/etc/init.d/photopea
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) ./files/photopea.config $(1)/etc/config/photopea
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_BIN) ./files/photopea.uci-default $(1)/etc/uci-defaults/photopea
 	$(INSTALL_DIR) $(1)/etc/photopea
 	$(CP) -fr $(PKG_BUILD_DIR)/www.photopea.com $(1)/etc/photopea/photopea
-	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_BIN) ./files/photopea.uci-default $(1)/etc/uci-defaults/photopea	
 endef
 
 
