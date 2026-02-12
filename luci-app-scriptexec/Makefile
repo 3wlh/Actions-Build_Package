@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-scriptexec
-PKG_VERSION:=1.0
-PKG_RELEASE:=$(shell date +%Y%m%d)
+PKG_VERSION:=$(shell date +%y.%m.%d)
+PKG_RELEASE:=$(shell date +%H%M%S)
 KG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
@@ -13,13 +13,13 @@ define Package/$(PKG_NAME)
 	SECTION:=system
 	CATEGORY:=System
 	SUBMENU:=System Tools
-	TITLE:=LuCI support for netconfig
+	TITLE:=LuCI support for scriptexec
 	PKGARCH:=all
 	DEPENDS:=+luci-base
 endef
 
 define Package/$(PKG_NAME)/description
-    A LuCI support for netconfig
+    A LuCI support for scriptexec
 endef
 
 define Build/Prepare
