@@ -39,8 +39,8 @@ init_config()
 
 local m, s, o
 m = Map("photopea", _("Photopea"), 
-    _("Web-based image editor") .. "<br/>" ..
-    _("Official reference") .. ": <a href='https://github.com/photopea/photopea' target='_blank'>NapCat API</a>")
+    _("This is a web-based image editor.") .. "<br/>" ..
+    _("Official reference") .. ": <a href='https://github.com' target='_blank'>Photopea</a>")
 
 -- 调用独立状态模板
 m:section(SimpleSection).template = "photopea/status"

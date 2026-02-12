@@ -21,8 +21,8 @@ msgid "Log"
 msgstr "日志"
 
 # 页面描述
-msgid "Web-based image editor"
-msgstr "网页版图片编辑器"
+msgid "This is a web-based image editor."
+msgstr "这是一个网页版的图片编辑器."
 msgid "Official reference"
 msgstr "官方参考"
 # 服务状态
