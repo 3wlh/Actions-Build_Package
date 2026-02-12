@@ -63,10 +63,10 @@ endef
 define Build/Po2lmo
 	if [ ! -d "po2lmo" ]; then \
 		git clone https://github.com/openwrt-dev/po2lmo.git && cd po2lmo; \
-		make clean && make && make install PREFIX=../ && cd - ;\
+		make clean && make && make install PREFIX=/tmp/ && cd - ;\
 	fi
 	$(foreach po,$(wildcard ./po/zh-cn/*.po), \
-		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
+		/tmp/po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
 endef
 
 define Build/Prepare
