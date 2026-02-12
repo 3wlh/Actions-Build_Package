@@ -21,10 +21,10 @@ msgid "Log"
 msgstr "日志"
 
 # 页面描述
-msgid "This is a web-based image editor."
-msgstr "这是一个网页版的图片编辑器."
-msgid "Official reference"
-msgstr "官方参考"
+msgid "Photopea is online image editor."
+msgstr "Photopea 是一款在线图片编辑器."
+msgid "Official website"
+msgstr "官方网址"
 # 服务状态
 msgid "Collecting data..."
 msgstr "正在收集数据..."
