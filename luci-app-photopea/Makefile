@@ -19,7 +19,7 @@ endif
 BIN_FILE:=$(BIN_NAME)
 BIN_URL:=https://github.com/3wlh/Actions-Build_Docker-image/releases/download/$(BIN_NAME)/$(BIN_NAME)_$(PKG_ARCH)
 WEB_FILE:=www.photopea.com.tar.gz
-WEB_URL:=https://github.com/3wlh/Actions-Build_Docker-image/releases/download/$(BIN_NAME)/www.photopea.com.tar.gz
+WEB_URL:=https://github.com/3wlh/Actions-Build_Docker-image/releases/download/$(BIN_NAME)/photopea-2.7.tar.gz
 FONTS_FILE:=fonts.tar.gz
 FONTS_URL:=https://github.com/3wlh/Actions-Build_Docker-image/releases/download/$(BIN_NAME)/fonts.tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/PKG_BUILD_$(BIN_NAME)
