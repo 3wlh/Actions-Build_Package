@@ -13,13 +13,13 @@ define Package/$(PKG_NAME)
 	SECTION:=system
 	CATEGORY:=System
 	SUBMENU:=System Tools
-	TITLE:=LuCI support for netconfig
+	TITLE:=LuCI support for scriptsse
 	PKGARCH:=all
 	DEPENDS:=+luci-base +sse-msg-static
 endef
 
 define Package/$(PKG_NAME)/description
-    A LuCI support for netconfig
+    A LuCI support for scriptsse
 endef
 
 define Build/Prepare
