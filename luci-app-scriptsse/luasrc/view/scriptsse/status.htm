@@ -100,7 +100,7 @@ let CFG = {
 // 异步获取LuCI配置接口的token和端口
 async function fetchConfig() {
     try {
-        const response = await fetch('/cgi-bin/luci/admin/system/scriptexec/cfg', {
+        const response = await fetch('/cgi-bin/luci/admin/system/scriptsse/cfg', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -160,7 +160,7 @@ function runCmd() {
     if (!exec) {
         //return;
     }
-    fetch('/cgi-bin/luci/admin/system/scriptexec/run?cmd=' + encodeURIComponent(exec))
+    fetch('/cgi-bin/luci/admin/system/scriptsse/run?cmd=' + encodeURIComponent(exec))
     .then(r=> r.ok ? r.json() :Promise.reject(`HTTP错误: ${r.status} (${r.statusText})`))
     .then(status=> {console.log("✅ 执行成功:", status.msg);})
     .catch(err => {
@@ -169,7 +169,7 @@ function runCmd() {
 }
 
 function stopCmd() {
-    fetch('/cgi-bin/luci/admin/system/scriptexec/stop')
+    fetch('/cgi-bin/luci/admin/system/scriptsse/stop')
         .then(r => r.ok ? r.json() : Promise.reject(`HTTP错误: ${r.status} (${r.statusText})`))
         .then(status=> {console.log("✅ 执行成功:", status.msg);})
         .catch(err => {

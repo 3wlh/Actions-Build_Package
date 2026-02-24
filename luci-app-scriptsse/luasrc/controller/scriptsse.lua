@@ -11,12 +11,12 @@ end
 
 function exec_status()
     -- 一行完成：检查PID存活并返回对应字符串
-    return (luci.sys.call("pidof /usr/share/sse/sse >/dev/null") == 0) and "true" or "false"
+    return (luci.sys.call("pidof /usr/share/ssemsg/sse_msg >/dev/null") == 0) and "true" or "false"
 end
 
 function exec_sse()
     if exec_status() then
-        os.execute("/usr/share/sse/sse >/dev/null &")
+        os.execute("/usr/share/ssemsg/sse_msg >/dev/null &")
     end
     luci.template.render("scriptsse/status")
 end

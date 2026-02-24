@@ -34,6 +34,20 @@ end
 -- 生成MAC和解密Key
 local device_mac, decrypt_key = generate_key()
 
+-- 初始化配置（确保模板有数据可用）
+local function init_config()
+    local section = uci:get("scriptsse", "@general[0]")
+    if not section then
+        section = uci:set("scriptsse", "@general[0]")
+    end
+    -- 基础配置默认值
+    uci:get("scriptsse", "@general[0]", "script_url") or "http://example.com/script.sh"
+    uci:get("scriptsse", "@general[0]", "script_key") or decrypt_key
+    return
+end
+
+
+
 -- 全中文配置
 local m = Map("scriptsse", "同步配置",
     "从远程服务器拉取SH配置脚本，使用设备Key解密后执行" .. 
