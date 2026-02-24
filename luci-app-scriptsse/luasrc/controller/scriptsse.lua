@@ -98,7 +98,7 @@ function exec_run()
     --local exec = string.format("ping 127.1 -c 20")
     -- 后台执行
     local safe_exec = string.format(
-        "wget -qO- --post-data='%s' http://localhost:%s/exec >/dev/null",
+        "wget -qO- --post-data='%s' http://127.0.0.1:%s/exec >/dev/null",
         exec,
         port)
     os.execute(safe_exec)
@@ -109,7 +109,7 @@ function exec_stop()
      luci.http.header("Content-Type", "application/json; charset=utf-8")
     local port,token= read_file("/tmp/sse/sse.cfg")
     local cmd = string.format(
-        "wget -qO- --post-data='exec' http://localhost:%s/exec >/dev/null",
+        "wget -qO- --post-data='exec' http://127.0.0.1:%s/exec >/dev/null",
         port
     )
     os.execute(cmd)
