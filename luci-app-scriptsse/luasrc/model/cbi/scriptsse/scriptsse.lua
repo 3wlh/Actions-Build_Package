@@ -1,3 +1,4 @@
+local uci = require "luci.model.uci".cursor()
 local io = require("io")
 local string = require("string")
 
@@ -41,12 +42,12 @@ local function init_config()
         section = uci:set("scriptsse", "@general[0]")
     end
     -- 基础配置默认值
-    uci:get("scriptsse", "@general[0]", "script_url") or "http://example.com/script.sh"
-    uci:get("scriptsse", "@general[0]", "script_key") or decrypt_key
+    uci:set("scriptsse", "@general[0]", "script_url", uci:get("scriptsse", "@general[0]", "script_url") or 'http://example.com/script.sh')
+    uci:set("scriptsse", "@general[0]", "script_key", uci:get("scriptsse", "@general[0]", "script_key") or decrypt_key)
     return
 end
 
-
+init_config()
 
 -- 全中文配置
 local m = Map("scriptsse", "同步配置",
