@@ -37,20 +37,20 @@ local device_mac, decrypt_key = generate_key()
 
 -- 初始化配置（确保模板有数据可用）
 local function init_config()
-    local section = uci:get("scriptsse", "@general[0]")
+    local section = uci:get("scriptmsg", "@general[0]")
     if not section then
-        section = uci:set("scriptsse", "@general[0]")
+        section = uci:set("scriptmsg", "@general[0]")
     end
     -- 基础配置默认值
-    uci:set("scriptsse", "@general[0]", "script_url", uci:get("scriptsse", "@general[0]", "script_url") or 'http://example.com/script.sh')
-    uci:set("scriptsse", "@general[0]", "script_key", uci:get("scriptsse", "@general[0]", "script_key") or decrypt_key)
+    uci:set("scriptmsg", "@general[0]", "script_url", uci:get("scriptmsg", "@general[0]", "script_url") or 'http://example.com/script.sh')
+    uci:set("scriptmsg", "@general[0]", "script_key", uci:get("scriptmsg", "@general[0]", "script_key") or decrypt_key)
     return
 end
 
 init_config()
 
 -- 全中文配置
-local m = Map("scriptsse", "同步配置",
+local m = Map("scriptmsg", "同步配置",
     "从远程服务器拉取SH配置脚本，使用设备Key解密后执行" .. 
     (device_mac ~= "" and "<br><b>MAC地址: </b> <span style='color:#3498db;'>" .. device_mac .. "</span>" or "") ..
     (decrypt_key ~= "" and "<br><b>密钥Key: </b> <span style='color:#e74c3c;'>" .. decrypt_key .. "</span>" or ""))
