@@ -18,7 +18,7 @@ function exec_msg()
     if exec_status() then
         os.execute("/usr/share/ssemsg/sse_msg >/dev/null &")
     end
-    luci.template.render("scriptsse/status")
+    luci.template.render("scriptmsg/status")
 end
 
 

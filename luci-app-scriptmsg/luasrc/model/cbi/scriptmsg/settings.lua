@@ -39,7 +39,8 @@ local device_mac, decrypt_key = generate_key()
 local function init_config()
     local section = uci:get("scriptmsg", "@general[0]")
     if not section then
-        section = uci:set("scriptmsg", "@general[0]")
+        local name = uci:add("scriptmsg", "general")
+        uci:reorder("scriptmsg", name, 0)
     end
     -- 基础配置默认值
     uci:set("scriptmsg", "@general[0]", "script_url", uci:get("scriptmsg", "@general[0]", "script_url") or 'http://example.com/script.sh')
