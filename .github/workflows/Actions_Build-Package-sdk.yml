@@ -46,8 +46,8 @@ on:
           - api-static
           - sub-static
           - page-static
-          - sse_server-static
-          - luci-app-scriptsse
+          - sse_msg-static
+          - luci-app-scriptmsg
           - luci-app-photopea
           - luci-app-napcatapi
           - luci-app-cifs-mount2
