@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-scriptsse
+PKG_NAME:=luci-app-scriptmsg
 PKG_VERSION:=$(shell date +%y.%m.%d)
 PKG_RELEASE:=$(shell date +%H%M%S)
 KG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
@@ -13,13 +13,13 @@ define Package/$(PKG_NAME)
 	SECTION:=system
 	CATEGORY:=System
 	SUBMENU:=System Tools
-	TITLE:=LuCI support for scriptsse
+	TITLE:=LuCI support for scriptmsg
 	PKGARCH:=all
 	DEPENDS:=+luci-base +sse-msg-static
 endef
 
 define Package/$(PKG_NAME)/description
-    A LuCI support for scriptsse
+    A LuCI support for scriptmsg
 endef
 
 define Build/Prepare

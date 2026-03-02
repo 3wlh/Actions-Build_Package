@@ -1,12 +1,12 @@
-module("luci.controller.scriptsse", package.seeall)
+module("luci.controller.scriptmsg", package.seeall)
 
 function index()
-    entry({"admin", "system", "scriptsse"}, firstchild(), _("在线配置"), 90).dependent = true
-    entry({"admin", "system", "scriptsse", "settings"}, cbi("scriptsse/scriptsse"), _("Settings"), 10).leaf = true
-    entry({"admin", "system", "scriptsse", "execute"}, call("exec_sse"), _("执行命令"), 20).leaf = true
-    entry({"admin", "system", "scriptsse", "cfg"}, call("exec_cfg"), nil).leaf = true
-    entry({"admin", "system", "scriptsse", "run"}, call("exec_run"), nil).leaf = true
-    entry({"admin", "system", "scriptsse", "stop"}, call("exec_stop"), nil).leaf = true
+    entry({"admin", "system", "scriptmsg"}, firstchild(), _("在线配置"), 90).dependent = true
+    entry({"admin", "system", "scriptmsg", "settings"}, cbi("scriptmsg/settings"), _("Settings"), 10).leaf = true
+    entry({"admin", "system", "scriptmsg", "execute"}, call("exec_msg"), _("执行命令"), 20).leaf = true
+    entry({"admin", "system", "scriptmsg", "cfg"}, call("exec_cfg"), nil).leaf = true
+    entry({"admin", "system", "scriptmsg", "run"}, call("exec_run"), nil).leaf = true
+    entry({"admin", "system", "scriptmsg", "stop"}, call("exec_stop"), nil).leaf = true
 end
 
 function exec_status()
@@ -14,7 +14,7 @@ function exec_status()
     return (luci.sys.call("pidof /usr/share/ssemsg/sse_msg >/dev/null") == 0) and "true" or "false"
 end
 
-function exec_sse()
+function exec_msg()
     if exec_status() then
         os.execute("/usr/share/ssemsg/sse_msg >/dev/null &")
     end
@@ -66,17 +66,17 @@ local function get_variable()
     local uci = require("luci.model.uci").cursor()
     -- 正确读取列表型配置节：@general[]（适配config general不带名称的场景）
     local config = {
-        url = uci:get("scriptsse", "@general[0]", "script_url") or "",
-        key = uci:get("scriptsse", "@general[0]", "script_key") or get_key(),
+        url = uci:get("scriptmsg", "@general[0]", "script_url") or "",
+        key = uci:get("scriptmsg", "@general[0]", "script_key") or get_key(),
     }
-    uci:unload("scriptsse")
+    uci:unload("scriptmsg")
     return config
 end
 
 
 function exec_cfg()
     luci.http.header("Content-Type", "application/json; charset=utf-8")
-    local port,token = read_file("/tmp/sse/sse.cfg")
+    local port,token = read_file("/tmp/notify/notify.log")
     local response = string.format('{"port": "%s", "token": "%s"}',port,token)
     luci.http.write(response) 
 end
@@ -90,7 +90,7 @@ function exec_run()
       --  luci.http.write("请输入命令") 
         --return 
     --end
-    local port,token = read_file("/tmp/sse/sse.cfg")
+    local port,token = read_file("/tmp/notify/notify.log")
     local cfg = get_variable()
     local url = cfg.url:gsub("'", "'\\''") -- 转义单引号防注入
     local key = cfg.key:gsub("'", "'\\''") -- 转义单引号防注入
@@ -107,7 +107,7 @@ end
 
 function exec_stop()
      luci.http.header("Content-Type", "application/json; charset=utf-8")
-    local port,token= read_file("/tmp/sse/sse.cfg")
+    local port,token= read_file("/tmp/notify/notify.log")
     local cmd = string.format(
         "wget -qO- --post-data='exec' http://127.0.0.1:%s/exec >/dev/null",
         port
