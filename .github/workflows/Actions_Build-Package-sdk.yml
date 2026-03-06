@@ -81,7 +81,7 @@ on:
       
 jobs:
   call-sdk-docker:
-    if: inputs.method == 'docker'
+    if: ${{ inputs.method == 'docker' }}
     uses: ./.github/workflows/Actions-SDK-Docker.yml
     secrets: inherit
     with:
@@ -93,7 +93,7 @@ jobs:
       version: ${{ inputs.version }}
   
   call-sdk-download:
-    if: inputs.method == 'download'
+    if: ${{ inputs.method == 'download' }}
     uses: ./.github/workflows/Actions-SDK-Download.yml
     secrets: inherit
     with:
