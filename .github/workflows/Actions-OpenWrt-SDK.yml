@@ -97,20 +97,8 @@ jobs:
             echo "feeds=true" >> $GITHUB_ENV
           fi
 
-      - name: Build Openwrt Packages
-        if: inputs.sdk == 'Openwrt'
-        uses: openwrt/gh-action-sdk@main
-        env:
-          ARCH: ${{ matrix.arch }}-${{ matrix.sdk_version }}
-          FEEDNAME: packages_ci
-          PACKAGES: ${{ inputs.package }}
-          NO_DEFAULT_FEEDS: ${{ env.feeds }}
-          NO_REFRESH_CHECK: true
-          V: ${{ env.Buildout }}
-
-      - name: Build Immortalwrt Packages
-        if: inputs.sdk == 'Immortalwrt'
-        uses: immortalwrt/gh-action-sdk@master
+      - name: Build SDK Packages
+        uses: ${{ inputs.sdk == 'Openwrt' ? 'openwrt/gh-action-sdk@main' : 'immortalwrt/gh-action-sdk@master' }}
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.sdk_version }}
           FEEDNAME: packages_ci
