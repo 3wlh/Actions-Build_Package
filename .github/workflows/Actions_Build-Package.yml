@@ -45,10 +45,10 @@ jobs:
         include:
           - arch: aarch64_generic
             sdk_url_path: layerscape/armv8_64b
-            sdk_name: -sdk-.*-layerscape-armv8_64b_
+            sdk_name: '-sdk-.*-layerscape-armv8_64b_'
           - arch: x86_64
             sdk_url_path: x86/64
-            sdk_name: -sdk-.*-x86-64_
+            sdk_name: '-sdk-.*-x86-64_'
 
     env:
       SDK_URL_PATH: ${{ matrix.sdk_url_path }}
