@@ -142,11 +142,11 @@ jobs:
 
       - name: Build Packages
         run: |
-          cd "${{ env.SDK_HOME }}"
+          cd "${{ env.CACHE_DIR }}"
           make defconfig  >/dev/null
           make package/${{ env.PACKAGE_NAME }}/{clean,compile} V=s
           # make package/${{ env.PACKAGE_NAME }}/{clean,compile}
-          find "${{ env.SDK_HOME }}/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
+          find "${{ env.CACHE_DIR }}/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
           cd -
 
       - name: Copy Bin Files
@@ -169,7 +169,7 @@ jobs:
         if: ${{env.UPLOAD_BIN_DIR}} == 'true'
         with:
           name: ${{ matrix.arch }}_package_${{ env.Time }}
-          path: ${{ env.SDK_HOME }}/bin 
+          path: ${{ env.CACHE_DIR }}/bin 
 
       - name: Upload to Release
         uses: softprops/action-gh-release@master
