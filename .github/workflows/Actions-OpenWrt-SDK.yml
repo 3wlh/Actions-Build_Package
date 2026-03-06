@@ -77,7 +77,7 @@ jobs:
           - aarch64_generic
           - x86_64
         sdk_version:
-          - openwrt-24.10
+          - openwrt-24.10.0
           #- SNAPSHOT
     env:
       BUILD_TIME: ${{ needs.jod_initial.outputs.time }}
