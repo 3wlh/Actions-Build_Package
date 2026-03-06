@@ -90,23 +90,15 @@ jobs:
       
       - name: Set Environment Variables
         run: |
-          # 动态设置SDK Action地址
-          if [ "$SELECTED_SDK" = "Openwrt" ]; then
-            echo "SDK_ACTION=openwrt/gh-action-sdk@main" >> $GITHUB_ENV
-          else
-            echo "SDK_ACTION=immortalwrt/gh-action-sdk@master" >> $GITHUB_ENV
-          fi
           if [ "${{ inputs.out }}" == "true" ]; then
             echo "Buildout=sc" >> $GITHUB_ENV
           fi
           if [[ "${{ inputs.feeds }}" == "true"  || "${{ inputs.package }}" =~ "static" ]]; then
             echo "feeds=true" >> $GITHUB_ENV
           fi
-          
-          
 
-      - name: Build SDK Packages
-        uses: ${{ env.SDK_ACTION }}
+      - name: Build Openwrt Packages
+        uses: ${{ inputs.sdk == 'Openwrt' ? 'openwrt/gh-action-sdk@main' : 'immortalwrt/gh-action-sdk@master' }}
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.sdk_version }}
           FEEDNAME: packages_ci
@@ -114,7 +106,18 @@ jobs:
           NO_DEFAULT_FEEDS: ${{ env.feeds }}
           NO_REFRESH_CHECK: true
           V: ${{ env.Buildout }}
-      
+
+      - name: Build Immortalwrt Packages
+        if: inputs.sdk == 'Immortalwrt'
+        uses: immortalwrt/gh-action-sdk@master
+        env:
+          ARCH: ${{ matrix.arch }}-${{ matrix.sdk_version }}
+          FEEDNAME: packages_ci
+          PACKAGES: ${{ inputs.package }}
+          NO_DEFAULT_FEEDS: ${{ env.feeds }}
+          NO_REFRESH_CHECK: true
+          V: ${{ env.Buildout }}
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
