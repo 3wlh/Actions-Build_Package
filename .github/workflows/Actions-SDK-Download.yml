@@ -110,20 +110,21 @@ jobs:
         run: |
           cd "${{ env.CACHE_DIR }}"
           if [[ $(du -s "${{ env.CACHE_DIR }}" | awk '{ print $1}') -lt 10240 ]]; then
-            echo -e "\e[1;32m Start downloading the SDK \e[0m"
+            echo -e "\e[1;32m ✅ 开始下载 SDK \e[0m"
             if ! ( wget -qO - "${Download_URL}/$SDK_URL_PATH/sha256sums" | grep -- "${{ env.SDK_NAME }}" > sha256sums.small 2>/dev/null ); then
               echo -e "\e[1;31m Error:Can not find ${{ env.SDK_NAME }} file in sha256sums. \e[0m"
               exit 1
             fi
             SDK_FILE="$(cat sha256sums.small | cut -d' ' -f2 | sed 's/*//g')"
             if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
-              echo -e "\e[1;32m Download:${Download_URL}/$SDK_URL_PATH/$SDK_FILE \e[0m"
+              echo -e "\e[1;32m ✅ 下载:${Download_URL}/$SDK_URL_PATH/$SDK_FILE \e[0m"
               wget -qO "$SDK_FILE" "${Download_URL}/$SDK_URL_PATH/$SDK_FILE"
               if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
-                echo -e "\e[1;31m Error:SDK can not be verified! \e[0m"
+                echo -e "\e[1;31m ❌ Error:SDK can not be verified! \e[0m"
                 exit 1
               fi
             fi
+            echo -e "\e[1;32m ✅ 压缩文件:$SDK_FILE \e[0m"
             tar -I zstd -xf "${SDK_FILE}" -C "${{ env.CACHE_DIR }}" --strip=1 && rm -fr ${SDK_FILE}
             ls
           fi
@@ -160,7 +161,7 @@ jobs:
           echo "${{ env.PACKAGE_NAME }}" > release.txt
           # name=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
           # name="*$(echo ${{ env.PACKAGE_NAME }} | sed 's/luci-app-//')*.ipk"
-          # PACKAGE_DIR="${{ env.CACHE_DIR }}/bin/packages"
+          PACKAGE_DIR="${{ env.CACHE_DIR }}/bin/packages"
           File=$(find "${PACKAGE_DIR}" -name "*${{ env.PACKAGE_NAME }}.[ai]pk")
           for dir in $(echo ${File} | sed 's| | |g')
           do
