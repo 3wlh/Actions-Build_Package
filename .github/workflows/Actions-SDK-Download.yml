@@ -155,14 +155,14 @@ jobs:
           echo "${{ env.PACKAGE_NAME }}" > release.txt
           # name=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
           name="*$(echo ${{ env.PACKAGE_NAME }} | sed 's/luci-app-//')*.ipk"
-          PACKAGE_DIR="${{ env.SDK_HOME }}/bin/"
+          PACKAGE_DIR="${{ env.CACHE_DIR }}/bin/"
           File=$(find "${PACKAGE_DIR}" -name "${name}")
           for dir in $(echo ${File} | sed 's| | |g')
           do
             echo ${dir}
-            cp -f ${dir} "${{ env.IPK_DIR }}/$(basename ${dir} | sed 's/_all//' | sed "s/.ipk/_${{ matrix.arch }}.ipk/")"
+            cp -f ${dir} "${{ env.OUTPUT_DIR }}/$(basename ${dir} | sed 's/_all//' | sed "s/.ipk/_${{ matrix.arch }}.ipk/")"
           done
-          find "${{ env.IPK_DIR }}" -name "*.ipk" -exec ls -lh {} \;
+          find "${{ env.OUTPUT_DIR }}" -name "*.ipk" -exec ls -lh {} \;
 
       - name: Upload to bin directory
         uses: actions/upload-artifact@main
