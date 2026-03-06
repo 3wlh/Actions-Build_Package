@@ -35,7 +35,12 @@ on:
           选择编译插件
         required: false
         type: string
-
+      
+      version:
+          description: |
+            选择 OpenWrt 版本
+          required: false
+          type: string
           
 jobs:
   jod_initial:
@@ -77,7 +82,7 @@ jobs:
           - aarch64_generic
           - x86_64
         sdk_version:
-          - openwrt-24.10.0
+          - openwrt-${{ inputs.Version }}
           #- SNAPSHOT
     env:
       BUILD_TIME: ${{ needs.jod_initial.outputs.time }}

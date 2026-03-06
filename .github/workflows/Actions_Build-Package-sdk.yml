@@ -38,6 +38,16 @@ on:
           - napcatapi-static
           - status-ports
       
+      version:
+        description: |
+          选择 OpenWrt 版本
+        required: true
+        default: "24.10.0"
+        type: choice
+        options:
+          - 23.05.0
+          - 24.10.0
+      
       feeds:
         description: |
           是否禁用feeds?
@@ -69,3 +79,4 @@ jobs:
       out: ${{ inputs.out }}
       sdk: ${{ inputs.sdk }}
       package: ${{ inputs.package }}
+      version: ${{ inputs.version }}
