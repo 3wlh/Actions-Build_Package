@@ -162,7 +162,7 @@ jobs:
           # name=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
           # name="*$(echo ${{ env.PACKAGE_NAME }} | sed 's/luci-app-//')*.ipk"
           PACKAGE_DIR="${{ env.CACHE_DIR }}/bin/packages"
-          File=$(find "${PACKAGE_DIR}" -name "*${{ env.PACKAGE_NAME }}.[ai]pk")
+          File=$(find "${PACKAGE_DIR}/" -name "*${{ env.PACKAGE_NAME }}.[ai]pk")
           for dir in $(echo ${File} | sed 's| | |g')
           do
             echo ${dir}
