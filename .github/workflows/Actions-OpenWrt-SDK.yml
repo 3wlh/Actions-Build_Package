@@ -52,7 +52,6 @@ jobs:
           
       - name: Delete GitHub Release
         uses: dev-drprasad/delete-tag-and-release@master
-        continue-on-error: true
         with:
           tag_name: GitHub-Actions_${{ inputs.package }}
           delete_release: true
@@ -158,7 +157,6 @@ jobs:
             ## 编译信息
             - 编译时间：`${{ env.BUILD_TIME }}`
             - SDK版本：`${{ inputs.sdk }}`
-            - 架构：`${{ matrix.arch }}`
             - 插件：`${{ inputs.package }}`
           allowUpdates: true
           removeArtifacts: false
