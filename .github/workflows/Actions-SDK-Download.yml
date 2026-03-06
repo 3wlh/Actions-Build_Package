@@ -150,12 +150,8 @@ jobs:
         run: |
           cd "${{ env.CACHE_DIR }}"
           make defconfig  >/dev/null
-          make \
-            CONFIG_AUTOREMOVE=y \
-            "package/${{ env.PACKAGE_NAME }}/{clean,compile}" \
-            -j "$(nproc)" \
-            V="${{ env.Buildout }}"
-          # make package/${{ env.PACKAGE_NAME }}/{clean,compile}
+          make package/${{ env.PACKAGE_NAME }}/{clean,compile} V=s${{ env.Buildout }} CONFIG_AUTOREMOVE=y 
+          # make package/${{ env.PACKAGE_NAME }}/{clean,compile} 
           find "${{ env.CACHE_DIR }}/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
           cd -
 
