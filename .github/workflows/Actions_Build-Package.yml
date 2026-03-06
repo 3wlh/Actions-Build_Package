@@ -36,7 +36,7 @@ jobs:
           echo "time=$(date "+%Y.%m.%d_%H%M%S")" >> $GITHUB_OUTPUT
 
   jod_build:
-    name: Build - Architecture: ${{ matrix.arch }}
+    name: Build-Architecture_${{ matrix.arch }}
     needs: jod_initial
     runs-on: ubuntu-latest
     strategy:
