@@ -118,7 +118,7 @@ jobs:
                 exit 1
               fi
             fi
-            tar -I zstd -xf "${SDK_FILE}" -C "${{ env.SDK_HOME }}" --strip=1 && rm -fr ${SDK_FILE}
+            tar -I zstd -xf "${SDK_FILE}" -C "${{ env.CACHE_DIR }}" --strip=1 && rm -fr ${SDK_FILE}
           fi
           test -d "dl" && rm -rf "dl" || true
           test -d "feeds" && rm -rf "feeds" || true
