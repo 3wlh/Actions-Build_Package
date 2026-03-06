@@ -165,10 +165,8 @@ jobs:
           for dir in $(echo ${File} | sed 's| | |g')
           do
             echo ${dir}
-            cp -fr $(dirname ${dir})/* "${{ env.OUTPUT_DIR }}/"
+            TARGET_PATH="$(dirname ${dir})"
           done
-          
-          
           if [ -d "$TARGET_PATH" ] && [ "$(ls -A $TARGET_PATH)" ]; then
             # 只执行一次tar命令，保留文件结构
             tar -zcf ${{ env.OUTPUT_DIR }}/${{ env.COMPRESSED_FILENAME }} -C $TARGET_PATH .
