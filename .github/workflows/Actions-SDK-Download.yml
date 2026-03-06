@@ -44,7 +44,7 @@ on:
 
 env:
   PACKAGE_NAME: ${{ inputs.package }}
-  CACHE_DIR: ~/.cache
+  CACHE_DIR: /tmp/.cache
   TZ: Asia/Shanghai
   Download_URL: "https://downloads.openwrt.org/releases/${{ inputs.Version }}/targets"
   UPLOAD_BIN_DIR: false
