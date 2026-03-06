@@ -81,8 +81,9 @@ jobs:
       SDK_URL_PATH: ${{ matrix.sdk_url_path }}
       SDK_NAME: ${{ matrix.sdk_name }}
       BUILD_TIME: ${{ needs.jod_initial.outputs.time }}
-      OUTPUT_DIR: ${{ github.workspace }}/Output/
-      CONFIG_CCACHE: y
+      OUTPUT_DIR: ${{ github.workspace }}/Output
+      COMPRESSED_FILENAME: ${{ inputs.package }}-${{ inputs.version }}-${{ matrix.arch }}_${{ needs.jod_initial.outputs.time }}.tar.gz
+      
     steps: 
       - name: Checkout
         uses: actions/checkout@main
@@ -100,6 +101,10 @@ jobs:
       - name: Configure environment variables
         run: |
           test -d "${{ env.CACHE_DIR }}" || mkdir -pm 755 "${{ env.CACHE_DIR }}"
+          test -d "${{ env.OUTPUT_DIR }}" || mkdir -pm 755 "${{ env.OUTPUT_DIR }}"
+          if [ "${{ inputs.out }}" == "true" ]; then
+            echo "Buildout=v" >> $GITHUB_ENV
+          fi
 
       - name: Download and Unzip SDK
         run: |
@@ -125,10 +130,11 @@ jobs:
           test -d "dl" && rm -rf "dl" || true
           test -d "feeds" && rm -rf "feeds" || true
           cp feeds.conf.default feeds.conf
-          sed -i 's#git.openwrt.org/openwrt/openwrt#github.com/openwrt/openwrt#' feeds.conf
-          sed -i 's#git.openwrt.org/feed/packages#github.com/openwrt/packages#' feeds.conf
-          sed -i 's#git.openwrt.org/project/luci#github.com/openwrt/luci#' feeds.conf
-          sed -i 's#git.openwrt.org/feed/telephony#github.com/openwrt/telephony#' feeds.conf
+          sed -i 's,git.openwrt.org/openwrt/openwrt/,github.com/openwrt/openwrt/,' feeds.conf
+          sed -i 's,git.openwrt.org/feed/packages/,github.com/openwrt/packages/,' feeds.conf
+          sed -i 's,git.openwrt.org/project/luci/,github.com/openwrt/luci/,' feeds.conf
+          sed -i 's,git.openwrt.org/feed/telephony/,github.com/openwrt/telephony/,' feeds.conf
+          echo "src-link "packages_ci" /feed/" >> feeds.conf
           echo "status=success" >> $GITHUB_OUTPUT
           
       - name: Update and Install Packages
@@ -144,7 +150,11 @@ jobs:
         run: |
           cd "${{ env.CACHE_DIR }}"
           make defconfig  >/dev/null
-          make package/${{ env.PACKAGE_NAME }}/{clean,compile} V=s
+          make \
+            CONFIG_AUTOREMOVE=y \
+            "package/${{ env.PACKAGE_NAME }}/{clean,compile}" \
+            -j "$(nproc)" \
+            V="${{ env.Buildout }}"
           # make package/${{ env.PACKAGE_NAME }}/{clean,compile}
           find "${{ env.CACHE_DIR }}/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
           cd -
@@ -154,14 +164,28 @@ jobs:
           touch release.txt
           echo "${{ env.PACKAGE_NAME }}" > release.txt
           # name=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
-          name="*$(echo ${{ env.PACKAGE_NAME }} | sed 's/luci-app-//')*.ipk"
-          PACKAGE_DIR="${{ env.CACHE_DIR }}/bin/"
-          File=$(find "${PACKAGE_DIR}" -name "${name}")
+          # name="*$(echo ${{ env.PACKAGE_NAME }} | sed 's/luci-app-//')*.ipk"
+          # PACKAGE_DIR="${{ env.CACHE_DIR }}/bin/packages"
+          File=$(find "${PACKAGE_DIR}" -name "*${{ env.PACKAGE_NAME }}*.[ai]pk")
           for dir in $(echo ${File} | sed 's| | |g')
           do
             echo ${dir}
-            cp -f ${dir} "${{ env.OUTPUT_DIR }}/$(basename ${dir} | sed 's/_all//' | sed "s/.ipk/_${{ matrix.arch }}.ipk/")"
+            cp -fr $(dirname ${dir})/* "${{ env.OUTPUT_DIR }}/"
           done
+          
+          
+          if [ -d "$TARGET_PATH" ] && [ "$(ls -A $TARGET_PATH)" ]; then
+            # 只执行一次tar命令，保留文件结构
+            tar -zcf ${{ env.OUTPUT_DIR }}/${{ env.COMPRESSED_FILENAME }} -C $TARGET_PATH .
+            echo "✅ 压缩文件成功：${{ env.OUTPUT_DIR }}/${{ env.COMPRESSED_FILENAME }}"
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "❌ 目标目录无文件：$TARGET_PATH"
+            echo "status=failed" >> $GITHUB_OUTPUT
+          fi
+          
+          
+          tar -zcf ${{ env.OUTPUT_DIR }}/${{ env.COMPRESSED_FILENAME }} -C $TARGET_PATH .
           find "${{ env.OUTPUT_DIR }}" -name "*.ipk" -exec ls -lh {} \;
 
       - name: Upload to bin directory
