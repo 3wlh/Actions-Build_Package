@@ -9,14 +9,14 @@ on:
         required: false
         type: string
       
-      package_name:
+      package:
         description: |
           选择编译插件
         required: false
         type: string
 
 env:
-  PACKAGE_NAME: ${{ inputs.package_name }}
+  PACKAGE_NAME: ${{ inputs.package }}
   CACHE_DIR: ~/.cache
   TZ: Asia/Shanghai
   Download_URL: "https://downloads.openwrt.org/releases/${{ inputs.Version }}/targets"
@@ -24,7 +24,7 @@ env:
 
 jobs:
   jod_initial:
-    name: Actions Build ${{ env.package_name }}
+    name: Actions Build ${{ inputs.package }}
     runs-on: ubuntu-latest
     outputs:
       time: ${{steps.output_time.outputs.time}}
@@ -36,7 +36,7 @@ jobs:
           echo "time=$(date "+%Y.%m.%d_%H%M%S")" >> $GITHUB_OUTPUT
 
   jod_build:
-    name: Build-Architecture_${{ matrix.arch }}
+    name: Build Architecture: ${{ matrix.arch }}
     needs: jod_initial
     runs-on: ubuntu-latest
     strategy:
