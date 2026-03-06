@@ -56,14 +56,16 @@ jobs:
           tag_name: GitHub-Actions_${{ inputs.package }}
           delete_release: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
       
       - name: Cleanup GitHub Cache
         if: (inputs.cache == true)
         run: |
-          gh cache delete --all --repo 3wlh/Actions-Build_Package
+          gh cache delete --all --repo ${{ github.repository }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+        continue-on-error: true
+        
   jobs_build:
     name: Build ${{ matrix.arch }}-${{ matrix.sdk }}
     needs: jod_initial
@@ -74,19 +76,19 @@ jobs:
         arch:
           - aarch64_generic
           - x86_64
-        sdk:
+        sdk_version:
           - openwrt-24.10
           #- SNAPSHOT
     env:
-      Time: ${{ needs.jod_initial.outputs.time }}
-      GZ: ${{ inputs.package }}-${{ matrix.sdk }}-${{ matrix.arch }}_${{ needs.jod_initial.outputs.time }}.tar.gz
-      Output: ${{ inputs.package }}/Output/
+      BUILD_TIME: ${{ needs.jod_initial.outputs.time }}
+      COMPRESSED_FILENAME: ${{ inputs.package }}-${{ matrix.sdk_version }}-${{ matrix.arch }}_${{ needs.jod_initial.outputs.time }}.tar.gz
+      OUTPUT_DIR: ${{ inputs.package }}/Output/
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       
-      - name: Set Variable
+      - name: Set Environment Variables
         run: |
           if [ "${{ inputs.out }}" == "true" ]; then
             echo "Buildout=sc" >> $GITHUB_ENV
@@ -126,18 +128,24 @@ jobs:
             bin/packages/riscv64_generic/packages_ci/*.[ia]pk
 
       - name: Create compress files
-        id: files
+        id: compress_files
         continue-on-error: true
         run: |
-          test -d ${{ env.Output }} || mkdir -p ${{ env.Output }}
-          if [ "${{ matrix.arch }}" = "riscv64_riscv64" ] && [ "${{ matrix.sdk }}" = "SNAPSHOT" ]; then
-            tar -zcvf ${{ env.Output }}/${{ env.GZ }} -C bin/packages/riscv64_generic/packages_ci/ --transform 's:.*/::' .
-            tar -zcvf ${{ env.Output }}${{ env.GZ }} -C bin/packages/riscv64_generic/ packages_ci
+          test -d ${{ env.OUTPUT_DIR }} || mkdir -p ${{ env.OUTPUT_DIR }}
+          if [ "${{ matrix.arch }}" = "riscv64_riscv64" ] && [ "${{ matrix.sdk_version }}" = "SNAPSHOT" ]; then
+            TARGET_PATH="bin/packages/riscv64_generic/packages_ci"
           else
-            tar -zcvf ${{ env.Output }}/${{ env.GZ }} -C bin/packages/${{ matrix.arch }}/packages_ci/ --transform 's:.*/::' .
-            tar -zcvf ${{ env.Output }}/${{ env.GZ }} -C bin/packages/${{ matrix.arch }}/ packages_ci
-          fi 
-          echo "status=success" >> $GITHUB_OUTPUT
+            TARGET_PATH="bin/packages/${{ matrix.arch }}/packages_ci"
+          fi
+          if [ -d "$TARGET_PATH" ] && [ "$(ls -A $TARGET_PATH)" ]; then
+            # 只执行一次tar命令，保留文件结构
+            tar -zcvf ${{ env.OUTPUT_DIR }}/${{ env.COMPRESSED_FILENAME }} -C $TARGET_PATH .
+            echo "✅ 压缩文件成功：${{ env.OUTPUT_DIR }}/${{ env.COMPRESSED_FILENAME }}"
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "❌ 目标目录无文件：$TARGET_PATH"
+            echo "status=failed" >> $GITHUB_OUTPUT
+          fi
           
       - name: Upload ${{ inputs.branch }} as release assets
         if: steps.files.outputs.status == 'success'
@@ -145,8 +153,13 @@ jobs:
         with:
           tag: GitHub-Actions_${{ inputs.package }}
           name: ${{ inputs.package }}
-          artifacts: ${{ env.Output }}/*
-          body: "## 编译时间：`${{ env.Time }}`"
+          artifacts: ${{ env.OUTPUT_DIR }}/*
+          body: |
+            ## 编译信息
+            - 编译时间：`${{ env.BUILD_TIME }}`
+            - SDK版本：`${{ inputs.sdk }}`
+            - 架构：`${{ matrix.arch }}`
+            - 插件：`${{ inputs.package }}`
           allowUpdates: true
           removeArtifacts: false
           replacesArtifacts: true
