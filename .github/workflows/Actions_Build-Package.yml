@@ -52,11 +52,11 @@ on:
         description: |
           选择 OpenWrt 版本
         required: true
-        default: "24.10.0"
+        default: "24.10"
         type: choice
         options:
-          - 23.05.0
-          - 24.10.0
+          - 23.05
+          - 24.10
       
       feeds:
         description: |
