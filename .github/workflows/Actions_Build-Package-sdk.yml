@@ -81,6 +81,7 @@ on:
       
 jobs:
   call-sdk-docker:
+    if: inputs.method == 'docker'
     uses: ./.github/workflows/Actions-OpenWrt-SDK.yml
     secrets: inherit
     with:
@@ -91,7 +92,8 @@ jobs:
       package: ${{ inputs.package }}
       version: ${{ inputs.version }}
   
-  call-sdk-download: 
+  call-sdk-download:
+    if: inputs.method == 'download'
     uses: ./.github/workflows/Actions_Build-Package.yml
     secrets: inherit
     with:
