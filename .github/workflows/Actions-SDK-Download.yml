@@ -62,6 +62,22 @@ jobs:
           sudo timedatectl set-timezone "${TZ}"
           echo "time=$(date "+%Y.%m.%d_%H%M%S")" >> $GITHUB_OUTPUT
         
+      - name: Delete GitHub Release
+        uses: dev-drprasad/delete-tag-and-release@master
+        with:
+          tag_name: GitHub-Actions_${{ inputs.package }}
+          delete_release: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+        
+      - name: Cleanup GitHub Cache
+        if: (inputs.cache == true)
+        run: |
+          gh cache delete --all --repo ${{ github.repository }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+               
   jod_build:
     name: Build Architecture ${{ matrix.arch }}
     needs: jod_initial
@@ -155,10 +171,9 @@ jobs:
           find "${{ env.CACHE_DIR }}/bin/" -type f -name "*.[ai]pk" -exec ls -lh {} \;
           cd -
 
-      - name: Copy Bin Files
+      - name: Create compress files
+        id: compress_files
         run: |
-          touch release.txt
-          echo "${{ env.PACKAGE_NAME }}" > release.txt
           # name=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
           # name="*$(echo ${{ env.PACKAGE_NAME }} | sed 's/luci-app-//')*.ipk"
           PACKAGE_DIR="${{ env.CACHE_DIR }}/bin/packages/"
@@ -166,7 +181,7 @@ jobs:
           echo 目录:${dir}
           for dir in $(echo ${File} | sed 's| | |g')
           do
-            echo ${dir}
+            echo "✅ 文件目录:$(dirname ${dir})"
             TARGET_PATH="$(dirname ${dir})"
           done
           if [ -d "$TARGET_PATH" ] && [ "$(ls -A $TARGET_PATH)" ]; then
@@ -188,11 +203,20 @@ jobs:
           name: ${{ matrix.arch }}_package_${{ env.Time }}
           path: ${{ env.CACHE_DIR }}/bin 
 
-      - name: Upload to Release
-        uses: softprops/action-gh-release@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload as release assets
+        if: steps.compress_files.outputs.status == 'success'
+        uses: ncipollo/release-action@main
         with:
-          tag_name: ${{ env.Time }}
-          body_path: release.txt
-          files: ${{ env.OUTPUT_DIR }}/*
+          tag: GitHub-Actions_${{ inputs.package }}
+          name: ${{ inputs.package }}
+          artifacts: ${{ env.OUTPUT_DIR }}/*
+          body: |
+            ## 编译信息
+            - 编译时间：`${{ env.BUILD_TIME }}`
+            - SDK版本：`${{ inputs.sdk }}`
+            - 插件：`${{ inputs.package }}`
+          allowUpdates: true
+          removeArtifacts: false
+          replacesArtifacts: true
+          makeLatest: true
+          token: ${{ secrets.GITHUB_TOKEN }}
