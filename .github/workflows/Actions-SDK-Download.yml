@@ -3,17 +3,44 @@ name: Actions SDK Download
 on:
   workflow_call:
     inputs:
-      version:
+      cache:
         description: |
-          选择 OpenWrt 版本
+          是否清理缓存?
+        required: false
+        default: false
+        type: boolean
+      
+      feeds:
+        description: |
+          是否禁用feeds?
+        required: false
+        default: false
+        type: boolean  
+      
+      out:
+        description: |
+          是否详细输出?
+        required: false
+        default: true
+        type: boolean
+      
+      sdk:
+        description: |
+          选择编译插件
         required: false
         type: string
-      
+        
       package:
         description: |
           选择编译插件
         required: false
         type: string
+      
+      version:
+          description: |
+            选择 OpenWrt 版本
+          required: false
+          type: string
 
 env:
   PACKAGE_NAME: ${{ inputs.package }}
