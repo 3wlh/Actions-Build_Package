@@ -8,7 +8,7 @@ on:
         description: |
           选择编译方式?
         required: true
-        default: "docker"
+        default: "download"
         type: choice
         options:
           - docker
