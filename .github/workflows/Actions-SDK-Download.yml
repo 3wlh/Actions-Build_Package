@@ -46,7 +46,7 @@ env:
   PACKAGE_NAME: ${{ inputs.package }}
   CACHE_DIR: /tmp/.cache
   TZ: Asia/Shanghai
-  Download_URL: "https://downloads.openwrt.org/releases/${{ inputs.Version }}/targets"
+  Download_URL: "https://downloads.openwrt.org/releases/${{ inputs.Version }}.0/targets"
   UPLOAD_BIN_DIR: false
 
 jobs:
