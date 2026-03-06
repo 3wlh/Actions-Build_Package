@@ -24,7 +24,7 @@ env:
 
 jobs:
   jod_initial:
-    name: Actions Build ${{ inputs.package_name }}
+    name: Actions Build ${{ env.package_name }}
     runs-on: ubuntu-latest
     outputs:
       time: ${{steps.output_time.outputs.time}}
