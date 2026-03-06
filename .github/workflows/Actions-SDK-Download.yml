@@ -89,7 +89,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          # DEBIAN_FRONTEND=noninteractive sudo apt-get install -y ccache gettext libncurses5-dev xsltproc
+          DEBIAN_FRONTEND=noninteractive sudo apt-get install -y ccache gettext libncurses5-dev xsltproc
 
       - name: Setup Cache
         uses: actions/cache@main
@@ -136,7 +136,7 @@ jobs:
           cd "${{ env.CACHE_DIR }}"
           # ./scripts/feeds update -a >/dev/null 2>&1
           find "${{ github.workspace }}" -maxdepth 1 -exec ln -s {} "package/" \;
-          rm package/$(basename ${{ github.workspace }})
+          # rm package/$(basename ${{ github.workspace }})
           ./scripts/feeds install -a >/dev/null 2>&1
           cd -
 
