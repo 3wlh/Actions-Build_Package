@@ -162,7 +162,7 @@ jobs:
           # name=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
           # name="*$(echo ${{ env.PACKAGE_NAME }} | sed 's/luci-app-//')*.ipk"
           PACKAGE_DIR="${{ env.CACHE_DIR }}/bin/packages/"
-          File=$(find "${PACKAGE_DIR}/" -name "*${{ env.PACKAGE_NAME }}.[ai]pk")
+          File=$(find "${PACKAGE_DIR}/" -name "*${{ env.PACKAGE_NAME }}*.[ai]pk")
           echo 目录:${dir}
           for dir in $(echo ${File} | sed 's| | |g')
           do
@@ -178,10 +178,8 @@ jobs:
             echo "❌ 目标目录无文件：$TARGET_PATH"
             echo "status=failed" >> $GITHUB_OUTPUT
           fi
-          
-          
           tar -zcf ${{ env.OUTPUT_DIR }}/${{ env.COMPRESSED_FILENAME }} -C $TARGET_PATH .
-          find "${{ env.OUTPUT_DIR }}" -name "*.ipk" -exec ls -lh {} \;
+          find "${{ env.OUTPUT_DIR }}" -name "*.gz" -exec ls -lh {} \;
 
       - name: Upload to bin directory
         uses: actions/upload-artifact@main
