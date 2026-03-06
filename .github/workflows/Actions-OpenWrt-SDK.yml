@@ -52,12 +52,12 @@ jobs:
           
       - name: Delete GitHub Release
         uses: dev-drprasad/delete-tag-and-release@master
+        continue-on-error: true
         with:
           tag_name: GitHub-Actions_${{ inputs.package }}
           delete_release: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
-      
+          
       - name: Cleanup GitHub Cache
         if: (inputs.cache == true)
         run: |
@@ -147,8 +147,8 @@ jobs:
             echo "status=failed" >> $GITHUB_OUTPUT
           fi
           
-      - name: Upload ${{ inputs.branch }} as release assets
-        if: steps.files.outputs.status == 'success'
+      - name: Upload as release assets
+        if: steps.compress_files.outputs.status == 'success'
         uses: ncipollo/release-action@main
         with:
           tag: GitHub-Actions_${{ inputs.package }}
