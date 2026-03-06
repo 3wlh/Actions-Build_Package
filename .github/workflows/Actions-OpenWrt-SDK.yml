@@ -98,7 +98,8 @@ jobs:
           fi
 
       - name: Build Openwrt Packages
-        uses: ${{ inputs.sdk == 'Openwrt' ? 'openwrt/gh-action-sdk@main' : 'immortalwrt/gh-action-sdk@master' }}
+        if: inputs.sdk == 'Openwrt'
+        uses: openwrt/gh-action-sdk@main
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.sdk_version }}
           FEEDNAME: packages_ci
