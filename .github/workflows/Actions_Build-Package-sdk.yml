@@ -4,27 +4,6 @@ on:
   repository_dispatch:
   workflow_dispatch:
     inputs:
-      cache:
-        description: |
-          是否清理缓存?
-        required: false
-        default: false
-        type: boolean
-      
-      feeds:
-        description: |
-          是否禁用feeds?
-        required: false
-        default: true
-        type: boolean  
-      
-      out:
-        description: |
-          是否详细输出?
-        required: false
-        default: true
-        type: boolean
-      
       sdk:
         description: |
           选择编译插件
@@ -58,7 +37,28 @@ on:
           - sunpanel
           - napcatapi-static
           - status-ports
-
+      
+      feeds:
+        description: |
+          是否禁用feeds?
+        required: false
+        default: true
+        type: boolean  
+      
+      out:
+        description: |
+          是否详细输出?
+        required: false
+        default: true
+        type: boolean
+      
+      cache:
+        description: |
+          是否清理缓存?
+        required: false
+        default: false
+        type: boolean
+      
 jobs:
   jod_workflow:
     uses: ./.github/workflows/Actions-OpenWrt-SDK.yml
