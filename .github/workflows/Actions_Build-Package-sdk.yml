@@ -64,8 +64,4 @@ jobs:
     uses: ./.github/workflows/Actions-OpenWrt-SDK.yml
     secrets: inherit
     with:
-      cache: ${{ inputs.cache }}
-      feeds: ${{ inputs.feeds }}
-      out: ${{ inputs.out }}
-      sdk: ${{ inputs.sdk }}
-      package: ${{ inputs.package }}
+      ${{ toJSON(inputs) }}
