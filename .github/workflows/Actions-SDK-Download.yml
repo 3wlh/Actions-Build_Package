@@ -1,4 +1,4 @@
-name: Actions Build and Package
+name: Actions SDK Download
 
 on:
   workflow_call:
