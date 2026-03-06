@@ -4,6 +4,16 @@ on:
   repository_dispatch:
   workflow_dispatch:
     inputs:
+      method:
+        description: |
+          选择编译方式?
+        required: true
+        default: "docker"
+        type: choice
+        options:
+          - docker
+          - download
+      
       sdk:
         description: |
           选择编译插件
@@ -70,7 +80,7 @@ on:
         type: boolean
       
 jobs:
-  jod_workflow:
+  call-sdk-docker:
     uses: ./.github/workflows/Actions-OpenWrt-SDK.yml
     secrets: inherit
     with:
@@ -80,3 +90,14 @@ jobs:
       sdk: ${{ inputs.sdk }}
       package: ${{ inputs.package }}
       version: ${{ inputs.version }}
+  
+  call-sdk-download: 
+    uses: ./.github/workflows/Actions_Build-Package.yml
+    secrets: inherit
+    with:
+      cache: ${{ inputs.cache }}
+      feeds: ${{ inputs.feeds }}
+      out: ${{ inputs.out }}
+      sdk: ${{ inputs.sdk }}
+      package: ${{ inputs.package }}
+      version: ${{ inputs.version }}  
