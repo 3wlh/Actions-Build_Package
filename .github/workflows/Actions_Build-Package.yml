@@ -55,8 +55,8 @@ on:
         default: "24.10"
         type: choice
         options:
-          - "23.05"
-          - "24.10"
+          - "23.05.0"
+          - "24.10.0"
       
       feeds:
         description: |
