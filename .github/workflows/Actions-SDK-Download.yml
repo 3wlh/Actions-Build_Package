@@ -112,6 +112,7 @@ jobs:
             fi
             SDK_FILE="$(cat sha256sums.small | cut -d' ' -f2 | sed 's/*//g')"
             if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
+              echo -e "\e[1;32m Download:${Download_URL}/$SDK_URL_PATH/$SDK_FILE \e[0m"
               wget -qO "$SDK_FILE" "${Download_URL}/$SDK_URL_PATH/$SDK_FILE"
               if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
                 echo -e "\e[1;31m Error:SDK can not be verified! \e[0m"
@@ -119,6 +120,7 @@ jobs:
               fi
             fi
             tar -I zstd -xf "${SDK_FILE}" -C "${{ env.CACHE_DIR }}" --strip=1 && rm -fr ${SDK_FILE}
+            ls
           fi
           test -d "dl" && rm -rf "dl" || true
           test -d "feeds" && rm -rf "feeds" || true
