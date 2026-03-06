@@ -134,7 +134,6 @@ jobs:
           sed -i 's,git.openwrt.org/feed/packages/,github.com/openwrt/packages/,' feeds.conf
           sed -i 's,git.openwrt.org/project/luci/,github.com/openwrt/luci/,' feeds.conf
           sed -i 's,git.openwrt.org/feed/telephony/,github.com/openwrt/telephony/,' feeds.conf
-          echo "src-link "packages_ci" /feed/" >> feeds.conf
           echo "status=success" >> $GITHUB_OUTPUT
           
       - name: Update and Install Packages
@@ -152,7 +151,7 @@ jobs:
           make defconfig  >/dev/null
           make package/${{ env.PACKAGE_NAME }}/{clean,compile} V=s${{ env.Buildout }} CONFIG_AUTOREMOVE=y 
           # make package/${{ env.PACKAGE_NAME }}/{clean,compile} 
-          find "${{ env.CACHE_DIR }}/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
+          find "${{ env.CACHE_DIR }}/bin/" -type f -name "*.[ai]pk" -exec ls -lh {} \;
           cd -
 
       - name: Copy Bin Files
@@ -162,7 +161,7 @@ jobs:
           # name=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
           # name="*$(echo ${{ env.PACKAGE_NAME }} | sed 's/luci-app-//')*.ipk"
           # PACKAGE_DIR="${{ env.CACHE_DIR }}/bin/packages"
-          File=$(find "${PACKAGE_DIR}" -name "*${{ env.PACKAGE_NAME }}*.[ai]pk")
+          File=$(find "${PACKAGE_DIR}" -name "*${{ env.PACKAGE_NAME }}.[ai]pk")
           for dir in $(echo ${File} | sed 's| | |g')
           do
             echo ${dir}
