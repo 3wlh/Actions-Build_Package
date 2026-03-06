@@ -195,4 +195,4 @@ jobs:
         with:
           tag_name: ${{ env.Time }}
           body_path: release.txt
-          files: ${{ env.IPK_DIR }}/*.ipk
+          files: ${{ env.OUTPUT_DIR }}/*
