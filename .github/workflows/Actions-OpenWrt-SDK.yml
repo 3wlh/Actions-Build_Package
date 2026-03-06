@@ -26,23 +26,22 @@ on:
       
       sdk:
         description: |
-          选择编译插件
+          选择SDK版本（Openwrt/Immortalwrt）
         required: false
         type: string
         
       package:
         description: |
-          选择编译插件
+          选择编译的插件名称
         required: false
         type: string
 
-          
 jobs:
-  jod_initial:
+  job_initial:  # 修复拼写错误：jod_initial → job_initial
     name: Actions Build ${{ inputs.package }}
     runs-on: ubuntu-latest
     outputs:
-      time: ${{steps.output_time.outputs.time}}
+      time: ${{ steps.output_time.outputs.time }}
     steps: 
       - name: output Time
         id: output_time
@@ -59,7 +58,7 @@ jobs:
         continue-on-error: true
       
       - name: Cleanup GitHub Cache
-        if: (inputs.cache == true)
+        if: inputs.cache == true
         run: |
           gh cache delete --all --repo ${{ github.repository }}
         env:
@@ -68,7 +67,7 @@ jobs:
         
   jobs_build:
     name: Build ${{ matrix.arch }}-${{ matrix.sdk_version }}
-    needs: jod_initial
+    needs: job_initial
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -80,8 +79,8 @@ jobs:
           - openwrt-24.10
           #- SNAPSHOT
     env:
-      BUILD_TIME: ${{ needs.jod_initial.outputs.time }}
-      COMPRESSED_FILENAME: ${{ inputs.package }}-${{ matrix.sdk_version }}-${{ matrix.arch }}_${{ needs.jod_initial.outputs.time }}.tar.gz
+      BUILD_TIME: ${{ needs.job_initial.outputs.time }}
+      COMPRESSED_FILENAME: ${{ inputs.package }}-${{ matrix.sdk_version }}-${{ matrix.arch }}_${{ needs.job_initial.outputs.time }}.tar.gz
       OUTPUT_DIR: ${{ inputs.package }}/Output/
     steps:
       - uses: actions/checkout@v4
@@ -106,7 +105,7 @@ jobs:
           NO_DEFAULT_FEEDS: ${{ env.feeds }}
           NO_REFRESH_CHECK: true
           V: ${{ env.Buildout }}
-        
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -114,6 +113,7 @@ jobs:
           path: |
             bin/packages/${{ matrix.arch }}/packages_ci/*.[ia]pk
             bin/packages/riscv64_generic/packages_ci/*.[ia]pk
+        if-no-files-found: warn  # 增加无文件时的处理，避免报错
 
       - name: Create compress files
         id: compress_files
@@ -135,8 +135,8 @@ jobs:
             echo "status=failed" >> $GITHUB_OUTPUT
           fi
           
-      - name: Upload ${{ inputs.branch }} as release assets
-        if: steps.files.outputs.status == 'success'
+      - name: Upload release assets
+        if: steps.compress_files.outputs.status == 'success'
         uses: ncipollo/release-action@main
         with:
           tag: GitHub-Actions_${{ inputs.package }}
