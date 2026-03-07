@@ -1,4 +1,4 @@
-name: Actions GitHub Workflow
+name: Actions Remove Workflow Runs
 
 on:
   workflow_call:

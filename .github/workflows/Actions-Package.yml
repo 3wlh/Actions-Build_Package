@@ -82,7 +82,7 @@ on:
 jobs:
   call-sdk-docker:
     if: ${{ inputs.method == 'docker' }}
-    uses: ./.github/workflows/Actions-SDK-Docker.yml
+    uses: ./.github/workflows/Call-SDK-Docker.yml
     secrets: inherit
     with:
       cache: ${{ inputs.cache }}
@@ -94,7 +94,7 @@ jobs:
   
   call-sdk-download:
     if: ${{ inputs.method == 'download' }}
-    uses: ./.github/workflows/Actions-SDK-Download.yml
+    uses: ./.github/workflows/Call-SDK-Download.yml
     secrets: inherit
     with:
       cache: ${{ inputs.cache }}

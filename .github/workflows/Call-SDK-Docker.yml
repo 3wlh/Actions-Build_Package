@@ -1,4 +1,4 @@
-name: Actions SDK Docker
+name: Call SDK Docker
 
 on:
   workflow_call:

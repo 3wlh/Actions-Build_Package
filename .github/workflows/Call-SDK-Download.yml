@@ -1,4 +1,4 @@
-name: Actions SDK Download
+name: Call SDK Download
 
 on:
   workflow_call:
