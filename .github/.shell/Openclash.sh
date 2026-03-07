@@ -1,6 +1,6 @@
 #!/bin/bash
 Time="$(date '+%Y-%m-%d %H:%M:%S')" && mkdir -p "$(pwd)/openclash" && DIR="$(pwd)/openclash"
-Data="$(curl -s https://api.github.com/repos/3wlh/Actions-Build_Package/releases/tags/GitHub-Actions_luci-app-openclash-ninja)"
+Data="$(curl -s https://api.github.com/repos/3wlh/Actions-Packages/releases/tags/GitHub-Actions_luci-app-openclash-ninja)"
 ipk_url="$(echo "${Data}" | grep -Eo '"browser_download_url":\s*".*luci-app-openclash-ninja.*"' | cut -d '"' -f 4)"
 [[ -z "$(Check "openclash" "${ipk_url}" "${2}/.")" ]] && echo -e "${Time}\e[1;32m - 【openclash】插件无更新.\e[0m" && exit
 echo "${Time} - 下载 luci-app-openclash-ninja ..."
