@@ -1,7 +1,6 @@
 name: Actions ipkg Feed
 
 on:
-  workflow_call:
   schedule:
     #- cron: '*/5 * * * *'  # 每5分钟一次
     - cron: '0 0 */3 * *'  # 每3天运行一次
@@ -15,7 +14,7 @@ env:
   USIGN: "https://github.com/openwrt/usign.git"
 
 jobs:
-  jod_feed:
+  jobs_feed:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -117,7 +116,7 @@ jobs:
         
   jod_workflow: 
     needs: jod_feed
-    uses: ./.github/workflows/Actions_GitHub_Workflow.yml
+    uses: ./.github/workflows/Actions_Remove_Workflow.yml
     secrets: inherit
     with:
       reuse: true
