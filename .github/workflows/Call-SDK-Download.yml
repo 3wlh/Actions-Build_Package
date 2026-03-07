@@ -162,7 +162,7 @@ jobs:
           if [ -d "$TARGET_PATH" ] && [ "$(ls -A $TARGET_PATH)" ]; then
             test -d "${TARGET_PATH}/tmp" && rm -fr "${TARGET_PATH}/tmp"
             # 只执行一次tar命令，保留文件结构
-            tar -zcf ${{ env.OUTPUT_DIR }}/${{ env.COMPRESSED_FILENAME }} -C $TARGET_PATH .
+            tar -zcf ${{ env.OUTPUT_DIR }}/${{ env.COMPRESSED_FILENAME }} -C $TARGET_PATH packages_ci
             test -d "${{ env.CACHE_DIR }}/bin/packages" && rm -rf ${{ env.CACHE_DIR }}/bin/packages
             echo "✅ 压缩文件成功：${{ env.OUTPUT_DIR }}/${{ env.COMPRESSED_FILENAME }}"
             echo "status=success" >> $GITHUB_OUTPUT
