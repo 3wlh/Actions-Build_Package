@@ -120,6 +120,7 @@ jobs:
           fi
           test -d "dl" && rm -rf "dl" || true
           test -d "feeds" && rm -rf "feeds" || true
+          test -d "${{ env.CACHE_DIR }}/bin/packages" && rm -rf ${{ env.CACHE_DIR }}/bin/packages
           cp feeds.conf.default feeds.conf
           sed -i 's,git.openwrt.org/openwrt/openwrt/,github.com/openwrt/openwrt/,' feeds.conf
           sed -i 's,git.openwrt.org/feed/packages/,github.com/openwrt/packages/,' feeds.conf
