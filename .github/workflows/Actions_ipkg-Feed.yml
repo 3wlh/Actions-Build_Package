@@ -87,7 +87,7 @@ jobs:
         find "/tmp/packages/x86_64" -type f -name "*.[ia]pk" -exec mv -f {} "${{ env.Path }}/packages/x86_64" \;      
             
     - name: Create Repositories index 
-      run : |  
+      run : |
         # gzip -k9 Packages
         Arch=(${{ env.Arch }})
         echo -e "${{ secrets.KEY }}" > /tmp/mime.key
@@ -111,7 +111,7 @@ jobs:
         # 提交更改
         git commit -am "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} update $(date +%Y-%m-%d" "%H:%M:%S)"
         # 清理优化Git仓库
-        # git gc --prune=now --aggressive >/dev/unll
+        # git gc --prune=now --aggressive >/dev/unll 2>&1
         # 强制提交到远程仓库
         git push origin main
         
