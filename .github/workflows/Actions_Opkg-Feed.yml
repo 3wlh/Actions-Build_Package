@@ -5,7 +5,6 @@ on:
   #schedule:
     #- cron: '*/5 * * * *'  # 每5分钟一次
     #- cron: '0 8 */2 * *'  # 每2天运行一次
-  repository_dispatch:
   workflow_dispatch:
 
 env:
