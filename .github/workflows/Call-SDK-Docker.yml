@@ -4,44 +4,18 @@ on:
   workflow_call:
     inputs:
       cache:
-        description: |
-          是否清理缓存?
-        required: false
-        default: false
         type: boolean
-      
       feeds:
-        description: |
-          是否禁用feeds?
-        required: false
-        default: false
-        type: boolean  
-      
+        type: boolean     
       out:
-        description: |
-          是否详细输出?
-        required: false
-        default: true
         type: boolean
-      
       sdk:
-        description: |
-          选择编译插件
-        required: false
-        type: string
-        
+        type: string  
       package:
-        description: |
-          选择编译插件
-        required: false
         type: string
-      
       version:
-          description: |
-            选择 OpenWrt 版本
-          required: false
           type: string
-          
+     
 jobs:
   jod_initial:
     name: Actions Build ${{ inputs.package }}
