@@ -116,7 +116,7 @@ jobs:
         git push origin main
         
   jod_workflow: 
-    needs: jod_feed
+    needs: jobs_feed
     uses: ./.github/workflows/Actions_Remove_Workflow.yml
     secrets: inherit
     with:
