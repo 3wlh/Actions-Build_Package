@@ -153,7 +153,6 @@ jobs:
           # name="*$(echo ${{ env.PACKAGE_NAME }} | sed 's/luci-app-//')*.ipk"
           PACKAGE_DIR="${{ env.CACHE_DIR }}/bin/packages/"
           File=$(find "${PACKAGE_DIR}/" -name "*${{ env.PACKAGE_NAME }}*.[ai]pk")
-          echo 目录:${dir}
           for dir in $(echo ${File} | sed 's| | |g')
           do
             echo "✅ 文件目录:$(dirname ${dir})"
@@ -161,14 +160,14 @@ jobs:
           done
           if [ -d "$TARGET_PATH" ] && [ "$(ls -A $TARGET_PATH)" ]; then
             # 只执行一次tar命令，保留文件结构
-            tar -zcf ${{ env.OUTPUT_DIR }}/${{ env.COMPRESSED_FILENAME }} -C $TARGET_PATH .
+            tar -zcf ${{ env.OUTPUT_DIR }}/${{ env.COMPRESSED_FILENAME }} -C $TARGET_PATH
+            test -d "${{ env.CACHE_DIR }}/bin/packages" && rm -rf ${{ env.CACHE_DIR }}/bin/packages
             echo "✅ 压缩文件成功：${{ env.OUTPUT_DIR }}/${{ env.COMPRESSED_FILENAME }}"
             echo "status=success" >> $GITHUB_OUTPUT
           else
             echo "❌ 目标目录无文件：$TARGET_PATH"
             echo "status=failed" >> $GITHUB_OUTPUT
           fi
-          tar -zcf ${{ env.OUTPUT_DIR }}/${{ env.COMPRESSED_FILENAME }} -C $TARGET_PATH .
           find "${{ env.OUTPUT_DIR }}" -name "*.gz" -exec ls -lh {} \;
 
       - name: Upload to bin directory
