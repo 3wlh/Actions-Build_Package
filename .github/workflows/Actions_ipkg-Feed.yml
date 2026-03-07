@@ -1,4 +1,4 @@
-name: Actions_ipkg-Feed
+name: Actions ipkg Feed
 
 on:
   workflow_call:
