@@ -28,7 +28,7 @@ jobs:
          
     - name: Git Clone Repositories
       id: git_clone
-      run : |
+      run: |
         test -d "GitHub" || mkdir -p "GitHub" 
         cd GitHub && git clone https://3wlh:${{ secrets.TOKEN_3WLH }}@github.com/3wlh/OpenWrt_Packages
         test -d "OpenWrt_Packages" && cd "OpenWrt_Packages"
@@ -47,7 +47,7 @@ jobs:
     
     - name: Install usign
       if: steps.git_clone.outputs.usign == 'fail'
-      run : |
+      run: |
         chmod -R 755 "${{ github.workspace }}/GitHub/OpenWrt_Packages/usign" && \
         cd ${{ github.workspace }}/GitHub/OpenWrt_Packages/usign && \
         cmake . && make && sudo make install
@@ -62,7 +62,7 @@ jobs:
         make && sudo make install
         
     - name: Create Script
-      run : |
+      run: |
         chmod -R 755 "$(pwd)/.github/.shell" "$(pwd)/.github/.packages"
         for file in $(pwd)/.github/.shell/*.sh $(pwd)/.github/.packages/*.sh ;do
           if [[ -f ${file} ]];then
@@ -73,21 +73,21 @@ jobs:
         done
         
     - name: Download aarch64_generic Packages
-      run : |
+      run: |
         Packages_all "aarch64_generic" "${{ env.Path }}"
         test -d "${{ env.Path }}/packages/aarch64_generic" || \
         mkdir -p "${{ env.Path }}/packages/aarch64_generic"
         find "/tmp/packages/aarch64_generic" -type f -name "*.[ia]pk" -exec mv -f {} "${{ env.Path }}/packages/aarch64_generic" \;
     
     - name: Download x86_64 Packages
-      run : |
+      run: |
         Packages_all "x86_64" "${{ env.Path }}"
         test -d "${{ env.Path }}/packages/x86_64" || \
         mkdir -p "${{ env.Path }}/packages/x86_64"
         find "/tmp/packages/x86_64" -type f -name "*.[ia]pk" -exec mv -f {} "${{ env.Path }}/packages/x86_64" \;      
             
     - name: Create Repositories index 
-      run : |  
+      run: |  
         # gzip -k9 Packages
         Arch=(${{ env.Arch }})
         echo -e "${{ secrets.KEY }}" > /tmp/mime.key
@@ -101,7 +101,7 @@ jobs:
         [[ -f Packages.stamps ]] && rm -f Packages.stamps
         
     - name: Git Erase Commits
-      run : |
+      run: |
         git config --global user.email "github-actions[bot]@github.com"
         git config --global user.name "GitHub_Actions[bot]"
         
