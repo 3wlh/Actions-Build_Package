@@ -93,7 +93,7 @@ jobs:
           test -d "${{ env.CACHE_DIR }}" || mkdir -pm 755 "${{ env.CACHE_DIR }}"
           test -d "${{ env.OUTPUT_DIR }}" || mkdir -pm 755 "${{ env.OUTPUT_DIR }}"
           if [ "${{ inputs.out }}" == "true" ]; then
-            echo "Buildout=v" >> $GITHUB_ENV
+            echo "Buildout=1" >> $GITHUB_ENV
           fi
 
       - name: Download and Unzip SDK
