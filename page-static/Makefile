@@ -14,10 +14,9 @@ ifeq ($(ARCH),x86_64)
 	PKG_ARCH:=x86_64
 endif
 
-PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_URL:=https://github.com/3wlh/Actions-Source/releases/download/$(BIN_NAME)/$(BIN_NAME).tar.gz
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
-PKG_HASH:=skip
+BIN_FILE:=$(BIN_NAME)
+BIN_URL:=https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_NapCat_Api/NapCat-linux-$(PKG_ARCH)
+PKG_BUILD_DIR:=$(BUILD_DIR)/PKG_BUILD_$(BIN_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -34,14 +33,17 @@ define Package/$(PKG_NAME)/description
 Post request to local webpage to return page.
 endef
 
-define Build/Prepare
-	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
-	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
-		wget -q $(PKG_URL) -O $(DL_DIR)/$(PKG_FILE); \
+define Download/Files
+	echo -e "\033[1;32m Download：$(BIN_URL)\033[0m"
+	if [ ! -f $(PKG_BUILD_DIR)/$(BIN_FILE) ] ; then \
+		wget -q $(BIN_URL) -O $(PKG_BUILD_DIR)/$(BIN_FILE); \
 	fi
-	rm -rf $(PKG_BUILD_DIR)
-	mkdir -p $(PKG_BUILD_DIR)
-	tar -zxvf $(DL_DIR)/$(PKG_FILE) -C $(PKG_BUILD_DIR)
+endef
+
+define Build/Prepare
+	echo -e "\033[31m Prepare：$(PKG_ARCH)\033[0m"
+	mkdir -pm 775 $(PKG_BUILD_DIR)
+	$(call Download/Files)
 endef
 
 define Build/Compile
@@ -49,7 +51,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/www/cgi-bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_NAME)-$(PKG_ARCH) $(1)/www/cgi-bin/$(BIN_NAME)
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_NAME) $(1)/www/cgi-bin/$(BIN_NAME)
 	chmod -R 755 $(1)/www/cgi-bin/$(BIN_NAME)
 endef
 
