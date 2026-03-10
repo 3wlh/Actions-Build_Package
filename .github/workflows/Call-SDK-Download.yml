@@ -80,7 +80,7 @@ jobs:
           fi
 
       - name: Install and Unzip SDK
-        uses: 3wlh/actions/openwrt/toolchain@main
+        uses: 3wlh/actions/openwrt/sdk@main
         id: sdk
         with:
           arch: ${{ matrix.arch }}
