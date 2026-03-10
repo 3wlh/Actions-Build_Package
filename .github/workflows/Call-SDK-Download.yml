@@ -17,10 +17,10 @@ on:
           type: string
 
 env:
-  PACKAGE_NAME: ${{ inputs.package }}
-  CACHE_DIR: /tmp/.cache
+  PACKAGE: ${{ inputs.package }}
+  CACHE_PATH: /tmp/.cache
+  OUTPUT_DIR: ${{ github.workspace }}/Output
   TZ: Asia/Shanghai
-  Download_URL: "https://downloads.openwrt.org/releases/${{ inputs.Version }}.0/targets"
   UPLOAD_BIN_DIR: false
 
 jobs:
@@ -46,12 +46,11 @@ jobs:
         
       - name: Cleanup GitHub Cache
         if: (inputs.cache == true)
-        run: |
-          gh cache delete --all --repo ${{ github.repository }}
+        continue-on-error: true
+        run: gh cache delete --all --repo ${{ github.repository }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
-               
+
   jod_build:
     name: Build Architecture ${{ matrix.arch }}
     needs: jod_initial
@@ -59,20 +58,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - arch: aarch64_generic
-            sdk_url_path: layerscape/armv8_64b
-            sdk_name: '-sdk-.*-layerscape-armv8_64b_'
-          - arch: x86_64
-            sdk_url_path: x86/64
-            sdk_name: '-sdk-.*-x86-64_'
-
+        arch: [aarch64_generic, x86/64]
     env:
-      SDK_URL_PATH: ${{ matrix.sdk_url_path }}
-      SDK_NAME: ${{ matrix.sdk_name }}
       BUILD_TIME: ${{ needs.jod_initial.outputs.time }}
-      OUTPUT_DIR: ${{ github.workspace }}/Output
-      COMPRESSED_FILENAME: ${{ inputs.package }}-${{ inputs.version }}-${{ matrix.arch }}_${{ needs.jod_initial.outputs.time }}.tar.gz
+      BUILD_FILENAME: ${{ env.PACKAGE }}-${{ inputs.version }}-${{ matrix.arch }}_${{ env.BUILD_TIME }}.tar.gz
       
     steps: 
       - name: Checkout
@@ -82,117 +71,82 @@ jobs:
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get install -y ccache gettext libncurses5-dev xsltproc
 
-      - name: Setup Cache
-        uses: actions/cache@main
-        with:
-          path: ${{ env.CACHE_DIR }}
-          key: openwrt-${{ matrix.arch }}
-
       - name: Configure environment variables
         run: |
-          test -d "${{ env.CACHE_DIR }}" || mkdir -pm 755 "${{ env.CACHE_DIR }}"
+          test -d "${{ env.CACHE_PATH }}" || mkdir -pm 755 "${{ env.CACHE_PATH }}"
           test -d "${{ env.OUTPUT_DIR }}" || mkdir -pm 755 "${{ env.OUTPUT_DIR }}"
           if [ "${{ inputs.out }}" == "true" ]; then
             echo "Buildout=99" >> $GITHUB_ENV
           fi
 
-      - name: Download and Unzip SDK
-        run: |
-          cd "${{ env.CACHE_DIR }}"
-          if [[ $(du -s "${{ env.CACHE_DIR }}" | awk '{ print $1}') -lt 10240 ]]; then
-            echo -e "\e[1;32m ✅ 开始下载 SDK \e[0m"
-            if ! ( wget -qO - "${Download_URL}/$SDK_URL_PATH/sha256sums" | grep -- "${{ env.SDK_NAME }}" > sha256sums.small 2>/dev/null ); then
-              echo -e "\e[1;31m  ❌ 错误：在 sha256sums 中找不到 ${{ env.SDK_NAME }} 文件. \e[0m"
-              exit 1
-            fi
-            SDK_FILE="$(cat sha256sums.small | cut -d' ' -f2 | sed 's/*//g')"
-            if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
-              echo -e "\e[1;32m ✅ 下载url:${Download_URL}/$SDK_URL_PATH/$SDK_FILE \e[0m"
-              wget -qO "$SDK_FILE" "${Download_URL}/$SDK_URL_PATH/$SDK_FILE"
-              if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
-                echo -e "\e[1;31m ❌ 错误：无法验证SDK！ \e[0m"
-                exit 1
-              fi
-            fi
-            echo -e "\e[1;32m ✅ 解压文件:$SDK_FILE \e[0m"
-            tar -I zstd -xf "${SDK_FILE}" -C "${{ env.CACHE_DIR }}" --strip=1 && rm -fr ${SDK_FILE}
-            ls
-          fi
-          test -d "dl" && rm -rf "dl" || true
-          test -d "feeds" && rm -rf "feeds" || true
-          test -d "${{ env.CACHE_DIR }}/bin/packages" && rm -rf ${{ env.CACHE_DIR }}/bin/packages
-          cp feeds.conf.default feeds.conf
-          sed -i 's,git.openwrt.org/openwrt/openwrt/,github.com/openwrt/openwrt/,' feeds.conf
-          sed -i 's,git.openwrt.org/feed/packages/,github.com/openwrt/packages/,' feeds.conf
-          sed -i 's,git.openwrt.org/project/luci/,github.com/openwrt/luci/,' feeds.conf
-          sed -i 's,git.openwrt.org/feed/telephony/,github.com/openwrt/telephony/,' feeds.conf
-          echo "status=success" >> $GITHUB_OUTPUT
+      - name: Install and Unzip SDK
+        uses: 3wlh/actions/openwrt/toolchain@main
+        id: sdk
+        with:
+          arch: ${{ matrix.arch }}
+          version: ${{ inputs.version }}
+          path: ${{ env.CACHE_PATH }}
+        
           
       - name: Update and Install Packages
+        working-directory: ${{ env.CACHE_PATH }}
         run: |
-          cd "${{ env.CACHE_DIR }}"
           # ./scripts/feeds update -a >/dev/null 2>&1
           find "${{ github.workspace }}" -maxdepth 1 -exec ln -s {} "package/" \;
-          # rm package/$(basename ${{ github.workspace }})
           ./scripts/feeds install -a >/dev/null 2>&1
           cd -
 
       - name: Build Packages
+        working-directory: ${{ env.CACHE_PATH }}
         run: |
-          cd "${{ env.CACHE_DIR }}"
           make defconfig  >/dev/null
           make package/${{ env.PACKAGE_NAME }}/{clean,compile} V=${{ env.Buildout }} CONFIG_AUTOREMOVE=y 
           # make package/${{ env.PACKAGE_NAME }}/{clean,compile} 
-          find "${{ env.CACHE_DIR }}/bin/" -type f -name "*.[ai]pk" -exec ls -lh {} \;
-          cd -
+          find "$(pwd)/bin/" -type f -name "*.[ai]pk" -exec ls -lh {} \;
 
       - name: Create compress files
-        id: compress_files
+        id: compress_file
+        env: 
+          Package: ${{ env.PACKAGE }}
+          Build_NAME: ${{ env.BUILD_FILENAME }}
+          Build_PATH: ${{ env.CACHE_PATH }}/bin/packages/
+          Output_FILE: ${{ env.OUTPUT_PATH }}/${{ env.BUILD_FILENAME }}
         run: |
-          # name=*$(echo ${{ env.PACKAGE_NAME }} | cut -d "-" -f 3-)*.ipk
-          # name="*$(echo ${{ env.PACKAGE_NAME }} | sed 's/luci-app-//')*.ipk"
-          PACKAGE_DIR="${{ env.CACHE_DIR }}/bin/packages/"
-          File=$(find "${PACKAGE_DIR}/" -name "*${{ env.PACKAGE_NAME }}*.[ai]pk")
-          for dir in $(echo ${File} | sed 's| | |g')
-          do
-            echo "✅ 文件目录:$(dirname ${dir})"
-            TARGET_PATH="$(dirname ${dir})"
-            
-          done
-          if [ -d "$TARGET_PATH" ] && [ "$(ls -A $TARGET_PATH)" ]; then
-            test -d "${TARGET_PATH}/tmp" && rm -fr "${TARGET_PATH}/tmp"
+          # 
+          file=$(find "${Build_PATH}/" -name "*${Package}*.[ai]pk" | tail -1)
+          file_path="$(dirname ${file})"
+          echo "✅ 文件目录: ${file_path}"
+          if [ -d "$file_path" ] && [ "$(ls -A $file_path)" ]; then
+            test -d "${file_path}/tmp" && rm -fr "${file_path}/tmp"
             # 只执行一次tar命令，保留文件结构
-            tar -zcf ${{ env.OUTPUT_DIR }}/${{ env.COMPRESSED_FILENAME }} -C $TARGET_PATH .
-            test -d "${{ env.CACHE_DIR }}/bin/packages" && rm -rf ${{ env.CACHE_DIR }}/bin/packages
-            echo "✅ 压缩文件成功：${{ env.OUTPUT_DIR }}/${{ env.COMPRESSED_FILENAME }}"
+            tar -zcf ${Output_FILE} -C $file_path .
+            test -d "${Build_PATH}" && rm -rf "${Build_PATH}"
+            echo "✅ 压缩文件成功：${Output_FILE}"
             echo "status=success" >> $GITHUB_OUTPUT
           else
-            echo "❌ 目标目录无文件：$TARGET_PATH"
-            echo "status=failed" >> $GITHUB_OUTPUT
+            echo "❌ 目标目录无文件：$file_path"
+            echo "status=failed" >> $GITHUB_OUTPU
           fi
-          find "${{ env.OUTPUT_DIR }}" -name "*.gz" -exec ls -lh {} \;
+          find "${{ env.OUTPUT_PATH }}" -name "*.gz" -exec ls -lh {} \;
 
       - name: Upload to bin directory
         uses: actions/upload-artifact@main
         if: ${{ env.UPLOAD_BIN_DIR == 'true' }} 
         with:
-          name: ${{ matrix.arch }}_package_${{ env.Time }}
-          path: ${{ env.CACHE_DIR }}/bin 
+          name: ${{ matrix.arch }}_package_${{ env.BUILD_TIME }}
+          path: ${{ env.CACHE_PATH }}/bin
 
+      
       - name: Upload as release assets
-        if: steps.compress_files.outputs.status == 'success'
-        uses: ncipollo/release-action@main
+        if: (steps.compress_file.outputs.status == 'success')
+        uses: softprops/action-gh-release@master
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
-          tag: GitHub-Actions_${{ inputs.package }}
-          name: ${{ inputs.package }}
-          artifacts: ${{ env.OUTPUT_DIR }}/*
+          tag_name: GitHub-Actions_${{ env.PACKAGE }}
+          name: Package：${{ env.PACKAGE }}
+          files: ${{ env.OUTPUT_PATH }}/*
           body: |
-            ## 编译信息
+            ## 软件信息：
             - 编译时间：`${{ env.BUILD_TIME }}`
-            - SDK版本：`${{ inputs.sdk }}`
-            - 插件：`${{ inputs.package }}`
-          allowUpdates: true
-          removeArtifacts: false
-          replacesArtifacts: true
-          makeLatest: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+            - SDK版本: `${{ inputs.version }}`
