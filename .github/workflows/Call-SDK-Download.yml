@@ -19,7 +19,7 @@ on:
 env:
   PACKAGE: ${{ inputs.package }}
   CACHE_PATH: /tmp/.cache
-  OUTPUT_DIR: ${{ github.workspace }}/Output
+  OUTPUT_PATH: ${{ github.workspace }}/Output
   TZ: Asia/Shanghai
   UPLOAD_BIN_DIR: false
 
@@ -77,7 +77,7 @@ jobs:
         run: |
           # ✅初始化设置
           test -d "${{ env.CACHE_PATH }}" || mkdir -pm 755 "${{ env.CACHE_PATH }}"
-          test -d "${{ env.OUTPUT_DIR }}" || mkdir -pm 755 "${{ env.OUTPUT_DIR }}"
+          test -d "${{ env.OUTPUT_PATH }}" || mkdir -pm 755 "${{ env.OUTPUT_PATH }}"
           if [ "${{ inputs.out }}" == "true" ]; then
             echo "Buildout=99" >> $GITHUB_ENV
           fi
@@ -104,8 +104,8 @@ jobs:
         run: |
           # ✅ 编译源码文件
           make defconfig  >/dev/null
-          make package/${{ env.PACKAGE_NAME }}/{clean,compile} V=${{ env.Buildout }} CONFIG_AUTOREMOVE=y 
-          # make package/${{ env.PACKAGE_NAME }}/{clean,compile} 
+          make package/${{ env.PACKAGE }}/{clean,compile} V=${{ env.Buildout }} CONFIG_AUTOREMOVE=y 
+          # make package/${{ env.PACKAGE }}/{clean,compile} 
           find "$(pwd)/bin/" -type f -name "*.[ai]pk" -exec ls -lh {} \;
 
       - name: Create compress files
