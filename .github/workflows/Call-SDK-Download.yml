@@ -60,7 +60,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [aarch64_generic, x86_64]
+        arch: [aarch64_generic,x86_64]
     env:
       BUILD_TIME: ${{ needs.jod_initial.outputs.time }}
       BUILD_FILENAME: ${{ inputs.package }}-${{ inputs.version }}-${{ matrix.arch }}_${{ needs.jod_initial.outputs.time }}.tar.gz
