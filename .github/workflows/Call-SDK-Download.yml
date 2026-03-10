@@ -73,8 +73,9 @@ jobs:
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get install -y ccache gettext libncurses5-dev xsltproc
 
-      - name: Configure environment variables
+      - name: Initialization Settings
         run: |
+          # ✅初始化设置
           test -d "${{ env.CACHE_PATH }}" || mkdir -pm 755 "${{ env.CACHE_PATH }}"
           test -d "${{ env.OUTPUT_DIR }}" || mkdir -pm 755 "${{ env.OUTPUT_DIR }}"
           if [ "${{ inputs.out }}" == "true" ]; then
@@ -93,14 +94,15 @@ jobs:
       - name: Update and Install Packages
         working-directory: ${{ env.CACHE_PATH }}
         run: |
+          # ✅ 复制源码文件
           # ./scripts/feeds update -a >/dev/null 2>&1
           find "${{ github.workspace }}" -maxdepth 1 -exec ln -s {} "package/" \;
           ./scripts/feeds install -a >/dev/null 2>&1
-          cd -
-
+   
       - name: Build Packages
         working-directory: ${{ env.CACHE_PATH }}
         run: |
+          # ✅ 编译源码文件
           make defconfig  >/dev/null
           make package/${{ env.PACKAGE_NAME }}/{clean,compile} V=${{ env.Buildout }} CONFIG_AUTOREMOVE=y 
           # make package/${{ env.PACKAGE_NAME }}/{clean,compile} 
