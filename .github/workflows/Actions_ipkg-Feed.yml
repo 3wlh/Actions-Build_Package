@@ -62,6 +62,7 @@ jobs:
         done
         
     - name: Git Erase Commits
+      working-directory: ${{ steps.feed.outputs.path }}
       run: |
         git config --global user.email "github-actions[bot]@github.com"
         git config --global user.name "GitHub_Actions[bot]"
