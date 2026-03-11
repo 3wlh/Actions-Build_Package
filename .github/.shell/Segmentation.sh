@@ -13,6 +13,8 @@ while IFS= read -r LINE; do
             fi
             Download_URL="${PACKAGES_URL}${FILE}"
             if [[ ! -f "${PACKAGES_PATH}/${FILE}" ]];then
+                # 删除旧PACKAGES
+                find ${PACKAGES_PATH} -type f -name "*${PREFIX}*" -exec rm -f {} \;
                 Download "${Download_URL}" "${PACKAGES_PATH}"
             else
                 echo -e "$(date '+%Y-%m-%d %H:%M:%S')\e[1;32m - (${FILE})插件无更新.\e[0m"
