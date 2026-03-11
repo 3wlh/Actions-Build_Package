@@ -76,7 +76,7 @@ jobs:
         # 清理优化Git仓库
         # git gc --prune=now --aggressive >/dev/unll
         # 强制提交到远程仓库
-        git push origin main
+        git push ${{ env.Repo }} origin main
         
   jod_workflow: 
     needs: jobs_feed
