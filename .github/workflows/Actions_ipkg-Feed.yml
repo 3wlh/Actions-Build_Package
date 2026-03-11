@@ -68,7 +68,6 @@ jobs:
         git config --global user.name "GitHub_Actions[bot]"
         
         Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
-        cd ${{ github.workspace }}/GitHub/OpenWrt_Packages
         # 添加所有文件
         git add -A
         # 提交更改
@@ -76,7 +75,7 @@ jobs:
         # 清理优化Git仓库
         # git gc --prune=now --aggressive >/dev/unll
         # 强制提交到远程仓库
-        git push ${{ env.Repo }} origin main
+        git push origin main
         
   jod_workflow: 
     needs: jobs_feed
