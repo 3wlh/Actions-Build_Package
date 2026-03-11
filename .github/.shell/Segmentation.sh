@@ -5,7 +5,7 @@ PACKAGES_NAME=(${3})
 wget -qO- "${PACKAGES_URL}/Packages" | \
 while IFS= read -r LINE; do
     for PREFIX in "${PACKAGES_NAME[@]}"; do
-        if [[ "$LINE" == "Filename"*${PREFIX}* ]]; then
+        if [[ "$LINE" == "Filename:"*${PREFIX}* ]]; then
             FILE=$(echo "$LINE" | grep -Eo ${PREFIX}'.*')
             if [[ -z "$FILE" ]]; then
                 # echo "No file found in line, skipping"
@@ -15,7 +15,7 @@ while IFS= read -r LINE; do
             if [[ ! -f "${PACKAGES_PATH}/${FILE}" ]];then
                 Download "${Download_URL}" "${PACKAGES_PATH}"
             else
-                echo -e "$(date '+%Y-%m-%d %H:%M:%S')\e[1;32m - 【${FILE}】插件无更新.\e[0m"
+                echo -e "$(date '+%Y-%m-%d %H:%M:%S')\e[1;32m - (${FILE})插件无更新.\e[0m"
             fi   
         fi
     done
