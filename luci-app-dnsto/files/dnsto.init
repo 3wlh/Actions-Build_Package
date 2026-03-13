@@ -4,7 +4,7 @@ START=99
 STOP=10
 
 NAME="dnsto"
-PROG="$(find /usr/sbin/ -maxdepth 1 -name "${NAME}*" -exec basename {} \; | head -1)"
+PROG="$(find /usr/sbin/ -maxdepth 1 -name "${NAME}*" | head -1)"
 
 log() {
 	echo "$(date "+%Y.%m.%d_%H%M%S") - ${1}" >>/tmp/$NAME.log
