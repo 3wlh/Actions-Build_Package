@@ -25,7 +25,7 @@ start() {
 	# 创建配置目录
 	[[ -d ${dir} ]] || mkdir -pm 755 "${dir}"
 	[[ -n "${pwd}" ]] && inpwd=" -pwd $pwd"
-	[[ -n "${url}" ]] && inurl=" -pwd $url"
+	[[ -n "${url}" ]] && inurl=" -url $url"
 	[[ -n "${token}" ]] && intoken=" -token $token"
 	echo "Starting ..."
 	# log "执行命令"
