@@ -3,32 +3,38 @@
 START=99
 STOP=10
 
-CONF="napcatapi"
-FILE="$(find /usr/sbin/ -maxdepth 1 -name "${CONF}*" -exec basename {} \; | head -1)"
-PROG="/usr/sbin/$FILE"
-CONF_PATH="/etc/$CONF"
+NAME="dnsto"
+PROG="$(find /usr/sbin/ -maxdepth 1 -name "${NAME}*" -exec basename {} \; | head -1)"
+
+log() {
+	echo "$(date "+%Y.%m.%d_%H%M%S") - ${1}" >>/tmp/$NAME.log
+}
 
 start() {
-	config_load "$CONF"
-
+	config_load "$NAME"
+	# log "开始运行"
 	local enabled
 	config_get_bool enabled "config" "enabled" "0"
 	[ "$enabled" -eq "1" ] || return 1
 	local port path_config pwd_config online_config token
 	config_get port "config" "port" "5663"
-	config_get path_config "config" "path_config" "$CONF_PATH"
-	config_get pwd_config "config" "pwd_config" "123456"
-	config_get online_config "config" "online_config" "http[s]://"
+	config_get dir "config" "path_config" "/etc/${NAME}"
+	config_get pwd "config" "pwd_config"
+	config_get url "config" "online_config"
 	config_get token "config" "token"
 	# 创建配置目录
-	[[ -d ${path_config} ]] || mkdir -p "${path_config}"
-	[[ -n "${token}" ]] && intoken="-token $token"
-	echo "Starting $FILE..."
+	[[ -d ${dir} ]] || mkdir -pm 755 "${dir}"
+	[[ -n "${pwd}" ]] && inpwd=" -pwd $pwd"
+	[[ -n "${url}" ]] && inurl=" -pwd $url"
+	[[ -n "${token}" ]] && intoken=" -token $token"
+	echo "Starting ..."
+	# log "执行命令"
 	# 构建启动参数
-	start-stop-daemon -S -q -b -x "$PROG" -- -p "$port" -c "$path_config" -pwd "$pwd_config" -url "$online_config" $intoken
+	start-stop-daemon -S -q -b -x "$PROG" -- -p "$port" -c "$dir"${inpwd}${inurl}${intoken}
 }
 
 stop() {
-		kill -9 `pidof $FILE | sed "s/$$//g"` 2>/dev/null
-		echo "$FILE stopped"
+		# log "结束运行"
+		kill -9 $(pidof $(basename ${PROG}) | sed "s/$$//g") 2>/dev/null
+		echo "stopped ..."
 }
