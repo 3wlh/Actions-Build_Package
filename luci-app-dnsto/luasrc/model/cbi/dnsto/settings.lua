@@ -94,7 +94,7 @@ o.rmempty = false
 o.description = _("Web Service Port")
 
 -- 配置文件路径
-o = s:option(Value, "path_config", _("Config path"))
+o = s:option(Value, "path_config", _("Config Path"))
 o.default = "/etc/dnsto"
 o.rmempty = true
 o.datatype = "string"
