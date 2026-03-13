@@ -4,8 +4,8 @@ function index()
 	entry({"admin", "services", "dnsto"}, firstchild(), _("DNDTO"), 90).dependent = true
 	entry({"admin", "services","dnsto_status"}, call("Run_status"))
 	-- 注册菜单 
-	entry({"admin", "services", "dnsto", "settings"}, cbi("dnsto/dnsto"), _("Settings"), 10).leaf = true
-	entry({"admin", "services", "dnsto", "index"}, template("dnsto/index"), _("Index"), 20).leaf = true
+	entry({"admin", "services", "dnsto", "settings"}, cbi("dnsto/settings"), _("Settings"), 10).leaf = true
+	entry({"admin", "services", "dnsto", "parse"}, template("dnsto/parse"), _("Parse"), 20).leaf = true
 	entry({"admin", "services", "dnsto", "logs"}, template("dnsto/logs"), _("Logs"), 30).leaf = true
 end
 

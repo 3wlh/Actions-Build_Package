@@ -10,15 +10,15 @@ msgstr ""
 
 # 插件名称
 msgid "DNDTO"
-msgid "DNDTO解析"
+msgstr "DNDTO解析"
 
 # 页面标题
 msgid "DNSTO Settings"
-msgstr "DNSTO 配置"
+msgstr "DNSTO 设置"
 msgid "Settings"
 msgstr "设置"
-msgid "Index"
-msgstr "配置"
+msgid "Parse"
+msgstr "解析"
 msgid "Logs"
 msgstr "日志"
 
@@ -39,7 +39,7 @@ msgstr "DNSTO：检测异常"
 
 # 按钮文本
 msgid "Open Web index"
-msgstr "打开配置页面"
+msgstr "打开解析页面"
 msgid "Open Web logs"
 msgstr "打开日志页面"
 
