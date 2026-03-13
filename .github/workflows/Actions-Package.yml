@@ -39,6 +39,7 @@ on:
           - luci-app-scriptmsg
           - luci-app-photopea
           - luci-app-napcatapi
+          - luci-app-dnsto
           - luci-app-cifs-mount2
           - luci-app-bypass
           - luci-app-unishare

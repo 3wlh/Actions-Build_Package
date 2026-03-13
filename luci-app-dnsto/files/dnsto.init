@@ -1,0 +1,34 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+STOP=10
+
+CONF="napcatapi"
+FILE="$(find /usr/sbin/ -maxdepth 1 -name "${CONF}*" -exec basename {} \; | head -1)"
+PROG="/usr/sbin/$FILE"
+CONF_PATH="/etc/$CONF"
+
+start() {
+	config_load "$CONF"
+
+	local enabled
+	config_get_bool enabled "config" "enabled" "0"
+	[ "$enabled" -eq "1" ] || return 1
+	local port path_config pwd_config online_config token
+	config_get port "config" "port" "5663"
+	config_get path_config "config" "path_config" "$CONF_PATH"
+	config_get pwd_config "config" "pwd_config" "123456"
+	config_get online_config "config" "online_config" "http[s]://"
+	config_get token "config" "token"
+	# 创建配置目录
+	[[ -d ${path_config} ]] || mkdir -p "${path_config}"
+	[[ -n "${token}" ]] && intoken="-token $token"
+	echo "Starting $FILE..."
+	# 构建启动参数
+	start-stop-daemon -S -q -b -x "$PROG" -- -p "$port" -c "$path_config" -pwd "$pwd_config" -url "$online_config" $intoken
+}
+
+stop() {
+		kill -9 `pidof $FILE | sed "s/$$//g"` 2>/dev/null
+		echo "$FILE stopped"
+}
