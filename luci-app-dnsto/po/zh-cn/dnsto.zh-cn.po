@@ -8,6 +8,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+# 插件名称
+msgid "DNDTO"
+msgid "DNDTO解析"
+
 # 页面标题
 msgid "DNSTO Settings"
 msgstr "DNSTO 配置"
