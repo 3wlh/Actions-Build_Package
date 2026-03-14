@@ -9,7 +9,7 @@ on:
 
 env:
   Arch: "aarch64_generic x86_64"
-  Repo: "https://3wlh:${{ secrets.TOKEN_3WLH }}@github.com/3wlh/OpenWrt_Packages"
+  Repo: "https://3wlh:${{ secrets.TOKEN_GITHUB }}@github.com/3wlh/OpenWrt_Packages"
   
 
 jobs:
