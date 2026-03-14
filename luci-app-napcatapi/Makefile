@@ -18,7 +18,7 @@ endif
 
 BIN_FILE:=$(BIN_NAME)
 BIN_URL:=https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_NapCat_Api/NapCat_Api-linux-$(PKG_ARCH)
-PKG_BUILD_DIR:=$(BUILD_DIR)/PKG_BUILD_$(BIN_NAME)
+PKG_BUILD_DIR:=$(BUILD_DIR)/PKG_BUILD_$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
