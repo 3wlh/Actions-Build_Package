@@ -17,11 +17,12 @@ ifeq ($(ARCH),x86_64)
 endif
 
 BIN_FILE:=$(BIN_NAME)
-BIN_URL:=https://github.com/3wlh/Actions-Docker/releases/download/$(BIN_NAME)/$(BIN_NAME)_$(PKG_ARCH)
+https://github.com/3wlh/Actions-Docker/releases/download/Files-Photopea/fonts.tar.gz
+BIN_URL:=https://github.com/3wlh/Actions-Docker/releases/download/Files-Photopea/photopea-linux-$(PKG_ARCH)
 WEB_FILE:=www.photopea.com.tar.gz
-WEB_URL:=https://github.com/3wlh/Actions-Docker/releases/download/$(BIN_NAME)/photopea-2.7.tar.gz
+WEB_URL:=https://github.com/3wlh/Actions-Docker/releases/download/Files-Photopea/photopea-2.7.tar.gz
 FONTS_FILE:=fonts.tar.gz
-FONTS_URL:=https://github.com/3wlh/Actions-Docker/releases/download/$(BIN_NAME)/fonts.tar.gz
+FONTS_URL:=https://github.com/3wlh/Actions-Docker/releases/download/Files-Photopea/fonts.tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/PKG_BUILD_$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
