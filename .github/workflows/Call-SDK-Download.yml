@@ -9,6 +9,8 @@ on:
         type: boolean  
       out:
         type: boolean
+      cnb:
+        type: boolean
       sdk:
         type: string
       package:
@@ -39,11 +41,21 @@ jobs:
       - name: Delete GitHub Release
         uses: dev-drprasad/delete-tag-and-release@master
         with:
+          repo: 3wlh/OpenWrt_Packages
           tag_name: GitHub-Actions_${{ inputs.package }}
           delete_release: true
-          github_token: ${{ github.token }}
+          github_token: ${{ secrets.TOKEN_GITHUB }}
         continue-on-error: true
-        
+      
+      - name: Delete CNB Release
+        if: (inputs.cnb == true)
+        uses: 3wlh/actions/CNB/delete-releases@main
+        with:
+          repository: 3wlh/OpenWrt_Packages
+          tag_name: GitHub-Actions_${{ inputs.package }}
+          token: ${{ secrets.TOKEN_CNB }}
+        continue-on-error: true
+      
       - name: Cleanup GitHub Cache
         if: (inputs.cache == true)
         continue-on-error: true
@@ -156,6 +168,7 @@ jobs:
             - SDK版本: `${{ inputs.version }}`
             
       - name: Upload as release assets CNB
+        if: (inputs.cnb == true && steps.compress_file.outputs.status == 'success')
         uses: 3wlh/actions/CNB/upload-releases@main
         with:
           repository: 3wlh/OpenWrt_Packages

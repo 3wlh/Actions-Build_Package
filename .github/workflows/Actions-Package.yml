@@ -59,6 +59,13 @@ on:
           - "23.05"
           - "24.10"
       
+      cnb:
+        description: |
+          是否上传CNB?
+        required: false
+        default: true
+        type: boolean
+      
       feeds:
         description: |
           是否禁用feeds?
@@ -102,5 +109,6 @@ jobs:
       feeds: ${{ inputs.feeds }}
       out: ${{ inputs.out }}
       sdk: ${{ inputs.sdk }}
+      cnb: ${{ inputs.cnb }}
       package: ${{ inputs.package }}
       version: ${{ inputs.version }}  
