@@ -48,8 +48,11 @@ local function generate_key()
         end
     end
     -- 同时返回MAC和解密Key
-    return key
+    return mac, key 
 end
+
+
+local device_mac, decrypt_key = generate_key()
 
 -- 初始化配置（确保模板有数据可用）
 local function init_config()
@@ -61,7 +64,7 @@ local function init_config()
     uci:set("dnsto", "config", "enabled", uci:get("dnsto", "config", "enabled") or 0)
     uci:set("dnsto", "config", "port", uci:get("dnsto", "config", "port") or "5063")
     uci:set("dnsto", "config", "path_config", uci:get("dnsto", "config", "path_config") or "/etc/dnsto")
-    uci:set("dnsto", "config", "pwd_config", uci:get("dnsto", "config", "pwd_config") or generate_key())
+    uci:set("dnsto", "config", "pwd_config", uci:get("dnsto", "config", "pwd_config") or decrypt_key)
     uci:set("dnsto", "config", "online_config", uci:get("dnsto", "config", "online_config") or "http[s]://")
     uci:set("dnsto", "config", "token", uci:get("dnsto", "config", "token") or generate_token())
     return
@@ -72,8 +75,11 @@ init_config()
 
 local m, s, o
 m = Map("dnsto", _("DNSTO Settings"), 
-    _("A lightweight DDNS automatic update tool that supports multiple DNS service providers.") .. "<br/>" ..
-    _("Official reference") .. ": <a href='https://github.com/3wlh/' target='_blank'>DNSTO</a>")
+    _("A lightweight DDNS automatic update tool that supports multiple DNS service providers.") .. "<br/>" ..  
+    (device_mac ~= "" and "<br><b>MAC: </b> <span style='color:#3498db;'>" .. device_mac .. "</span>" or "") .. 
+    (decrypt_key ~= "" and "<br><b>Key: </b> <span style='color:#e74c3c;'>" .. decrypt_key .. "</span>" or "")) .. 
+    "<br/>" .. _("Official reference") .. ": <a href='https://github.com/3wlh/' target='_blank'>DNSTO</a>")
+    
 
 -- 调用独立状态模板
 m:section(SimpleSection).template = "dnsto/status"
@@ -102,7 +108,7 @@ o.description = _('Configuration File Storage Path');
 
 -- 解密密钥
 o = s:option(Value, "pwd_config", _("Decrypt KEY"))
-o.default = generate_key()
+o.default = decrypt_key
 o.password = true
 o.rmempty = true
 o.description = _('Decryption Key[Auto MAC Generate]');
