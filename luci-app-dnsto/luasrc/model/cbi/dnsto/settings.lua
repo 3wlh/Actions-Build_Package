@@ -48,9 +48,8 @@ local function generate_key()
         end
     end
     -- 同时返回MAC和解密Key
-    return mac, key 
+    return mac, key
 end
-
 
 local device_mac, decrypt_key = generate_key()
 
@@ -75,11 +74,9 @@ init_config()
 
 local m, s, o
 m = Map("dnsto", _("DNSTO Settings"), 
-    _("A lightweight DDNS automatic update tool that supports multiple DNS service providers.") .. "<br/>" ..  
-    (device_mac ~= "" and "<br><b>MAC: </b> <span style='color:#3498db;'>" .. device_mac .. "</span>" or "") .. 
-    (decrypt_key ~= "" and "<br><b>Key: </b> <span style='color:#e74c3c;'>" .. decrypt_key .. "</span>" or "")) .. 
-    "<br/>" .. _("Official reference") .. ": <a href='https://github.com/3wlh/' target='_blank'>DNSTO</a>")
-    
+    _("A lightweight DDNS automatic update tool that supports multiple DNS service providers.") .. "<br/>" ..    
+    _("Official reference") .. ": <a href='https://github.com/3wlh/' target='_blank'>DNSTO</a>" ..
+    (device_mac ~= "" and "<br><b>MAC: </b> <span style='color:#3498db;'>" .. device_mac .. "</span>" or ""))
 
 -- 调用独立状态模板
 m:section(SimpleSection).template = "dnsto/status"
