@@ -72,7 +72,7 @@ define Package/$(PKG_NAME)/postinst
 endef
 
 define Build/Compile
-	touch $($BUILD_DIR)/$(PKG_NAME).built
+	touch $(BUILD_DIR)/$(PKG_NAME).built
 endef
 
 define Package/$(PKG_NAME)/conffiles
