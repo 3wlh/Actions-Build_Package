@@ -1,20 +1,21 @@
 #!/bin/sh
-[ ! -f "/usr/share/ucitrack/luci-app-napcatapi.json" ] && {
-    cat > /usr/share/ucitrack/luci-app-napcatapi.json << EEOF
+name="napcatapi"
+[ ! -f "/usr/share/ucitrack/luci-app-${name}.json" ] && {
+    cat > /usr/share/ucitrack/luci-app-${name}.json << EOF
 {
-    "config": "napcatapi",
-    "init": "napcatapi"
+    "config": "${name}",
+    "init": "${name}"
 }
-EEOF
+EOF
 }
 
 uci -q batch <<-EOF >/dev/null
-	delete ucitrack.@napcatapi[-1]
-	add ucitrack napcatapi
-	set ucitrack.@napcatapi[-1].init=napcatapi
+	delete ucitrack.${name}
+	add ucitrack ${name}
+	set ucitrack.@${name}[-1].init=${name}
 	commit ucitrack
 EOF
 
-/etc/init.d/napcatapi enable
+/etc/init.d/${name} enable
 
 exit 0
