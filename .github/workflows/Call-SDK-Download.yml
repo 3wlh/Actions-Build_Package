@@ -141,12 +141,25 @@ jobs:
           path: ${{ env.CACHE_PATH }}/bin
 
       
-      - name: Upload as release assets
+      - name: Upload as release assets GitHub
         if: (steps.compress_file.outputs.status == 'success')
         uses: softprops/action-gh-release@master
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
         with:
+          repository: 3wlh/OpenWrt_Packages
+          token: ${{ secrets.TOKEN_GITHUB }}
+          tag_name: GitHub-Actions_${{ env.PACKAGE }}
+          name: Package：${{ env.PACKAGE }}
+          files: ${{ env.OUTPUT_PATH }}/*
+          body: |
+            ## 软件信息：
+            - 编译时间：`${{ env.BUILD_TIME }}`
+            - SDK版本: `${{ inputs.version }}`
+            
+      - name: Upload as release assets CNB
+        uses: 3wlh/actions/CNB/upload-releases@main
+        with:
+          repository: 3wlh/OpenWrt_Packages
+          token: ${{ secrets.TOKEN_CNB }}
           tag_name: GitHub-Actions_${{ env.PACKAGE }}
           name: Package：${{ env.PACKAGE }}
           files: ${{ env.OUTPUT_PATH }}/*
