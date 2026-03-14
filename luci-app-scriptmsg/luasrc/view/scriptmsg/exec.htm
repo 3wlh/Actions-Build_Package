@@ -2,10 +2,9 @@
 <style>
 /* 保留原有样式，无需修改 */
 .cbi-map {
-    flex: 1; 
-    max-width: 100%;
-    min-height: 300px;
-    max-height: calc(100vh - 125px);
+    flex: 1;
+    /*idth: 100%;*/
+    /*height: 100%;*/
     padding: 0px;
 }
 
@@ -50,10 +49,12 @@
 }
 
 #log {
-    flex: 1; 
-    min-height: 100px;
-    max-width: 100%;
+    flex: 1;
     width: 100%;
+    height: 100vh;
+    min-height: 200px;
+    max-width: 100%;
+    max-height: calc(100vh - 290px);
     border: 1px solid #ddd;
     border-radius: 4px;
     padding: 0 !important;
