@@ -1,5 +1,5 @@
 #!/bin/bash
-PACKAGES_URL="https://api.github.com/repos/3wlh/Actions-Packages/releases/tags/GitHub-Actions"
+PACKAGES_URL="https://api.github.com/repos/3wlh/OpenWrt_Packages/releases/tags/GitHub-Actions"
 PACKAGES_ARCH="${1}"
 PACKAGES_PATH="${2}"
 PACKAGES_NAME=(${3})
