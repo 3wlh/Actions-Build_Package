@@ -3,8 +3,8 @@ module("luci.controller."..name, package.seeall)
 local api = require("luci.model.cbi."..name..".api.download")
 
 -- 二进制名与下载源 (action_index 渲染 + action_download 回退共用)
-local bin_file     = name
-local download_url = "https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_" .. name
+local bin_file = name
+local download_url = "https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_" .. bin_file
 
 function index()
 	-- 菜单始终注册 (二进制检查在 action_index 实时执行, 避免菜单缓存导致下载后不刷新)
@@ -55,7 +55,6 @@ function action_index()
 end
 
 -- 下载二进制: 服务端用控制器常量推导路径/URL, 调 api.download
--- (不读客户端输入, 避免任意文件写入风险)
 function action_download()
 	local info = api.arch_info(bin_file, download_url)
 	luci.http.prepare_content("application/json")
