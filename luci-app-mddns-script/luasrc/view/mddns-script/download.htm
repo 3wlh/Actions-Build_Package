@@ -1,0 +1,85 @@
+<%+header%>
+
+<div class="cbi-map">
+    <fieldset class="cbi-section">
+        <legend><%:Binary Not Installed%></legend>
+        <div class="cbi-section-descr" style="padding:12px;">
+
+            <p style="color:red; font-size:14px; margin-bottom:15px;">
+                <strong>&#9888;&#65039; <%:The binary was not found in /usr/sbin/%></strong>
+            </p>
+
+            <p><%:Please download and install the binary matching your device architecture.%></p>
+
+            <table class="cbi-section-table" style="margin-top:10px; width:100%;">
+                <tr>
+                    <td style="width:30%; padding:4px 0;"><%:Device architecture%></td>
+                    <td style="padding:4px 0;"><code><%=arch%></code> &#8594; <code><%=pkg_arch%></code></td>
+                </tr>
+                <tr>
+                    <td style="padding:4px 0;"><%:Binary file%></td>
+                    <td style="padding:4px 0;"><code><%=bin_name%></code></td>
+                </tr>
+                <tr>
+                    <td style="padding:4px 0;"><%:Install path%></td>
+                    <td style="padding:4px 0;"><code><%=bin_dir%></code></td>
+                </tr>
+            </table>
+
+            <p style="margin-top:15px;"><%:Download URL:%></p>
+            <p><code style="word-break:break-all; display:block; padding:8px; background:#f5f5f5; border:1px solid #ddd; border-radius:4px;"><%=bin_url%></code></p>
+
+            <p style="margin-top:15px; color:#666;">
+                <%:Binary not detected, downloading automatically...%>
+            </p>
+
+            <div class="cbi-page-actions" style="margin-top:20px;">
+                <input type="button" class="cbi-button cbi-button-apply" id="dl_btn" value="<%:Download%>" onclick="downloadBin()" />
+                <span id="dl_tip" style="margin-left:10px;"></span>
+            </div>
+
+        </div>
+    </fieldset>
+</div>
+
+<script>
+function downloadBin() {
+    var btn = document.getElementById('dl_btn');
+    var tip = document.getElementById('dl_tip');
+    btn.disabled = true;
+    btn.value = '<%:Downloading...%>';
+    tip.innerHTML = '<span style="color:#666"><%:Downloading, please wait...%></span>';
+
+    fetch(L.url("admin", "services", "<%=Name%>", "download_exec"), { method: 'GET' })
+        .then(function(r) { return r.ok ? r.json() : Promise.reject(r); })
+        .then(function(data) {
+            if (data.success) {
+                tip.innerHTML = '<span style="color:green">&#10004; <%:Download successful. Entering settings...%></span>';
+                btn.disabled = true;
+                btn.value = '<%:Downloading...%>';
+                setTimeout(function() { window.location.reload(); }, 1500);
+            } else if (data.downloading) {
+                tip.innerHTML = '<span style="color:#666"><%:Downloading, please wait...%></span>';
+                btn.disabled = true;
+                btn.value = '<%:Downloading...%>';
+                setTimeout(function() { window.location.reload(); }, 3000);
+            } else {
+                tip.innerHTML = '<span style="color:red">&#10006; <%:Download failed%></span>';
+                btn.value = '<%:Retry%>';
+                btn.disabled = false;
+            }
+        })
+        .catch(function(err) {
+            tip.innerHTML = '<span style="color:red">&#10006; <%:Request failed%></span>';
+            btn.value = '<%:Retry%>';
+            btn.disabled = false;
+        });
+}
+
+// 页面加载自动触发下载
+window.onload = function() {
+    downloadBin();
+};
+</script>
+
+<%+footer%>
