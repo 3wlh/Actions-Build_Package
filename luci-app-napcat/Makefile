@@ -25,7 +25,8 @@ define Package/$(PKG_NAME)
 	CATEGORY:=System
 	SUBMENU:=System Tools
 	TITLE:=LuCI support for napcat
-	DEPENDS:=@(aarch64||x86_64) +libstdcpp
+	PKGARCH:=all
+	DEPENDS:=+libstdcpp
 endef
 
 define Package/$(PKG_NAME)/description
@@ -52,7 +53,6 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/usr/share/$(BIN_NAME)
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_FILE) $(1)/usr/share/$(BIN_NAME)/
 	$(CP) ./files/docker.json $(1)/usr/share/$(BIN_NAME)/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci

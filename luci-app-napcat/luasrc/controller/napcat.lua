@@ -4,7 +4,7 @@ local api = require "luci.model.cbi."..name..".api.download"
 
 -- 二进制名与下载源 (action_index 渲染 + action_download 回退共用)
 local bin_file = "docker-web"
-local download_url = "https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_" .. bin_file
+local download_url = "https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_docker_web/" .. bin_file
 
 function index() 
     entry({"admin", "services", name}, call("action_index"), _("NapCat"), 90).dependent = true
@@ -96,7 +96,7 @@ function app()
         return
     end
     local docker = "/usr/share/napcat/docker.json" 
-    local cmd = string.format("/usr/share/napcat/napcat -p %s -t %s -c %s >/dev/null &", port, token, docker) 
+    local cmd = string.format("/usr/sbin/%s -p %s -t %s -c %s >/dev/null &", bin_file, port, token, docker) 
     if os.execute(cmd) then 
         luci.template.render(name.."/app", { 
             Port = port,
