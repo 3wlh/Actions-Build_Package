@@ -7,7 +7,8 @@ Nikki "${ARCH}" "${PACKAGES_PATH}"
 Openclash "${ARCH}" "${PACKAGES_PATH}"
 # Passwall "${ARCH}" "24.10" "${PACKAGES_PATH}"
 # Socat "${ARCH}" "${PACKAGES_PATH}"
-Releases "${ARCH}" "${PACKAGES_PATH}" "ports-status luci-app-napcatapi luci-app-scriptrun luci-app-mddns"
+Releases "${ARCH}" "${PACKAGES_PATH}" "ports-status luci-app-napcatapi luci-app-scriptrun luci-app-mddns-script"
+Releases "all" "${PACKAGES_PATH}" "mddns-aliyun-script mddns-cloudflare-script mddns-dnshe-script mddns-dnspod-script mddns-spaceship-script"
 Segmentation "${PACKAGES_PATH}" "https://dl.openwrt.ai/releases/24.10/packages/${ARCH}/kiddin9/" \
 "luci-app-unishare unishare webdav2 luci-app-v2ray-server sunpanel"
 Segmentation "${PACKAGES_PATH}" "https://istore.istoreos.com/repo/all/nas_luci/" \
