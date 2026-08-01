@@ -37,7 +37,7 @@ jobs:
         id: parse_arch
         run: |
           MAKEFILE="${{ inputs.package }}/Makefile"
-          DEFAULT='["x86_64"]'
+          DEFAULT='["aarch64_generic","x86_64"]'
 
           if [ ! -f "$MAKEFILE" ]; then
             echo "::warning::Makefile not found at $MAKEFILE, fallback to default arch list"
