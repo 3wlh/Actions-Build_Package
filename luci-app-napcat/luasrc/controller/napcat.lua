@@ -1,11 +1,40 @@
 local name = "napcat"
 module("luci.controller." .. name, package.seeall) 
+local api = require "luci.model.cbi."..name..".api.download"
+
+-- 二进制名与下载源 (action_index 渲染 + action_download 回退共用)
+local bin_file = "docker-web"
+local download_url = "https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_" .. bin_file
 
 function index() 
-    entry({"admin", "services", name}, firstchild(), _("NapCat"), 90).dependent = true 
+    entry({"admin", "services", name}, call("action_index"), _("NapCat"), 90).dependent = true
+    entry({"admin", "services", name, "download_exec"}, call("action_download")).leaf = true
     entry({"admin", "services", name, "app"}, call("app"), _("Settings"), 10).leaf = true 
 end 
 
+-- 主入口: 实时检查二进制, 存在则跳转设置页, 不存在则显示下载页面
+function action_index()
+	if api.installed(bin_file) then
+		luci.http.redirect(luci.dispatcher.build_url("admin", "system", name, "settings"))
+	else
+		local info = api.arch_info(bin_file, download_url)
+		luci.template.render(name.."/download", {
+			Name = name,
+			arch = info.arch,
+			pkg_arch = info.pkg_arch,
+			bin_name = info.bin_name,
+			bin_dir = info.bin_path,
+			bin_url = info.bin_url
+		})
+	end
+end
+
+-- 下载二进制: 服务端用控制器常量推导路径/URL, 调 api.download
+function action_download()
+	local info = api.arch_info(bin_file, download_url)
+	luci.http.prepare_content("application/json")
+	luci.http.write_json(api.download(info.bin_path, info.bin_url))
+end
 -- 输出错误日志
 local errors = {}
 function log_error(msg)
