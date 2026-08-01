@@ -56,7 +56,14 @@ jobs:
             exit 0
           fi
 
-          # 从 DEPENDS:=@(aarch64||x86_64) 中提取架构列表
+          # 1) PKGARCH:=all => 架构无关包, 只需在单架构上编译一次
+          if grep -m1 -qE 'PKGARCH:=[[:space:]]*all' "$MAKEFILE"; then
+            echo "Detected PKGARCH:=all (noarch), building on single arch: x86_64"
+            echo 'matrix=["x86_64"]' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # 2) 从 DEPENDS:=@(aarch64||x86_64) 中提取架构列表
           DEPS_LINE=$(grep -m1 'DEPENDS:=@(' "$MAKEFILE" || true)
           if [ -z "$DEPS_LINE" ]; then
             echo "::warning::No @(arch) constraint found in $MAKEFILE, fallback to default arch list"
