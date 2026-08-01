@@ -48,7 +48,7 @@ jobs:
         id: parse_arch
         run: |
           MAKEFILE="${{ inputs.package }}/Makefile"
-          DEFAULT='["aarch64_generic","x86_64"]'
+          DEFAULT='["x86_64"]'
 
           if [ ! -f "$MAKEFILE" ]; then
             echo "::warning::Makefile not found at $MAKEFILE, fallback to default arch list"
@@ -56,48 +56,45 @@ jobs:
             exit 0
           fi
 
-          # 1) PKGARCH:=all => 架构无关包, 只需在单架构上编译一次
+          # 1) DEPENDS:=@(aarch64||x86_64) => 架构约束(硬性要求), 按声明的架构编译
+          #    优先于 PKGARCH:=all: 主包若限定架构, 子包的 PKGARCH:=all 不应收缩矩阵
+          DEPS_LINE=$(grep -m1 'DEPENDS:=@(' "$MAKEFILE" || true)
+          if [ -n "$DEPS_LINE" ]; then
+            ARCHS=$(printf '%s' "$DEPS_LINE" | sed -E 's/.*@\((.*)\).*/\1/' | tr '|' '\n' | sed -E 's/[[:space:]]//g' | grep -v '^$')
+            MATRIX="["
+            COUNT=0
+            for arch in $ARCHS; do
+              case "$arch" in
+                aarch64) sdk="aarch64_generic" ;;
+                x86_64)  sdk="x86_64" ;;
+                riscv64) sdk="riscv64_generic" ;;
+                i386)    sdk="i386_pentium4" ;;
+                mipsel)  sdk="mipsel_24kc" ;;
+                mips)    sdk="mips_24kc" ;;
+                *)       sdk="$arch" ;;
+              esac
+              MATRIX="$MATRIX\"$sdk\","
+              COUNT=$((COUNT+1))
+            done
+            if [ "$COUNT" -gt 0 ]; then
+              MATRIX="${MATRIX%,}]"
+              echo "Parsed matrix from DEPENDS: $MATRIX"
+              echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "::warning::DEPENDS has @() but no arch parsed from $MAKEFILE, fall through to PKGARCH check"
+          fi
+
+          # 2) PKGARCH:=all => 架构无关包, 只需在单架构上编译一次
           if grep -m1 -qE 'PKGARCH:=[[:space:]]*all' "$MAKEFILE"; then
             echo "Detected PKGARCH:=all (noarch), building on single arch: x86_64"
             echo 'matrix=["x86_64"]' >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          # 2) 从 DEPENDS:=@(aarch64||x86_64) 中提取架构列表
-          DEPS_LINE=$(grep -m1 'DEPENDS:=@(' "$MAKEFILE" || true)
-          if [ -z "$DEPS_LINE" ]; then
-            echo "::warning::No @(arch) constraint found in $MAKEFILE, fallback to default arch list"
-            echo "matrix=$DEFAULT" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          ARCHS=$(printf '%s' "$DEPS_LINE" | sed -E 's/.*@\((.*)\).*/\1/' | tr '|' '\n' | sed -E 's/[[:space:]]//g' | grep -v '^$')
-
-          MATRIX="["
-          COUNT=0
-          for arch in $ARCHS; do
-            case "$arch" in
-              aarch64) sdk="aarch64_generic" ;;
-              x86_64)  sdk="x86_64" ;;
-              riscv64) sdk="riscv64_generic" ;;
-              i386)    sdk="i386_pentium4" ;;
-              mipsel)  sdk="mipsel_24kc" ;;
-              mips)    sdk="mips_24kc" ;;
-              *)       sdk="$arch" ;;
-            esac
-            MATRIX="$MATRIX\"$sdk\","
-            COUNT=$((COUNT+1))
-          done
-
-          if [ "$COUNT" -eq 0 ]; then
-            echo "::warning::No arch parsed from $MAKEFILE, fallback to default arch list"
-            echo "matrix=$DEFAULT" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          MATRIX="${MATRIX%,}]"
-          echo "Parsed matrix: $MATRIX"
-          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+          # 3) 兜底: 默认架构列表
+          echo "::warning::No @(arch) constraint and no PKGARCH:=all in $MAKEFILE, fallback to default arch list"
+          echo "matrix=$DEFAULT" >> "$GITHUB_OUTPUT"
 
       - name: Delete GitHub Release
         uses: dev-drprasad/delete-tag-and-release@master
