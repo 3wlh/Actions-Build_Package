@@ -14,7 +14,8 @@ define Package/$(PKG_NAME)
 	CATEGORY:=System
 	SUBMENU:=System Tools
 	TITLE:=LuCI support for scriptrun
-	DEPENDS:=+bash +sseconsole-static
+	PKGARCH:=all
+	DEPENDS:=+libstdcpp +bash
 endef
 
 define Package/$(PKG_NAME)/description
