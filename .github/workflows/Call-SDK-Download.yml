@@ -33,13 +33,65 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       time: ${{steps.output_time.outputs.time}}
+      matrix: ${{ steps.parse_arch.outputs.matrix }}
     steps: 
+      - name: Checkout
+        uses: actions/checkout@main
+
       - name: output Time
         id: output_time
         run: |
           sudo timedatectl set-timezone "${TZ}"
           echo "time=$(date "+%Y.%m.%d_%H%M%S")" >> $GITHUB_OUTPUT
         
+      - name: Parse arch from Makefile
+        id: parse_arch
+        run: |
+          MAKEFILE="${{ inputs.package }}/Makefile"
+          DEFAULT='["aarch64_generic","x86_64"]'
+
+          if [ ! -f "$MAKEFILE" ]; then
+            echo "::warning::Makefile not found at $MAKEFILE, fallback to default arch list"
+            echo "matrix=$DEFAULT" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # 从 DEPENDS:=@(aarch64||x86_64) 中提取架构列表
+          DEPS_LINE=$(grep -m1 'DEPENDS:=@(' "$MAKEFILE" || true)
+          if [ -z "$DEPS_LINE" ]; then
+            echo "::warning::No @(arch) constraint found in $MAKEFILE, fallback to default arch list"
+            echo "matrix=$DEFAULT" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          ARCHS=$(printf '%s' "$DEPS_LINE" | sed -E 's/.*@\((.*)\).*/\1/' | tr '|' '\n' | sed -E 's/[[:space:]]//g' | grep -v '^$')
+
+          MATRIX="["
+          COUNT=0
+          for arch in $ARCHS; do
+            case "$arch" in
+              aarch64) sdk="aarch64_generic" ;;
+              x86_64)  sdk="x86_64" ;;
+              riscv64) sdk="riscv64_generic" ;;
+              i386)    sdk="i386_pentium4" ;;
+              mipsel)  sdk="mipsel_24kc" ;;
+              mips)    sdk="mips_24kc" ;;
+              *)       sdk="$arch" ;;
+            esac
+            MATRIX="$MATRIX\"$sdk\","
+            COUNT=$((COUNT+1))
+          done
+
+          if [ "$COUNT" -eq 0 ]; then
+            echo "::warning::No arch parsed from $MAKEFILE, fallback to default arch list"
+            echo "matrix=$DEFAULT" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          MATRIX="${MATRIX%,}]"
+          echo "Parsed matrix: $MATRIX"
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+
       - name: Delete GitHub Release
         uses: dev-drprasad/delete-tag-and-release@master
         with:
@@ -74,7 +126,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [aarch64_generic,x86_64]
+        arch: ${{ fromJson(needs.jod_initial.outputs.matrix) }}
     env:
       BUILD_TIME: ${{ needs.jod_initial.outputs.time }}
       BUILD_FILENAME: ${{ inputs.package }}-${{ inputs.version }}-${{ matrix.arch }}_${{ needs.jod_initial.outputs.time }}.tar.gz
