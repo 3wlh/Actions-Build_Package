@@ -5,7 +5,7 @@ PACKAGES_NAME=(${3})
 wget -qO- "${PACKAGES_URL}/Packages" | \
 while IFS= read -r LINE; do
     for NAME in "${PACKAGES_NAME[@]}"; do
-        if [[ "$LINE" == "Filename:"*${NAME}* ]]; then
+        if [[ "$LINE" == "Filename: "${NAME}* ]]; then
             FILE=$(echo "$LINE" | grep -Eo ${NAME}'.*')
             if [[ -z "$FILE" ]]; then
                 # echo "No file found in line, skipping"
