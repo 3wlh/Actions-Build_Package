@@ -55,7 +55,6 @@ function action_index()
 end
 
 -- 启动下载(若无进程) + 返回状态 (前端轮询同一接口)
--- total: 前端回传的远程总大小, 命中则后端跳过 HEAD
 function action_download()
 	local info = api.arch_info(bin_file, download_url)
 	local total = tonumber(luci.http.formvalue("total"))
