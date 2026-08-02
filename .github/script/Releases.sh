@@ -13,7 +13,7 @@ curl -# -L --fail "${gz_url}" -o "${DIR}/$(basename ${gz_url})"
 if [[ "$(du -b "${DIR}/$(basename ${gz_url})" 2>/dev/null | awk '{print $1}')" -le "512" ]]; then
 		echo -e "${Time} - \e[1;31m【${DIR}/$(basename ${gz_url})】下载失败.\e[0m"
 fi
-find "${DIR}" -type f -name "$(basename ${gz_url})" -exec tar -zxf {} -C "${DIR}" \;
+# find "${DIR}" -type f -name "$(basename ${gz_url})" -exec tar -zxf {} -C "${DIR}" \;
 Delete "${DIR}" "${PACKAGES_PATH}"
 }
 
