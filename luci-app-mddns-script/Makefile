@@ -61,10 +61,9 @@ define Package/$(PKG_NAME)/prerm
 }
 endef
 
-# 卸载后: 删除 opkg 不跟踪的残留文件 (运行时下载的二进制 / 锁 / 日志),
+# 卸载后: 删除 opkg (不跟踪的残留文件),
 define Package/$(PKG_NAME)/postrm
 [ -n "$${IPKG_INSTROOT}" ] || { rm -f /usr/sbin/mddns-script
-	rm -f /tmp/mddns-dl.lock /tmp/mddns-script.log
 	rm -f /tmp/luci-indexcache.*
 	rm -rf /tmp/luci-modulecache/
 	/etc/init.d/rpcd reload 2>/dev/null

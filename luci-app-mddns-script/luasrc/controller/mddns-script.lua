@@ -2,7 +2,7 @@ local name = "mddns-script"
 module("luci.controller."..name, package.seeall)
 local api = require("luci.model.cbi."..name..".api.download")
 
--- 二进制名与下载源 (action_index 渲染 + action_download 回退共用)
+-- 二进制文件名与下载地址
 local bin_file = name
 local download_url = string.format("https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
 
@@ -54,7 +54,7 @@ function action_index()
 	end
 end
 
--- 启动下载(若无进程) + 返回状态 (前端轮询同一接口)
+-- 启动下载
 function action_download()
 	local info = api.arch_info(bin_file, download_url)
 	local total = tonumber(luci.http.formvalue("total"))
