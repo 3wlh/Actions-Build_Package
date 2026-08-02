@@ -2,7 +2,7 @@ local name = "scriptrun"
 module("luci.controller."..name, package.seeall) 
 local api = require("luci.model.cbi."..name..".api.download")
 
--- 二进制名与下载源
+-- 二进制名称与下载地址
 local bin_file = "sseconsole"
 local download_url = string.format("https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
 
