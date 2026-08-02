@@ -194,8 +194,8 @@ endef
 
 # call BuildPackage - OpenWrt buildroot signature
 $(eval $(call BuildPackage,$(PKG_NAME)))
-PKG_VERSION:=1
-PKG_RELEASE:=1
+# PKG_VERSION:=1
+# PKG_RELEASE:=1
 $(eval $(call BuildPackage,mddns-aliyun-script))
 $(eval $(call BuildPackage,mddns-cloudflare-script))
 $(eval $(call BuildPackage,mddns-dnshe-script))
