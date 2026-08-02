@@ -28,9 +28,9 @@
                 </tr>
             </table>
 
-            <div class="cbi-page-actions" style="margin-top:16px;">
+            <span id="dl_tip" style="display:block; margin-top:16px;"></span>
+            <div class="cbi-page-actions">
                 <input type="button" class="cbi-button cbi-button-apply" id="dl_btn" value="<%:Download%>" onclick="downloadBin()" />
-                <span id="dl_tip" style="margin-left:10px;"></span>
             </div>
 
         </div>
@@ -40,32 +40,45 @@
 <script>
 var dlBtn = document.getElementById('dl_btn');
 var dlTip = document.getElementById('dl_tip');
+var pollTimer = null;
+var dlTotal = 0;       // 后端首次返回的远程总大小, 后续请求回传避免重复 HEAD
 
-// 统一设置按钮 + 提示状态, 可选自动刷新 (消除四个分支的重复赋值)
+// 统一设置按钮 + 提示状态, 进入终态时停轮询
 function setDlState(busy, btnText, tipColor, tipHtml, reload) {
+    if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; }
     dlBtn.disabled = !!busy;
     dlBtn.value = btnText;
     dlTip.innerHTML = '<span style="color:' + tipColor + '">' + tipHtml + '</span>';
     if (reload) setTimeout(function() { window.location.reload(); }, reload);
 }
 
-function downloadBin() {
-    setDlState(true, '<%:Downloading...%>', '#666', '<%:Downloading, please wait...%>');
-    // 下载接口 = 当前页面路径 + /download_exec (去掉末尾斜杠避免双斜杠)
+// 轮询 download_exec: 首次自动启动下载, 后续查询状态 (2 秒一次)
+function pollStatus() {
     var dlUrl = window.location.pathname.replace(/\/+$/, '') + '/download_exec';
+    if (dlTotal > 0) dlUrl += '?total=' + dlTotal;   // 回传总大小, 后端跳过 HEAD
     fetch(dlUrl, { method: 'GET' })
         .then(function(r) { return r.ok ? r.json() : Promise.reject(r); })
         .then(function(d) {
+            if (d.total) dlTotal = d.total;           // 首次拿到总大小, 后续请求带回
             if (d.success)
                 setDlState(true, '<%:Downloading...%>', 'green', '&#10004; <%:Download successful. Entering settings...%>', 1500);
-            else if (d.downloading)
-                setDlState(true, '<%:Downloading...%>', '#666', '<%:Downloading, please wait...%>', 3000);
-            else
-                setDlState(false, '<%:Retry%>', 'red', '&#10006; <%:Download failed%>');
+            else if (d.downloading) {
+                var pct = d.percent || 0;
+                dlTip.innerHTML = '<span style="color:#666"><%:Downloading, please wait...%></span> ' +
+                    '<span style="display:inline-block;width:140px;height:10px;border:1px solid #ccc;border-radius:5px;overflow:hidden;vertical-align:middle;">' +
+                    '<span style="display:block;height:100%;width:' + pct + '%;background:#5cb85c;"></span></span>' +
+                    ' <span style="color:#666">' + pct + '%</span>';
+                pollTimer = setTimeout(pollStatus, 2000);   // 下载中, 继续轮询
+            }
         })
         .catch(function() {
-            setDlState(false, '<%:Retry%>', 'red', '&#10006; <%:Request failed%>');
+            pollTimer = setTimeout(pollStatus, 2000);   // 网络抖动, 继续轮询
         });
+}
+
+function downloadBin() {
+    setDlState(true, '<%:Downloading...%>', '#666', '<%:Downloading, please wait...%>');
+    pollStatus();
 }
 
 // 页面加载自动触发下载
