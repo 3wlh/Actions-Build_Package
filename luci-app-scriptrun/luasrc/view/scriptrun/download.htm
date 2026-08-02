@@ -28,9 +28,9 @@
                 </tr>
             </table>
 
-            <div class="cbi-page-actions" style="margin-top:16px;">
+            <span id="dl_tip" style="display:block; margin-top:16px;"></span>
+            <div class="cbi-page-actions">
                 <input type="button" class="cbi-button cbi-button-apply" id="dl_btn" value="<%:Download%>" onclick="downloadBin()" />
-                <span id="dl_tip" style="margin-left:10px;"></span>
             </div>
 
         </div>
@@ -40,8 +40,10 @@
 <script>
 var dlBtn = document.getElementById('dl_btn');
 var dlTip = document.getElementById('dl_tip');
+var dlTotal = 0;
+var pollData = { total: 0 };   // 回传总大小: 首次 0 (后端发 HEAD), 拿到后更新跳过 HEAD
 
-// 统一设置按钮 + 提示状态, 可选自动刷新 (消除四个分支的重复赋值)
+// 设置按钮 + 提示 (纯 UI; 终态由调用方 XHR.halt() 停轮询)
 function setDlState(busy, btnText, tipColor, tipHtml, reload) {
     dlBtn.disabled = !!busy;
     dlBtn.value = btnText;
@@ -49,27 +51,28 @@ function setDlState(busy, btnText, tipColor, tipHtml, reload) {
     if (reload) setTimeout(function() { window.location.reload(); }, reload);
 }
 
-function downloadBin() {
-    setDlState(true, '<%:Downloading...%>', '#666', '<%:Downloading, please wait...%>');
-    // 下载接口 = 当前页面路径 + /download_exec (去掉末尾斜杠避免双斜杠)
-    var dlUrl = window.location.pathname.replace(/\/+$/, '') + '/download_exec';
-    fetch(dlUrl, { method: 'GET' })
-        .then(function(r) { return r.ok ? r.json() : Promise.reject(r); })
-        .then(function(d) {
-            if (d.success)
-                setDlState(true, '<%:Downloading...%>', 'green', '&#10004; <%:Download successful. Entering settings...%>', 1500);
-            else if (d.downloading)
-                setDlState(true, '<%:Downloading...%>', '#666', '<%:Downloading, please wait...%>', 3000);
-            else
-                setDlState(false, '<%:Retry%>', 'red', '&#10006; <%:Download failed%>');
-        })
-        .catch(function() {
-            setDlState(false, '<%:Retry%>', 'red', '&#10006; <%:Request failed%>');
-        });
-}
+var dlUrl = window.location.pathname.replace(/\/+$/, '') + '/download_exec';
+// XHR.poll: 2 秒轮询 download_exec (首次约 250ms 即触发); 网络错误自动下一轮重试
+// pollData.total 动态回传: 后端首次 HEAD 取总大小, 后续轮询带 total 跳过 HEAD
+XHR.poll(5, dlUrl, pollData, function(xhr, d) {
+    if (xhr.status != 200 || !d) return;            // 网络错误/非 JSON, 等下一轮
+    if (d.total) { dlTotal = d.total; pollData.total = dlTotal; }
+    if (d.success) {
+        XHR.halt();                                  // 完成, 停止轮询
+        setDlState(true, '<%:Downloading...%>', 'green', '&#10004; <%:Download successful. Entering settings...%>', 1500);
+    } else if (d.downloading) {
+        var pct = d.percent || 0;
+        dlTip.innerHTML = '<span style="color:#666"><%:Downloading, please wait...%></span> ' +
+            '<span style="display:inline-block;width:140px;height:10px;border:1px solid #ccc;border-radius:5px;overflow:hidden;vertical-align:middle;">' +
+            '<span style="display:block;height:100%;width:' + pct + '%;background:#5cb85c;"></span></span>' +
+            ' <span style="color:#666">' + pct + '%</span>';
+    } else {
+        XHR.halt();                                  // 非下载中且非完成, 停止轮询
+    }
+});
 
-// 页面加载自动触发下载
-window.onload = downloadBin;
+// 初始状态 (脚本在 DOM 末尾, 元素已就绪)
+setDlState(true, '<%:Downloading...%>', '#666', '<%:Downloading, please wait...%>');
 </script>
 
 <%+footer%>

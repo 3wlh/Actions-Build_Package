@@ -2,9 +2,9 @@ local name = "scriptrun"
 module("luci.controller."..name, package.seeall) 
 local api = require("luci.model.cbi."..name..".api.download")
 
--- 二进制名与下载源 (action_index 渲染 + action_download 回退共用)
+-- 二进制名与下载源
 local bin_file = "sseconsole"
-local download_url = "https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_" .. bin_file
+local download_url = string.format("https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
 
 function index()
     entry({"admin", "system", name},  call("action_index"), _("在线配置"), 90).dependent = true
@@ -32,11 +32,12 @@ function action_index()
 	end
 end
 
--- 下载二进制: 服务端用控制器常量推导路径/URL, 调 api.download
+-- 启动下载(若无进程) + 返回状态 (前端轮询同一接口)
 function action_download()
 	local info = api.arch_info(bin_file, download_url)
+	local total = tonumber(luci.http.formvalue("total"))
 	luci.http.prepare_content("application/json")
-	luci.http.write_json(api.download(info.bin_path, info.bin_url))
+	luci.http.write_json(api.download(info.bin_path, info.bin_url, total))
 end
 
 -- 输出错误日志

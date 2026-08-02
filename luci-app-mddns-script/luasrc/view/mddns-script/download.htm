@@ -40,49 +40,39 @@
 <script>
 var dlBtn = document.getElementById('dl_btn');
 var dlTip = document.getElementById('dl_tip');
-var pollTimer = null;
-var dlTotal = 0;       // 后端首次返回的远程总大小, 后续请求回传避免重复 HEAD
+var dlTotal = 0;
+var pollData = { total: 0 };   // 回传总大小: 首次 0 (后端发 HEAD), 拿到后更新跳过 HEAD
 
-// 统一设置按钮 + 提示状态, 进入终态时停轮询
+// 设置按钮 + 提示 (纯 UI; 终态由调用方 XHR.halt() 停轮询)
 function setDlState(busy, btnText, tipColor, tipHtml, reload) {
-    if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; }
     dlBtn.disabled = !!busy;
     dlBtn.value = btnText;
     dlTip.innerHTML = '<span style="color:' + tipColor + '">' + tipHtml + '</span>';
     if (reload) setTimeout(function() { window.location.reload(); }, reload);
 }
 
-// 轮询 download_exec: 首次自动启动下载, 后续查询状态 (2 秒一次)
-function pollStatus() {
-    var dlUrl = window.location.pathname.replace(/\/+$/, '') + '/download_exec';
-    if (dlTotal > 0) dlUrl += '?total=' + dlTotal;   // 回传总大小, 后端跳过 HEAD
-    fetch(dlUrl, { method: 'GET' })
-        .then(function(r) { return r.ok ? r.json() : Promise.reject(r); })
-        .then(function(d) {
-            if (d.total) dlTotal = d.total;           // 首次拿到总大小, 后续请求带回
-            if (d.success)
-                setDlState(true, '<%:Downloading...%>', 'green', '&#10004; <%:Download successful. Entering settings...%>', 1500);
-            else if (d.downloading) {
-                var pct = d.percent || 0;
-                dlTip.innerHTML = '<span style="color:#666"><%:Downloading, please wait...%></span> ' +
-                    '<span style="display:inline-block;width:140px;height:10px;border:1px solid #ccc;border-radius:5px;overflow:hidden;vertical-align:middle;">' +
-                    '<span style="display:block;height:100%;width:' + pct + '%;background:#5cb85c;"></span></span>' +
-                    ' <span style="color:#666">' + pct + '%</span>';
-                pollTimer = setTimeout(pollStatus, 2000);   // 下载中, 继续轮询
-            }
-        })
-        .catch(function() {
-            pollTimer = setTimeout(pollStatus, 2000);   // 网络抖动, 继续轮询
-        });
-}
+var dlUrl = window.location.pathname.replace(/\/+$/, '') + '/download_exec';
+// XHR.poll: 2 秒轮询 download_exec (首次约 250ms 即触发); 网络错误自动下一轮重试
+// pollData.total 动态回传: 后端首次 HEAD 取总大小, 后续轮询带 total 跳过 HEAD
+XHR.poll(5, dlUrl, pollData, function(xhr, d) {
+    if (xhr.status != 200 || !d) return;            // 网络错误/非 JSON, 等下一轮
+    if (d.total) { dlTotal = d.total; pollData.total = dlTotal; }
+    if (d.success) {
+        XHR.halt();                                  // 完成, 停止轮询
+        setDlState(true, '<%:Downloading...%>', 'green', '&#10004; <%:Download successful. Entering settings...%>', 1500);
+    } else if (d.downloading) {
+        var pct = d.percent || 0;
+        dlTip.innerHTML = '<span style="color:#666"><%:Downloading, please wait...%></span> ' +
+            '<span style="display:inline-block;width:140px;height:10px;border:1px solid #ccc;border-radius:5px;overflow:hidden;vertical-align:middle;">' +
+            '<span style="display:block;height:100%;width:' + pct + '%;background:#5cb85c;"></span></span>' +
+            ' <span style="color:#666">' + pct + '%</span>';
+    } else {
+        XHR.halt();                                  // 非下载中且非完成, 停止轮询
+    }
+});
 
-function downloadBin() {
-    setDlState(true, '<%:Downloading...%>', '#666', '<%:Downloading, please wait...%>');
-    pollStatus();
-}
-
-// 页面加载自动触发下载
-window.onload = downloadBin;
+// 初始状态 (脚本在 DOM 末尾, 元素已就绪)
+setDlState(true, '<%:Downloading...%>', '#666', '<%:Downloading, please wait...%>');
 </script>
 
 <%+footer%>
