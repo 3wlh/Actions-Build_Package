@@ -1,12 +1,10 @@
-local name = "mddns-script"
+local name = "mddns-go"
 module("luci.controller."..name, package.seeall)
 local api = require("luci.model.cbi."..name..".api.download")
 
 function index()
-	-- 菜单始终注册 (二进制检查在 action_index 实时执行, 避免菜单缓存导致下载后不刷新)
-	entry({"admin", "services", name}, call("action_index"), _("MultiDDNS"), 90).dependent = true
-	entry({"admin", "services",name.."_status"}, call("Run_status")).leaf = true
-	entry({"admin", "services", name, "download_exec"}, call("action_download")).leaf = true
+	entry({"admin", "services", name}, firstchild(), _("MultiDDNS"), 90).dependent = true
+	entry({"admin", "services",name.."_status"}, call("Run_status"))
 	-- 注册菜单 
 	entry({"admin", "services", name, "settings"}, cbi(name.."/settings"), _("Settings"), 10).leaf = true
 	entry({"admin", "services", name, "parse"}, call("template", "parse"), _("Parse"), 20).leaf = true
@@ -14,9 +12,9 @@ function index()
 end
 
 -- 二进制文件名与下载地址
-local bin_file = name
-local cnb_url = string.format("https://cnb.cool/3wlh/Build-File/-/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
-local github_url = string.format("https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
+local bin_file = "mddns-go"
+local cnb_url = "https://cnb.cool/3wlh/Build-File/-/releases/download//GitHub-Actions_MDDNS/MDDNS-linux-%s"
+local github_url = "https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_MDDNS/MDDNS-linux-%s"
 
 function Get_Url()
 	return cnb_url
@@ -48,8 +46,8 @@ function action_download()
 end
 
 function template(index)
-	luci.template.render(name.."/"..index, {
-		Name = name,
+	luci.template.render(name.."/"..index, { 
+		Name = name, 
 	})
 end
 
@@ -66,3 +64,4 @@ function Run_status()
 	}
 	luci.http.write_json(status)
 end
+

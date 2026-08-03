@@ -1,12 +1,12 @@
 # Copyright (C) 2020-2026 3wlh <https://github.com/3wlh>
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-mddns
-BIN_NAME:=mddns
+PKG_NAME:=luci-app-mddns-go
+BIN_NAME:=mddns-go
 PKG_VERSION:=$(shell date +%y.%m.%d)
 PKG_RELEASE:=$(shell date +%H%M%S)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
-LUCI_TITLE:=LuCI app for mddns
+LUCI_TITLE:=LuCI app for mddns-go
 LUCI_LANG:=zh-cn
 
 ifeq ($(ARCH),aarch64)
@@ -28,7 +28,8 @@ define Package/$(PKG_NAME)
 	SUBMENU:=Applications
 	TITLE:=$(PKG_NAME)
 	URL:=https://github.com/3wlh
-	DEPENDS:=@(aarch64||x86_64)
+	PKGARCH:=all
+	# DEPENDS#:=@(aarch64||x86_64)
 endef
 
 define Package/$(PKG_NAME)/description
@@ -54,7 +55,7 @@ endef
 define Build/Prepare
 	echo -e "\033[31m Prepare：$(PKG_ARCH)\033[0m"
 	mkdir -pm 775 $(PKG_BUILD_DIR)
-	$(call Download/Files)
+	# $(call Download/Files)
 	$(call Build/Po2lmo)
 	$(CP) -fr root $(PKG_BUILD_DIR)
 	$(CP) -fr luasrc $(PKG_BUILD_DIR)
@@ -76,24 +77,24 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/conffiles
-/etc/mddns/
-/etc/config/mddns
+/etc/mddns-go/
+/etc/config/mddns-go
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_FILE) $(1)/usr/sbin/
+	# $(INSTALL_DIR) $(1)/usr/sbin
+	# $(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_FILE) $(1)/usr/sbin/
 	$(CP) $(PKG_BUILD_DIR)/root/* $(1)/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
 	$(CP) $(PKG_BUILD_DIR)/luasrc/* $(1)/usr/lib/lua/luci/
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/*.*.lmo $(1)/usr/lib/lua/luci/i18n/
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./files/mddns.init $(1)/etc/init.d/mddns
+	$(INSTALL_BIN) ./files/mddns-go.init $(1)/etc/init.d/mddns-go
 	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) ./files/mddns.config $(1)/etc/config/mddns
+	$(INSTALL_CONF) ./files/mddns-go.config $(1)/etc/config/mddns-go
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_BIN) ./files/mddns.uci-default $(1)/etc/uci-defaults/99-$(PKG_NAME)
-	$(INSTALL_DIR) $(1)/etc/mddns
+	$(INSTALL_BIN) ./files/mddns-go.uci-default $(1)/etc/uci-defaults/99-$(PKG_NAME)
+	$(INSTALL_DIR) $(1)/etc/mddns-go
 endef
 
 

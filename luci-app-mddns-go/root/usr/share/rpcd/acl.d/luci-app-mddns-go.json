@@ -1,13 +1,13 @@
 {
-	"luci-app-mddns": {
+	"luci-app-mddns-go": {
 		"description": "Grant UCI access for luci-app-mddns",
 		"read": {
-			"uci": [ "mddns" ],
+			"uci": [ "mddns-go" ],
 			"ubus": {
 				"service": [ "list" ]
 			},
 			"file": {
-				"/usr/sbin/mddns": [ "exec" ],
+				"/usr/sbin/mddns-go": [ "exec" ],
 				"/*": [ "read" ]
 			}
 		},

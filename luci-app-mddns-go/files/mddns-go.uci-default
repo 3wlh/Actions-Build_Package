@@ -1,5 +1,5 @@
 #!/bin/sh
-name="mddns"
+name="mddns-go"
 [ ! -f "/usr/share/ucitrack/luci-app-${name}.json" ] && {
     cat > /usr/share/ucitrack/luci-app-${name}.json << EOF
 {

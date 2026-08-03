@@ -3,7 +3,7 @@
 START=99
 STOP=10
 
-NAME="mddns"
+NAME="mddns-go"
 PROG="$(find /usr/sbin/ -maxdepth 1 -name "${NAME}*" | head -1)"
 
 log() {

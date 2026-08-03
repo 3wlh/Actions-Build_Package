@@ -1,4 +1,4 @@
-local name="mddns"
+local name="mddns-go"
 local uci = require "luci.model.uci".cursor()
 local fs = require "nixio.fs"
 

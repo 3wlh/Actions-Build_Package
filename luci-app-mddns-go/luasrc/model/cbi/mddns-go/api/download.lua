@@ -1,4 +1,4 @@
-local name = "mddns-script"
+local name = "mddns-go"
 module("luci.model.cbi."..name..".api.download", package.seeall)
 local fs  = require "nixio.fs"
 local sys = require "luci.sys"
