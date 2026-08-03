@@ -2,10 +2,6 @@ local name = "mddns-script"
 module("luci.controller."..name, package.seeall)
 local api = require("luci.model.cbi."..name..".api.download")
 
--- 二进制文件名与下载地址
-local bin_file = name
-local download_url = string.format("https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
-
 function index()
 	-- 菜单始终注册 (二进制检查在 action_index 实时执行, 避免菜单缓存导致下载后不刷新)
 	entry({"admin", "services", name}, call("action_index"), _("MultiDDNS"), 90).dependent = true
@@ -15,6 +11,15 @@ function index()
 	entry({"admin", "services", name, "settings"}, cbi(name.."/settings"), _("Settings"), 10).leaf = true
 	entry({"admin", "services", name, "parse"}, call("template", "parse"), _("Parse"), 20).leaf = true
 	entry({"admin", "services", name, "logs"}, call("template", "logs"), _("Logs"), 30).leaf = true
+end
+
+-- 二进制文件名与下载地址
+local bin_file = name
+local cnb_url = string.format("https://cnb.cool/3wlh/Build-File/-/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
+local github_url = string.format("https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
+
+function Get_Url()
+	return cnb_url
 end
 
 function template(index)
@@ -42,7 +47,7 @@ function action_index()
 	if api.installed(bin_file) then
 		luci.http.redirect(luci.dispatcher.build_url("admin", "services", name, "settings"))
 	else
-		local info = api.arch_info(bin_file, download_url)
+		local info = api.arch_info(bin_file, Get_Url())
 		luci.template.render(name.."/download", {
 			Name = name,
 			arch = info.arch,
@@ -56,7 +61,7 @@ end
 
 -- 启动下载
 function action_download()
-	local info = api.arch_info(bin_file, download_url)
+	local info = api.arch_info(bin_file, Get_Url())
 	local total = tonumber(luci.http.formvalue("total"))
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(api.download(info.bin_path, info.bin_url, total))
