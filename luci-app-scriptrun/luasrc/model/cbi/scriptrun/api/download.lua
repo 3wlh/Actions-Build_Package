@@ -73,6 +73,48 @@ function arch_info(bin_file, download_url)
 	}
 end
 
+-- 选择下载地址
+function Get_Url(cn_url, default_url)
+	local country = Get_Position()
+	if country == "CN" then
+		return cn_url
+	end
+	return default_url
+end
+
+-- 获取网络地址
+function Get_Position()
+    local c = http_client()
+    if c == "" then
+        return nil
+    end
+    local services = {
+        -- 优先：HTTP，兼容性最好
+        {url = "https://1.1.1.1/cdn-cgi/trace" , pattern = 'loc=(%w+)'},
+        {url = "https://freeipapi.com/api/json", pattern = '"countryCode":"(%w+)"'},
+        {url = "http://ip-api.com/json?fields=countryCode" , pattern = '"countryCode":"(%w+)"'},
+        {url = "http://ipwho.is/" , pattern = '"country_code":"(%w+)"'},
+        {url = "https://ipinfo.io/json" , pattern = '"country":"(%w+)"'}
+    }
+    for _, svc in ipairs(services) do
+		local output, country
+        if c == "curl" then
+			output = sys.exec(string.format("curl -s -m 2 '%s' 2>/dev/null", svc.url))
+		elseif c == "wget" then
+			output = sys.exec(string.format("wget -qO- -T 2 '%s' 2>/dev/null", svc.url)) 
+		end
+        if output and output ~= "" then
+            country = output:match(svc.pattern)
+            if country then
+                return country
+            end
+        end
+    end
+    return nil
+end
+
+
+
 -- 二进制是否已安装且有效
 function installed(bin_file)
 	return is_elf(install_dir .. "/" .. bin_file)

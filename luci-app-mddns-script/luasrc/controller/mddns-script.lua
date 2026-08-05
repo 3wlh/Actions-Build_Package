@@ -16,21 +16,16 @@ end
 
 -- 二进制文件名与下载地址
 local bin_file = name
-local cnb_url = string.format("https://cnb.cool/3wlh/Build-File/-/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
-local github_url = string.format("https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
-
-function Get_Url()
-	return cnb_url
-end
+local cn_url = string.format("https://cnb.cool/3wlh/Build-File/-/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
+local default_url = string.format("https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
 
 -- 主入口: 实时检查二进制, 存在则跳转设置页, 不存在则显示下载页面
 function action_index()
 	if api.installed(bin_file) then
-		--luci.http.redirect(luci.dispatcher.build_url("admin", "services", name, "settings"))
-		local map = require("luci.model.cbi."..name..".settings")
-		map:render()
+		luci.http.redirect(luci.dispatcher.build_url("admin", "services", name, "settings"))
 	else
-		local info = api.arch_info(bin_file, Get_Url())
+		default_url= api.Get_Url(cn_url, default_url)
+		local info = api.arch_info(bin_file, url)
 		luci.template.render(name.."/download", {
 			Name = name,
 			arch = info.arch,
@@ -44,7 +39,7 @@ end
 
 -- 启动下载
 function action_download()
-	local info = api.arch_info(bin_file, Get_Url())
+	local info = api.arch_info(bin_file, default_url)
 	local total = tonumber(luci.http.formvalue("total"))
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(api.download(info.bin_path, info.bin_url, total))

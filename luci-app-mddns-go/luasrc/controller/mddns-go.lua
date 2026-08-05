@@ -13,8 +13,8 @@ end
 
 -- 二进制文件名与下载地址
 local bin_file = "mddns-go"
-local cnb_url = "https://cnb.cool/3wlh/Build-File/-/releases/download//GitHub-Actions_MDDNS/MDDNS-linux-%s"
-local github_url = "https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_MDDNS/MDDNS-linux-%s"
+local cn_url = "https://cnb.cool/3wlh/Build-File/-/releases/download//GitHub-Actions_MDDNS/MDDNS-linux-%s"
+local default_url = "https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_MDDNS/MDDNS-linux-%s"
 
 function Get_Url()
 	return cnb_url
@@ -25,7 +25,8 @@ function action_index()
 	if api.installed(bin_file) then
 		luci.http.redirect(luci.dispatcher.build_url("admin", "services", name, "settings"))
 	else
-		local info = api.arch_info(bin_file, Get_Url())
+		default_url= api.Get_Url(cn_url, default_url)
+		local info = api.arch_info(bin_file, default_url)
 		luci.template.render(name.."/download", {
 			Name = name,
 			arch = info.arch,
@@ -39,7 +40,7 @@ end
 
 -- 启动下载
 function action_download()
-	local info = api.arch_info(bin_file, Get_Url())
+	local info = api.arch_info(bin_file, default_url)
 	local total = tonumber(luci.http.formvalue("total"))
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(api.download(info.bin_path, info.bin_url, total))
