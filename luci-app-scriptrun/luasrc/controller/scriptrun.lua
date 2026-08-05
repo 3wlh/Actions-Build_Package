@@ -1,4 +1,5 @@
-local name = "scriptrun"
+module(..., package.seeall)
+local name = (...):match("%.([^%.]+)$") 
 module("luci.controller."..name, package.seeall) 
 local api = require("luci.model.cbi."..name..".api.download")
 

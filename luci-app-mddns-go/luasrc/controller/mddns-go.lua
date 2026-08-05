@@ -1,5 +1,5 @@
-local name = "mddns-go"
-module("luci.controller."..name, package.seeall)
+module(..., package.seeall)
+local name = (...):match("%.([^%.]+)$")
 local api = require("luci.model.cbi."..name..".api.download")
 
 function index()

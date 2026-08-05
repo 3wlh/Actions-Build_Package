@@ -1,4 +1,4 @@
-local name="mddns-script"
+local name = debug.getinfo(1, "S").source:match("/([^/]+)/[^/]+$")
 local uci = require "luci.model.uci".cursor()
 local fs = require "nixio.fs"
 

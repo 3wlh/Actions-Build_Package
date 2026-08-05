@@ -1,4 +1,4 @@
-local name="scriptrun"
+local name = debug.getinfo(1, "S").source:match("/([^/]+)/[^/]+$")
 local uci = require "luci.model.uci".cursor()
 
 -- 生成解密密钥（Key）的函数
