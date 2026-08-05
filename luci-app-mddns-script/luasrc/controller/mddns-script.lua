@@ -26,7 +26,9 @@ end
 -- 主入口: 实时检查二进制, 存在则跳转设置页, 不存在则显示下载页面
 function action_index()
 	if api.installed(bin_file) then
-		luci.http.redirect(luci.dispatcher.build_url("admin", "services", name, "settings"))
+		--luci.http.redirect(luci.dispatcher.build_url("admin", "services", name, "settings"))
+		local map = require("luci.model.cbi."..name..".settings")
+		map:render()
 	else
 		local info = api.arch_info(bin_file, Get_Url())
 		luci.template.render(name.."/download", {

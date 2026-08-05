@@ -1,7 +1,7 @@
 module(..., package.seeall)
 local name = (...):match("%.([^%.]+)$")
 module("luci.controller." .. name, package.seeall) 
-local api = require "luci.model.cbi."..name..".api.download"
+local api = require("luci.model.cbi."..name..".api.download")
 
 function index() 
     entry({"admin", "services", name}, call("action_index"), _("NapCat"), 90).dependent = true
@@ -21,7 +21,7 @@ end
 -- 主入口: 实时检查二进制, 存在则跳转设置页, 不存在则显示下载页面
 function action_index()
 	if api.installed(bin_file) then
-		luci.http.redirect(luci.dispatcher.build_url("admin", "system", name, "app"))
+		app()
 	else
 		local info = api.arch_info(bin_file, Get_Url())
 		luci.template.render(name.."/download", {
@@ -35,12 +35,14 @@ function action_index()
 	end
 end
 
--- 下载二进制: 服务端用控制器常量推导路径/URL, 调 api.download
+-- 启动下载
 function action_download()
 	local info = api.arch_info(bin_file, Get_Url())
+	local total = tonumber(luci.http.formvalue("total"))
 	luci.http.prepare_content("application/json")
-	luci.http.write_json(api.download(info.bin_path, info.bin_url))
+	luci.http.write_json(api.download(info.bin_path, info.bin_url, total))
 end
+
 -- 输出错误日志
 local errors = {}
 function log_error(msg)
@@ -101,8 +103,7 @@ function app()
         luci.template.render(name.."/errlog", { errors = errors })
         return
     end
-    local docker = "/usr/share/napcat/docker.json" 
-    local cmd = string.format("/usr/sbin/%s -p %s -t %s -c %s >/dev/null &", bin_file, port, token, docker) 
+    local cmd = string.format("(/usr/sbin/%s -p %s -t %s -c %s >/dev/null &)", bin_file, port, token, docker) 
     if os.execute(cmd) then 
         luci.template.render(name.."/app", { 
             Port = port,
