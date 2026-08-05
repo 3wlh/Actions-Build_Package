@@ -1,7 +1,7 @@
-local name = "scriptrun"
-module("luci.model.cbi."..name..".api.download", package.seeall)
+module(..., package.seeall)
 local fs  = require "nixio.fs"
 local sys = require "luci.sys"
+
 local install_dir = "/usr/sbin"
 
 -- 检查文件是否为有效 ELF 二进制 (前4字节 \x7fELF)
@@ -20,29 +20,41 @@ local function file_size(path)
 	return s and tonumber(s.size) or 0
 end
 
--- 远程文件总大小 (字节): curl HEAD 优先 (-L 跟随重定向), 失败回退 wget --spider
--- 取 Content-Length 末次 (重定向链中 200 的), 取不到返回 0
+-- 检测可用 HTTP 客户端 (缓存; 优先 curl: 重定向/HEAD 更可靠, BusyBox wget 功能受限)
+local _client
+local function http_client()
+	if _client == nil then
+		local p = sys.exec("command -v curl 2>/dev/null || command -v wget 2>/dev/null") or ""
+		_client = p:find("curl") and "curl" or p:find("wget") and "wget" or ""
+	end
+	return _client
+end
+
+-- 远程文件总大小 (字节): 用已检测客户端取 Content-Length 末次 (重定向链中 200 的)
 local function fetch_total(bin_url)
-	-- ① curl HEAD: grep 末次 content-length (重定向链末尾 200 响应的)
-	local out = sys.exec(string.format(
-		"curl -fsIL --connect-timeout 5 --max-time 10 '%s' 2>/dev/null | grep -i 'content-length' | tail -1", bin_url)) or ""
-	local n = tonumber(out:match(":%s*(%d+)"))
-	if n and n > 0 then return n end
-	-- ② wget --spider 回退 (curl 缺失或 HEAD 失败; -t/-T 短选项兼容 BusyBox)
-	out = sys.exec(string.format(
-		"wget --spider -S -t 1 -T 8 '%s' 2>&1 | grep -i 'content-length' | tail -1", bin_url)) or ""
+	local c = http_client()
+	local out = ""
+	if c == "curl" then
+		out = sys.exec(string.format(
+			"curl -fsIL --connect-timeout 5 --max-time 10 '%s' 2>/dev/null | grep -i 'content-length' | tail -1", bin_url)) or ""
+	elseif c == "wget" then
+		out = sys.exec(string.format(
+			"wget --spider -S -t 1 -T 8 '%s' 2>&1 | grep -i 'content-length' | tail -1", bin_url)) or ""
+	end
 	return tonumber(out:match(":%s*(%d+)")) or 0
 end
 
--- 下载进程是否存活 (pgrep -f 匹配 目录和bin_url)
--- pgrep -f 读 /proc/PID/cmdline 全量命令行, 不受 ps 无终端截断影响 (URL 在末尾也能匹配)
--- 自匹配规避: pgrep 的 pattern 含 'wget'/'curl' 会命中执行 pgrep 的 sh 自身,
--- 用字符类 w[g]et / c[u]rl 使字面串不含 'wget'/'curl', 规避自匹配
-local function dl_running(file,url)
-	local cmd = string.format(
-		"pgrep -f 'w[g]et.*%s.*%s' >/dev/null 2>&1 || pgrep -f 'c[u]rl.*%s.*%s' >/dev/null 2>&1",
-		file,url,file,url)
-	return sys.call(cmd) == 0
+-- 下载进程是否存活 (pgrep -f 匹配已检测客户端 + tmp路径 + url)
+-- pgrep -f 读 /proc/PID/cmdline 全量命令行, 不受 ps 无终端截断影响
+-- 自匹配规避: 字符类 w[g]et / c[u]rl 使字面串不含 'wget'/'curl', 不命中 pgrep 自身
+local function dl_running(file, url)
+	local c = http_client()
+	if c == "curl" then
+		return sys.call(string.format("pgrep -f 'c[u]rl.*%s.*%s' >/dev/null 2>&1", file, url)) == 0
+	elseif c == "wget" then
+		return sys.call(string.format("pgrep -f 'w[g]et.*%s.*%s' >/dev/null 2>&1", file, url)) == 0
+	end
+	return false
 end
 
 -- 计算设备架构信息, 拼装下载URL
@@ -73,14 +85,27 @@ function download(bin_path, bin_url, client_total)
 	if is_elf(bin_path) then
 		return { success = true }
 	end
-	-- 文件不存在: 无下载进程才启动 (前端每 2s 轮询; 首次启动后后续轮询 dl_running=true 跳过, 防重复起 wget)
+	-- 检测 HTTP 客户端, 无则停止 (前端见 downloading=false 停轮询)
+	local c = http_client()
+	if c == "" then
+		return { success = false, downloading = false, percent = 0, total = 0 }
+	end
+	-- 文件不存在: 无下载进程才启动 (前端每 2s 轮询; 首次启动后后续轮询 dl_running=true 跳过, 防重复起进程)
 	local tmp = bin_path .. ".tmp"
-	if not dl_running(tmp,bin_url) then
+	if not dl_running(tmp, bin_url) then
 		os.remove(bin_path)
 		-- 下到 .tmp, 成功后 mv 到 bin_path (原子替换), 避免 partial 文件前4字节 ELF magic 触发 is_elf 误判完成
-		local cmd = string.format(
-			"(wget -O '%s' '%s' && mv -f '%s' '%s' && chmod 755 '%s' || (curl -fsL --connect-timeout 30 -o '%s' '%s' && mv -f '%s' '%s' && chmod 755 '%s') || rm -f '%s' ) >/dev/null 2>&1 </dev/null &",
-			tmp, bin_url, tmp, bin_path, bin_path, tmp, bin_url, tmp, bin_path, bin_path, tmp)
+		-- 用已检测客户端构建命令 (curl 优先; 仅一个客户端, 无需 || 回退链)
+		local cmd
+		if c == "curl" then
+			cmd = string.format(
+				"(curl -fsL --connect-timeout 30 -o '%s' '%s' && mv -f '%s' '%s' && chmod 755 '%s' || rm -f '%s') >/dev/null 2>&1 </dev/null &",
+				tmp, bin_url, tmp, bin_path, bin_path, tmp)
+		else  -- wget
+			cmd = string.format(
+				"(wget -O '%s' '%s' && mv -f '%s' '%s' && chmod 755 '%s' || rm -f '%s') >/dev/null 2>&1 </dev/null &",
+				tmp, bin_url, tmp, bin_path, bin_path, tmp)
+		end
 		sys.call(cmd)
 	end
 	-- 计算下载进度: tmp 已下载字节 / 远程总大小
