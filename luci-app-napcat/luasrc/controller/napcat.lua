@@ -1,4 +1,5 @@
-local name = "napcat"
+module(..., package.seeall)
+local name = (...):match("%.([^%.]+)$")
 module("luci.controller." .. name, package.seeall) 
 local api = require "luci.model.cbi."..name..".api.download"
 
@@ -9,7 +10,7 @@ function index()
 end 
 
 -- 二进制文件名与下载地址
-local bin_file = docker-web
+local bin_file = "docker-web"
 local cnb_url = string.format("https://cnb.cool/3wlh/Build-File/-/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
 local github_url = string.format("https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
 

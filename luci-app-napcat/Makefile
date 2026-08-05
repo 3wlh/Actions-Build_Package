@@ -43,7 +43,7 @@ endef
 define Build/Prepare
 	echo -e "\033[1;32m Prepare：$(PKG_ARCH)\033[0m"
 	mkdir -pm 775 $(PKG_BUILD_DIR)
-	$(call Download/Files)
+	# $(call Download/Files)
 	$(CP) ./luasrc $(PKG_BUILD_DIR)
 	chmod -R 755 $(PKG_BUILD_DIR)	
 endef
@@ -53,7 +53,8 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_FILE) $(1)/usr/share/$(BIN_NAME)/
+	$(INSTALL_DIR) $(1)/usr/share/$(BIN_NAME)/
+	# $(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_FILE) $(1)/usr/share/$(BIN_NAME)/
 	$(CP) ./files/docker.json $(1)/usr/share/$(BIN_NAME)/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci
 	$(CP) $(PKG_BUILD_DIR)/luasrc/* $(1)/usr/lib/lua/luci/
