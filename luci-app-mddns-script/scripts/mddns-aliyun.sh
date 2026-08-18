@@ -5,22 +5,30 @@
 # @key_field: access_key_id
 # @secret_field: access_key_secret
 #
+# 阿里云 DNS RPC API (alidns.aliyuncs.com), HMAC-SHA1 签名 (内置签名工具)
+#
 
 log_info() { echo "[阿里云] $1" >&2; }
 log_ok()   { echo "[阿里云] ✓ $1" >&2; }
 log_err()  { echo "[阿里云] ✗ $1" >&2; }
 
-MDDNS_BIN="${MDDNS_BIN:-mddns-script}"
+MDDNS_BIN="${MDDNS_BIN:-mddns-scripts}"
 ENDPOINT="https://alidns.aliyuncs.com"
 
 # 用法: mddns-aliyun.sh <action> <domain> <sub> <type> [ip] [ttl] [record_id] [key] [secret]
 ACTION="$1"; DOMAIN="$2"; SUB="$3"; TYPE="$4"; IP="$5"; TTL="$6"; RECORD_ID="$7"; KEY="$8"; SECRET="$9"
 
 ACCESS_KEY_ID="${KEY:-${ALIYUN_ACCESS_KEY_ID}}"
-ACCESS_KEY_SECRET="${SECRET:-${ALIYUN_ACCESS_KEY_SECRET}}"
+ACCESS_KEY_SECRET="${SECRET:-${ALIYUN_ACCESS_SECRET:-${ALIYUN_ACCESS_KEY_SECRET}}}"
 
 if [ -z "$ACCESS_KEY_ID" ] || [ -z "$ACCESS_KEY_SECRET" ]; then
     echo "错误: 请提供 key 和 secret" >&2
+    exit 1
+fi
+
+# RPC 签名依赖主程序内置签名工具 (MDDNS_BIN 由主程序启动时注入)
+if ! command -v "$MDDNS_BIN" >/dev/null 2>&1; then
+    log_err "签名工具不可用: $MDDNS_BIN"
     exit 1
 fi
 
@@ -37,9 +45,9 @@ fi
 # HTTP GET 请求
 http_get() {
     if [ "$HTTP_CLIENT" = "curl" ]; then
-        curl -s "$1"
+        curl -s --connect-timeout 5 --max-time 15 "$1" 2>/dev/null
     else
-        wget -q -O - "$1"
+        wget -q -O - --timeout=15 --tries=1 "$1" 2>/dev/null
     fi
 }
 
@@ -57,14 +65,12 @@ url_encode() {
     }'
 }
 
+# ── 阿里云 RPC 签名: Base64(HMAC-SHA1(待签名串, Secret + "&")) ──
+# 待签名串 = GET&%2F&URL编码(按参数名排序后的 k=v&k=v 串)
 generate_signature() {
     params="$1"; secret="$2"
     sorted=$(printf '%s' "$params" | tr '&' '\n' | sort | tr '\n' '&' | sed 's/&$//')
     string="GET&%2F&$(url_encode "$sorted")"
-    if ! command -v "$MDDNS_BIN" >/dev/null 2>&1; then
-        log_err "签名工具不可用: $MDDNS_BIN"
-        return 1
-    fi
     result=$(printf '%s' "$string" | "$MDDNS_BIN" -sha1 -hmac "${secret}&" -base64 2>&1)
     if [ -z "$result" ]; then
         log_err "签名失败: $MDDNS_BIN 无输出"
@@ -79,14 +85,29 @@ send_request() {
     nonce="$(date +%s)$$"
     all="Action=$action&Format=JSON&Version=2015-01-09&AccessKeyId=$ACCESS_KEY_ID&SignatureMethod=HMAC-SHA1&SignatureVersion=1.0&SignatureNonce=$nonce&Timestamp=$(url_encode "$ts")"
     for arg in "$@"; do all="$all&$arg"; done
-    sig=$(generate_signature "$all" "$ACCESS_KEY_SECRET")
+    sig=$(generate_signature "$all" "$ACCESS_KEY_SECRET") || return 1
     http_get "${ENDPOINT}/?${all}&Signature=$(url_encode "$sig")"
+}
+
+# ── 响应检查: 空响应/含 Code 错误视为失败 ──
+# 用法: check_api_error <result> ; 返回 0=正常, 1=失败(已记录日志)
+check_api_error() {
+    if [ -z "$1" ]; then
+        log_err "API 无响应 (网络或认证失败)"
+        return 1
+    fi
+    if printf '%s' "$1" | grep -q '"Code"'; then
+        log_err "API 错误: $1"
+        return 1
+    fi
+    return 0
 }
 
 get_record() {
     domain="$1"; sub="$2"; type="$3"
     log_info "查询记录: ${sub}.${domain} (${type})"
     result=$(send_request "DescribeDomainRecords" "DomainName=$domain" "RRKeyWord=$(url_encode "$sub")" "Type=$type")
+    check_api_error "$result" || exit 1
     id=$(printf '%s' "$result" | grep -o '"RecordId":"[^"]*"' | head -1 | cut -d'"' -f4)
     val=$(printf '%s' "$result" | grep -o '"Value":"[^"]*"' | head -1 | cut -d'"' -f4)
     if [ -n "$id" ]; then
@@ -94,33 +115,40 @@ get_record() {
         echo "$id $val"
     else
         log_err "查询记录失败: ${sub}.${domain} (${type}) 未找到记录"
-        log_err "API返回: $result"
     fi
 }
 
 add_record() {
     domain="$1"; sub="$2"; type="$3"; val="$4"; ttl="$5"
     log_info "添加记录: ${sub}.${domain} (${type}) -> ${val}"
-    result=$(send_request "AddDomainRecord" "DomainName=$domain" "RR=$(url_encode "$sub")" "Type=$type" "Value=$(url_encode "$val")" "TTL=$ttl")
+    result=$(send_request "AddDomainRecord" "DomainName=$domain" "RR=$(url_encode "$sub")" "Type=$type" "Value=$(url_encode "$val")" "TTL=${ttl:-600}")
+    if ! check_api_error "$result"; then
+        exit 1
+    fi
     if printf '%s' "$result" | grep -q '"RecordId"'; then
         log_ok "添加记录成功: ${sub}.${domain} (${type}) -> ${val}"
         echo "添加成功"
     else
         log_err "添加记录失败: ${sub}.${domain} (${type}) -> ${val}"
         log_err "API返回: $result"
+        exit 1
     fi
 }
 
 update_record() {
     domain="$1"; sub="$2"; type="$3"; val="$4"; ttl="$5"; id="$6"
     log_info "更新记录: ${sub}.${domain} (${type}) -> ${val} (RecordId=${id})"
-    result=$(send_request "UpdateDomainRecord" "RecordId=$id" "RR=$(url_encode "$sub")" "Type=$type" "Value=$(url_encode "$val")" "TTL=$ttl")
+    result=$(send_request "UpdateDomainRecord" "RecordId=$id" "RR=$(url_encode "$sub")" "Type=$type" "Value=$(url_encode "$val")" "TTL=${ttl:-600}")
+    if ! check_api_error "$result"; then
+        exit 1
+    fi
     if printf '%s' "$result" | grep -q '"RecordId"'; then
         log_ok "更新记录成功: ${sub}.${domain} (${type}) -> ${val} (RecordId=${id})"
         echo "更新成功"
     else
         log_err "更新记录失败: ${sub}.${domain} (${type}) -> ${val} (RecordId=${id})"
         log_err "API返回: $result"
+        exit 1
     fi
 }
 
@@ -128,12 +156,16 @@ delete_record() {
     domain="$1"; id="$2"
     log_info "删除记录: ${domain} (RecordId=${id})"
     result=$(send_request "DeleteDomainRecord" "RecordId=$id")
+    if ! check_api_error "$result"; then
+        exit 1
+    fi
     if printf '%s' "$result" | grep -q '"RequestId"'; then
         log_ok "删除记录成功: ${domain} (RecordId=${id})"
         echo "删除成功"
     else
         log_err "删除记录失败: ${domain} (RecordId=${id})"
         log_err "API返回: $result"
+        exit 1
     fi
 }
 
