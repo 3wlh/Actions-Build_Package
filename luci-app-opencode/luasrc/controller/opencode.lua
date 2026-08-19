@@ -5,15 +5,20 @@ local api = require("luci.model.cbi."..name..".api.download")
 
 function index()
 	-- 菜单始终注册 (二进制检查在 action_index 实时执行, 避免菜单缓存导致下载后不刷新)
-	entry({"admin", "services", name}, call("action_index"), _("MultiDDNS"), 90).dependent = true
+	entry({"admin", "services", name}, call("action_index"), _("OpenCode"), 90).dependent = true
 	entry({"admin", "services",name.."_status"}, call("Run_status")).leaf = true
 	entry({"admin", "services", name, "download_exec"}, call("action_download")).leaf = true
+	-- 注册文件读写的 RPC 接口
+    entry({"admin", "services", name.."_read"}, call("Read_File"), nil).leaf = true
+    entry({"admin", "services", name.."_save"}, call("Save_File"), nil).leaf = true
 	-- 注册菜单 --
 	entry({"admin", "services", name, "settings_cbi"}, cbi(name.."/settings")).leaf = true
 	entry({"admin", "services", name, "settings"}, call("action_index", "settings"), _("Settings"), 10).leaf = true
-	entry({"admin", "services", name, "parse"}, call("action_index", "parse"), _("Parse"), 20).leaf = true
-	entry({"admin", "services", name, "logs"}, call("action_index", "logs"), _("Logs"), 30).leaf = true
+	entry({"admin", "services", name, "edit"},call("action_index", "edit"), _("Edit"), 20).leaf = true
 end
+
+local home = os.getenv("HOME") or "/root"
+local TARGET_FILE = home .. "/.config/opencode/package.json"
 
 -- 二进制文件名与下载地址
 local bin_file = name
@@ -67,4 +72,41 @@ function Run_status()
 		token = (token or "")
 	}
 	luci.http.write_json(status)
+end
+
+-- 读取单个文件内容
+function Read_File()
+    local fs = require "nixio.fs"
+    local http = require "luci.http"
+    -- 安全检查：文件是否存在
+    if not fs.access(TARGET_FILE, "r") then
+        http.write_json({ code = 1, msg = "File not found" })
+        return
+    end
+
+    local content = fs.readfile(TARGET_FILE)
+    if content then
+        http.write_json({ code = 0, data = content })
+    else
+        http.write_json({ code = 1, msg = "Failed to read file" })
+    end
+end
+
+-- 保存单个文件内容
+function Save_File()
+    local fs = require "nixio.fs"
+    local http = require "luci.http"
+    local content = http.formvalue("content")
+    -- 安全检查：内容非空 + 文件可写
+    if not content or not fs.access(TARGET_FILE, "w") then
+        http.write_json({ code = 1, msg = "File not writable" })
+        return
+    end
+    local res = fs.writefile(TARGET_FILE, content)
+
+    if res then
+        http.write_json({ code = 0, msg = "Save success" })
+    else
+        http.write_json({ code = 1, msg = "Save Failed." })
+    end
 end

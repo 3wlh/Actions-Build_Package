@@ -5,11 +5,14 @@ local api = require("luci.model.cbi."..name..".api.download")
 
 function index()
     entry({"admin", "system", name},  call("action_index"), _("在线配置"), 90).dependent = true
-    entry({"admin", "system", name, "download_exec"}, call("action_download")).leaf = true
-    entry({"admin", "system", name, "settings"}, cbi(name.."/settings"), _("Settings"), 10).leaf = true
-    entry({"admin", "system", name, "execute"}, call("exec_cmd"), _("执行命令"), 20).leaf = true
     entry({"admin", "system", name, "run"}, call("exec_run"), nil).leaf = true
     entry({"admin", "system", name, "stop"}, call("exec_stop"), nil).leaf = true
+    entry({"admin", "system", name, "download_exec"}, call("action_download")).leaf = true
+    -- 注册菜单 --
+    entry({"admin", "system", name, "settings_cbi"}, cbi(name.."/settings")).leaf = true
+    entry({"admin", "system", name, "settings"}, call("action_index", "settings"), _("Settings"), 10).leaf = true
+    entry({"admin", "system", name, "execute"},call("action_index", "execute"), _("执行命令"), 20).leaf = true
+    
 end
 
 -- 二进制名称与下载地址
@@ -18,11 +21,18 @@ local cn_url = string.format("https://cnb.cool/3wlh/Build-File/-/releases/downlo
 local default_url = string.format("https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
 
 -- 主入口: 实时检查二进制, 存在则跳转设置页, 不存在则显示下载页面
-function action_index()
+function action_index(index)
+	-- 取 URL 最后一段
+	local index_name = luci.dispatcher.context.path[#luci.dispatcher.context.path]
 	if api.installed(bin_file) then
-		luci.http.redirect(luci.dispatcher.build_url("admin", "system", name, "settings"))
+		-- if index_name == "settings" then
+		if index_name:match("settings") or index == nil then
+			luci.http.redirect(luci.dispatcher.build_url("admin", "system", name, "settings_cbi"))
+			return
+		end	
+		exec_cmd()
 	else
-		default_url= api.Get_Url(cn_url, default_url)
+		default_url = api.Get_Url(cnb_url, default_url)
 		local info = api.arch_info(bin_file, default_url)
 		luci.template.render(name.."/download", {
 			Name = name,
@@ -133,6 +143,7 @@ function exec_cmd()
         })
     end
 end
+
 
 local function get_config()
     local uci = require("luci.model.uci").cursor()

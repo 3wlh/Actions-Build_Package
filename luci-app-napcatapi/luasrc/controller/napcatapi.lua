@@ -4,7 +4,7 @@ module("luci.controller."..name, package.seeall)
 function index()
 	entry({"admin", "services", name}, firstchild(), _("NapCat Api"), 90).dependent = true
 	entry({"admin", "services",name.."_status"}, call("Run_status"))
-	-- 注册菜单 
+	-- 注册菜单 --
 	entry({"admin", "services", name, "settings"}, cbi(name.."/settings"), _("Settings"), 10).leaf = true
 	entry({"admin", "services", name, "edit"}, call("template", "edit"), _("Edit"), 20).leaf = true
 	entry({"admin", "services", name, "napcat"}, call("template", "napcat"), _("NapCat"), 30).leaf = true

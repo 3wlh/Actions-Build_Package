@@ -5,8 +5,9 @@ local api = require("luci.model.cbi."..name..".api.download")
 function index()
 	entry({"admin", "services", name}, firstchild(), _("MultiDDNS"), 90).dependent = true
 	entry({"admin", "services",name.."_status"}, call("Run_status"))
-	-- 注册菜单 
-	entry({"admin", "services", name, "settings"}, cbi(name.."/settings"), _("Settings"), 10).leaf = true
+	-- 注册菜单 -- 
+	entry({"admin", "services", name, "settings_cbi"}, cbi(name.."/settings")).leaf = true
+	entry({"admin", "services", name, "settings"}, call("action_index", "settings"), _("Settings"), 10).leaf = true
 	entry({"admin", "services", name, "parse"}, call("template", "parse"), _("Parse"), 20).leaf = true
 	entry({"admin", "services", name, "logs"}, call("template", "logs"), _("Logs"), 30).leaf = true
 end
@@ -21,11 +22,20 @@ function Get_Url()
 end
 
 -- 主入口: 实时检查二进制, 存在则跳转设置页, 不存在则显示下载页面
-function action_index()
+function action_index(index)
+	-- 取 URL 最后一段 "parse" / "logs"
+	local index_name = luci.dispatcher.context.path[#luci.dispatcher.context.path]
 	if api.installed(bin_file) then
-		luci.http.redirect(luci.dispatcher.build_url("admin", "services", name, "settings"))
+		-- if index_name == "settings" then
+		if index_name:match("settings") or index == nil then
+			luci.http.redirect(luci.dispatcher.build_url("admin", "services", name, "settings_cbi"))
+			return
+		end	
+		luci.template.render(name.."/" .. index_name, {
+            Name = name,
+        })
 	else
-		default_url= api.Get_Url(cn_url, default_url)
+		default_url = api.Get_Url(cnb_url, default_url)
 		local info = api.arch_info(bin_file, default_url)
 		luci.template.render(name.."/download", {
 			Name = name,
@@ -46,12 +56,6 @@ function action_download()
 	luci.http.write_json(api.download(info.bin_path, info.bin_url, total))
 end
 
-function template(index)
-	luci.template.render(name.."/"..index, { 
-		Name = name, 
-	})
-end
-
 function Run_status()
 	luci.http.prepare_content("application/json")
 	local uci  = require "luci.model.uci".cursor()
@@ -65,4 +69,3 @@ function Run_status()
 	}
 	luci.http.write_json(status)
 end
-

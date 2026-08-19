@@ -1,0 +1,20 @@
+{
+	"luci-app-opencode": {
+		"description": "Grant UCI access for luci-app-opencode",
+		"read": {
+			"uci": [ "opencode" ],
+			"ubus": {
+				"service": [ "list" ]
+			},
+			"file": {
+				"/usr/sbin/opencode": [ "exec" ],
+				"/*": [ "read" ]
+			}
+		},
+		"write": {
+			"file": {
+				"/*": [ "write" ]
+			}
+		}
+	}
+}
