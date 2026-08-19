@@ -68,8 +68,7 @@ function Run_status()
 	local cmd = string.format("pgrep %s* >/dev/null", name)
 	local status = {
 		running = (luci.sys.call(cmd) == 0),
-		port = (port or 5063),
-		token = (token or "")
+		port = (port or 4096),
 	}
 	luci.http.write_json(status)
 end

@@ -7,12 +7,12 @@ NAME="opencode"
 PROG="$(find /usr/sbin/ -maxdepth 1 -name "${NAME}*" | head -1)"
 
 log() {
-	echo "$(date "+%Y.%m.%d_%H%M%S") - ${1}" >>/tmp/$NAME.log
+	# echo "$(date "+%Y.%m.%d_%H%M%S") - ${1}" >>/tmp/$NAME.log
+	logger -t ${NAME} "${1}"
 }
 
 start() {
 	config_load "$NAME"
-	# log "开始运行"
 	local enabled
 	config_get_bool enabled "config" "enabled" "0"
 	[ "$enabled" -eq "1" ] || return 1
@@ -23,15 +23,13 @@ start() {
 	# 创建配置目录
 	[[ -n "${username}" ]] && export OPENCODE_SERVER_USERNAME="$username"
 	[[ -n "${password}" ]] && export OPENCODE_SERVER_PASSWORD="$password"
-	echo "Starting ..."
-	# log "执行命令"
 	# 构建启动参数
 	start-stop-daemon -S -q -b -x "$PROG" -- web --hostname 0.0.0.0 --port ${port}
+	log "${NAME} Starting ..."
 }
 
 stop() {
-	# log "结束运行"
 	# kill -9 $(pgrep -f "${PROG}*" | sed "s/$$//g") 2>/dev/null
 	start-stop-daemon -K -q -s KILL -x "$PROG" 2>/dev/null
-	echo "stopped ..."
+	log "${NAME} stopped ..."
 }

@@ -1,4 +1,4 @@
-local name="photopea"
+local name=debug.getinfo(1, "S").source:match("/([^/]+)/[^/]+$")
 local uci = require "luci.model.uci".cursor()
 local fs = require "nixio.fs"
 
@@ -42,6 +42,11 @@ local m, s, o
 m = Map(name, _("Configuration"), 
     _("Photopea is online image editor.") .. "<br/>" ..
     _("Official website") .. ": <a href='www.Photopea.com' target='_blank'>Photopea</a>")
+
+m.apply_on_parse = true -- 解析阶段立即写入配置文件
+m.on_after_commit = function(self)
+    -- os.execute("/etc/init.d/"..name.." restart &")
+end
 
 -- 调用独立状态模板
 s = m:section(SimpleSection)

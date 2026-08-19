@@ -6,6 +6,11 @@ STOP=10
 NAME="napcatapi"
 PROG="$(find /usr/sbin/ -maxdepth 1 -name "${NAME}*" | head -1)"
 
+writelog() {
+	# echo "$(date "+%Y.%m.%d_%H%M%S") - ${1}" >>/tmp/$NAME.log
+	logger -t ${NAME} "${1}"
+}
+
 start() {
 	config_load "${NAME}"
 	local enabled
@@ -20,13 +25,13 @@ start() {
 	# 创建配置目录
 	[[ -d ${path_config} ]] || mkdir -p "${path_config}"
 	[[ -n "${token}" ]] && intoken=" -token $token"
-	echo "Starting..."
 	# 构建启动参数
 	start-stop-daemon -S -q -b -x "$PROG" -- -p "$port" -c "$path_config" -pwd "$pwd_config" -url "$online_config"$intoken
+	writelog "${NAME} Starting ..."
 }
 
 stop() {
 	# kill -9 $(pgrep ${NAME}* | sed "s/$$//g") 2>/dev/null
 	start-stop-daemon -K -q -s KILL -x "$PROG" 2>/dev/null
-	echo "Stopped..."
+	writelog "${NAME} stopped ..."
 }

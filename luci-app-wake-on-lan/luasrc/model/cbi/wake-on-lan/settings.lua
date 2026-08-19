@@ -24,8 +24,9 @@ init_config()
 local m, s, o
 m = Map(name,  _("Configuration"),_("Plug-in for Wake-on-LAN devices"))
 
+m.apply_on_parse = true -- 解析阶段立即写入配置文件
 m.on_after_commit = function(self)
-    os.execute("/etc/init.d/"..name.." restart >/dev/null 2>&1 &")
+    -- os.execute("/etc/init.d/"..name.." restart &")
 end
 
 -- 调用独立状态模板

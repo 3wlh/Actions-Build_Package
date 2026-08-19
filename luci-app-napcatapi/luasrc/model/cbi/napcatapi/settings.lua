@@ -1,4 +1,4 @@
-local name="napcatapi"
+local name=debug.getinfo(1, "S").source:match("/([^/]+)/[^/]+$")
 local uci = require "luci.model.uci".cursor()
 
 -- 翻译函数
@@ -66,8 +66,9 @@ m = Map(name, _("Configuration"),
     (mac ~= "" and "<br><b>Mac: </b> <span style='color:#3498db;'>" .. mac .. "</span>" or "")..
     (key ~= "" and "<br><b>Key: </b> <span style='color:#e74c3c;'>" .. key .. "</span>" or ""))
 
+m.apply_on_parse = true -- 解析阶段立即写入配置文件
 m.on_after_commit = function(self)
-    os.execute("/etc/init.d/"..name.." restart >/dev/null 2>&1 &")
+    -- os.execute("/etc/init.d/"..name.." restart &")
 end
 
 -- 调用独立状态模板

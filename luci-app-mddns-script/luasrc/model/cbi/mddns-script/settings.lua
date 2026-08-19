@@ -66,8 +66,9 @@ m = Map(name, _("Configuration"),
     _("Official reference") .. ": <a href='https://github.com/3wlh/' target='_blank'>MultiDDNS</a>" ..
     (device_mac ~= "" and "<br><b>MAC: </b> <span style='color:#3498db;'>" .. device_mac .. "</span>" or ""))
 
+m.apply_on_parse = true -- 解析阶段立即写入配置文件
 m.on_after_commit = function(self)
-    os.execute("/etc/init.d/"..name.." restart >/dev/null 2>&1 &")
+    -- os.execute("/etc/init.d/"..name.." restart &")
 end
 
 -- 调用独立状态模板

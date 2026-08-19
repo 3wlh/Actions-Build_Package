@@ -44,8 +44,9 @@ m = Map(name, _("Configuration"),
     _("OpenCode is an open-source AI coding agent. It offers multiple ways to use, including a terminal interface, a desktop app, and IDE extensions.")
     .."<br/>".._("Official reference")..": <a href='https://opencode.ai/docs' target='_blank'>OpenCode</a>")
 
+m.apply_on_parse = true -- 解析阶段立即写入配置文件
 m.on_after_commit = function(self)
-    os.execute("/etc/init.d/"..name.." restart >/dev/null 2>&1 &")
+    -- os.execute("/etc/init.d/"..name.." restart &")
 end
 
 -- 调用独立状态模板

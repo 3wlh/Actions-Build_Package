@@ -6,13 +6,13 @@ STOP=10
 NAME="mddns-script"
 PROG="$(find /usr/sbin/ -maxdepth 1 -name "${NAME}*" | head -1)"
 
-log() {
-	echo "$(date "+%Y.%m.%d_%H%M%S") - ${1}" >>/tmp/$NAME.log
+writelog() {
+	# echo "$(date "+%Y.%m.%d_%H%M%S") - ${1}" >>/tmp/$NAME.log
+	logger -t ${NAME} "${1}"
 }
 
 start() {
 	config_load "$NAME"
-	# log "开始运行"
 	local enabled
 	config_get_bool enabled "config" "enabled" "0"
 	[ "$enabled" -eq "1" ] || return 1
@@ -27,15 +27,13 @@ start() {
 	[[ -n "${pwd}" ]] && inpwd=" -pwd $pwd"
 	[[ -n "${url}" ]] && case "$url" in http://*|https://*) inurl=" -url $url";; esac
 	[[ -n "${token}" ]] && intoken=" -token $token"
-	echo "Starting ..."
-	# log "执行命令"
 	# 构建启动参数
 	start-stop-daemon -S -q -b -x "$PROG" -- -p "$port" -c "$dir"${inpwd}${inurl}${intoken}
+	writelog "${NAME} Starting ..."
 }
 
 stop() {
-		# log "结束运行"
-		# kill -9 $(pgrep -f "${PROG}*" | sed "s/$$//g") 2>/dev/null
-		start-stop-daemon -K -q -s KILL -x "$PROG" 2>/dev/null
-		echo "stopped ..."
+	# kill -9 $(pgrep -f "${PROG}*" | sed "s/$$//g") 2>/dev/null
+	start-stop-daemon -K -q -s KILL -x "$PROG" 2>/dev/null
+	writelog "${NAME} stopped ..."
 }

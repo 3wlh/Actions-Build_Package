@@ -6,9 +6,13 @@ STOP=10
 NAME="photopea"
 PROG="$(find /usr/sbin/ -maxdepth 1 -name "${NAME}*" | head -1)"
 
+writelog() {
+	# echo "$(date "+%Y.%m.%d_%H%M%S") - ${1}" >>/tmp/$NAME.log
+	logger -t ${NAME} "${1}"
+}
+
 start() {
 	config_load "${NAME}"
-
 	local enabled
 	config_get_bool enabled "config" "enabled" "0"
 	[ "$enabled" -eq "1" ] || return 1
@@ -22,10 +26,11 @@ start() {
 	echo "Starting..."
 	# 构建启动参数
 	start-stop-daemon -S -q -b -x "$PROG" -- -p "$port" -d "${dir}"$intoken
+	writelog "${NAME} Starting ..."
 }
 
 stop() {
-		# kill -9 $(pgrep ${NAME}* | sed "s/$$//g") 2>/dev/null
-		start-stop-daemon -K -q -s KILL -x "$PROG" 2>/dev/null
-		echo "Stopped..."
+	# kill -9 $(pgrep ${NAME}* | sed "s/$$//g") 2>/dev/null
+	start-stop-daemon -K -q -s KILL -x "$PROG" 2>/dev/null
+	writelog "${NAME} stopped ..."
 }

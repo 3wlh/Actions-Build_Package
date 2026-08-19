@@ -51,7 +51,7 @@ define Package/$(PKG_NAME)/postinst
 	exit 0
 }
 endef
-
+/etc/init.d/rpcd restart
 # 卸载前: 停止并禁用服务 (此时 init 脚本和二进制仍在, 可正常 stop)
 define Package/$(PKG_NAME)/prerm
 [ -n "$${IPKG_INSTROOT}" ] || { /etc/init.d/opencode stop 2>/dev/null
