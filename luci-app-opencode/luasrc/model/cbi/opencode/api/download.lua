@@ -115,11 +115,28 @@ function Get_Position()
     return nil
 end
 
-
-
 -- 二进制是否已安装且有效
 function installed(bin_file)
 	return is_elf(install_dir .. "/" .. bin_file)
+end
+
+
+-- 安全校验 
+-- 路径白名单: 必须是 install_dir 下的纯文件名 (无 .. / 无子目录 / 无特殊字符)
+local function safe_path(p)
+	return type(p) == "string"
+	    and p:match("^" .. install_dir .. "/[%w%-%._]+$") ~= nil
+end
+
+-- URL 白名单: http(s) 协议 + 安全字符集 (不含引号/空格/分号/&/|/$/反引号等)
+local function safe_url(u)
+	return type(u) == "string"
+	    and u:match("^https?://[%w%-%._~:/%?%=%&%%%+%#]+$") ~= nil
+end
+
+-- 纵深防御: 单引号转义 (白名单下理论上到不了这里, 双保险)
+local function sh_quote(s)
+	return (s:gsub("'", "'\\''"))
 end
 
 -- 启动下载(若无进程) + 返回当前状态 (单接口, 前端轮询同一URL)
@@ -128,6 +145,13 @@ function download(bin_path, bin_url, client_total)
 	-- 下载先写 .tmp 完成后才 mv 到 bin_path, 故 bin_path 存在即代表下载完整, 不会被 partial 文件误判
 	if is_elf(bin_path) then
 		return { success = true }
+	end
+	-- ★ 入口校验: 不过白名单立即拒绝, 不执行任何命令
+	if not safe_path(bin_path) then
+		return { success = false, downloading = false, error = "invalid path" }
+	end
+	if not safe_url(bin_url) then
+		return { success = false, downloading = false, error = "invalid url" }
 	end
 	-- 检测 HTTP 客户端, 无则停止 (前端见 downloading=false 停轮询)
 	local c = http_client()
@@ -138,17 +162,18 @@ function download(bin_path, bin_url, client_total)
 	local tmp = bin_path .. ".tmp"
 	if not dl_running(tmp, bin_url) then
 		os.remove(bin_path)
+		local qpath, qurl, qtmp = sh_quote(bin_path), sh_quote(bin_url), sh_quote(tmp)
 		-- 下到 .tmp, 成功后 mv 到 bin_path (原子替换), 避免 partial 文件前4字节 ELF magic 触发 is_elf 误判完成
 		-- 用已检测客户端构建命令 (curl 优先; 仅一个客户端, 无需 || 回退链)
 		local cmd
 		if c == "curl" then
 			cmd = string.format(
 				"(curl -fsL --connect-timeout 30 -o '%s' '%s' && mv -f '%s' '%s' && chmod 755 '%s' || rm -f '%s') >/dev/null 2>&1 </dev/null &",
-				tmp, bin_url, tmp, bin_path, bin_path, tmp)
+				qtmp, qurl, qtmp, qpath, qpath, qtmp)
 		else  -- wget
 			cmd = string.format(
 				"(wget -O '%s' '%s' && mv -f '%s' '%s' && chmod 755 '%s' || rm -f '%s') >/dev/null 2>&1 </dev/null &",
-				tmp, bin_url, tmp, bin_path, bin_path, tmp)
+				qtmp, qurl, qtmp, qpath, qpath, qtmp)
 		end
 		sys.call(cmd)
 	end

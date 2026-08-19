@@ -41,7 +41,7 @@
 var dlBtn = document.getElementById('dl_btn');
 var dlTip = document.getElementById('dl_tip');
 var dlTotal = 0;
-var pollData = { total: 0 };   // 回传总大小: 首次 0 (后端发 HEAD), 拿到后更新跳过 HEAD
+var pollData = {total:0,url:'<%=bin_url%>',path:'<%=bin_dir%>'};   // 回传总大小: 首次 0 (后端发 HEAD), 拿到后更新跳过 HEAD
 
 // 设置按钮 + 提示 (纯 UI; 终态由调用方 XHR.halt() 停轮询)
 function setDlState(busy, btnText, tipColor, tipHtml, reload) {

@@ -32,8 +32,7 @@ function action_index(index)
 		end	
 		exec_cmd()
 	else
-		default_url = api.Get_Url(cn_url, default_url)
-		local info = api.arch_info(bin_file, default_url)
+		local info = api.arch_info(bin_file, api.Get_Url(cn_url, default_url))
 		luci.template.render(name.."/download", {
 			Name = name,
 			arch = info.arch,
@@ -47,10 +46,12 @@ end
 
 -- 启动下载(若无进程) + 返回状态 (前端轮询同一接口)
 function action_download()
-	local info = api.arch_info(bin_file, default_url)
+	local url  = luci.http.formvalue("url")
+	local path = luci.http.formvalue("path")
+	--local info = api.arch_info(bin_file, file_url)
 	local total = tonumber(luci.http.formvalue("total"))
 	luci.http.prepare_content("application/json")
-	luci.http.write_json(api.download(info.bin_path, info.bin_url, total))
+	luci.http.write_json(api.download(path, url, total))
 end
 
 -- 输出错误日志

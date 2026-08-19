@@ -2,35 +2,35 @@
 
 <div class="cbi-map">
     <fieldset class="cbi-section">
-        <legend><%:二进制未安装%></legend>
+        <legend><%:Binary Not Installed%></legend>
         <div class="cbi-section-descr" style="padding:12px;">
 
             <p style="color:red; font-size:14px; margin-bottom:12px;">
-                <strong>&#9888;&#65039; <%:未在 /usr/sbin/ 下找到二进制文件%></strong>
+                <strong>&#9888;&#65039; <%:The binary was not found in /usr/sbin/%></strong>
             </p>
 
             <table class="cbi-section-table" style="margin-top:8px; width:100%;">
                 <tr>
-                    <td style="width:30%; padding:3px 0;"><%:设备架构%></td>
+                    <td style="width:30%; padding:3px 0;"><%:Device architecture%></td>
                     <td style="padding:3px 0;"><code><%=arch%></code> &#8594; <code><%=pkg_arch%></code></td>
                 </tr>
                 <tr>
-                    <td style="padding:3px 0;"><%:二进制文件%></td>
+                    <td style="padding:3px 0;"><%:Binary file%></td>
                     <td style="padding:3px 0;"><code><%=bin_name%></code></td>
                 </tr>
                 <tr>
-                    <td style="padding:3px 0;"><%:安装路径%></td>
+                    <td style="padding:3px 0;"><%:Install path%></td>
                     <td style="padding:3px 0;"><code><%=bin_dir%></code></td>
                 </tr>
                 <tr>
-                    <td style="padding:3px 0; vertical-align:top;"><%:下载地址:%></td>
+                    <td style="padding:3px 0; vertical-align:top;"><%:Download URL:%></td>
                     <td style="padding:3px 0;"><code style="word-break:break-all;"><%=bin_url%></code></td>
                 </tr>
             </table>
 
             <span id="dl_tip" style="display:block; margin-top:16px;"></span>
             <div class="cbi-page-actions">
-                <input type="button" class="cbi-button cbi-button-apply" id="dl_btn" value="<%:下载%>" onclick="downloadBin()" />
+                <input type="button" class="cbi-button cbi-button-apply" id="dl_btn" value="<%:Download%>" onclick="downloadBin()" />
             </div>
 
         </div>
@@ -41,7 +41,7 @@
 var dlBtn = document.getElementById('dl_btn');
 var dlTip = document.getElementById('dl_tip');
 var dlTotal = 0;
-var pollData = { total: 0 };   // 回传总大小: 首次 0 (后端发 HEAD), 拿到后更新跳过 HEAD
+var pollData = {total:0,url:'<%=bin_url%>',path:'<%=bin_dir%>'};   // 回传总大小: 首次 0 (后端发 HEAD), 拿到后更新跳过 HEAD
 
 // 设置按钮 + 提示 (纯 UI; 终态由调用方 XHR.halt() 停轮询)
 function setDlState(busy, btnText, tipColor, tipHtml, reload) {
@@ -59,10 +59,10 @@ XHR.poll(5, dlUrl, pollData, function(xhr, d) {
     if (d.total) { dlTotal = d.total; pollData.total = dlTotal; }
     if (d.success) {
         XHR.halt();                                  // 完成, 停止轮询
-        setDlState(true, '<%:下载中...%>', 'green', '&#10004; <%:下载成功，即将进入设置页面...%>', 1500);
+        setDlState(true, '<%:Downloading...%>', 'green', '&#10004; <%:Download successful. Entering settings...%>', 1500);
     } else if (d.downloading) {
         var pct = d.percent || 0;
-        dlTip.innerHTML = '<span style="color:#666"><%:正在下载，请稍候...%></span> ' +
+        dlTip.innerHTML = '<span style="color:#666"><%:Downloading, please wait...%></span> ' +
             '<span style="display:inline-block;width:140px;height:10px;border:1px solid #ccc;border-radius:5px;overflow:hidden;vertical-align:middle;">' +
             '<span style="display:block;height:100%;width:' + pct + '%;background:#5cb85c;"></span></span>' +
             ' <span style="color:#666">' + pct + '%</span>';
@@ -72,7 +72,7 @@ XHR.poll(5, dlUrl, pollData, function(xhr, d) {
 });
 
 // 初始状态 (脚本在 DOM 末尾, 元素已就绪)
-setDlState(true, '<%:下载中...%>', '#666', '<%:正在下载，请稍候...%>');
+setDlState(true, '<%:Downloading...%>', '#666', '<%:Downloading, please wait...%>');
 </script>
 
 <%+footer%>
