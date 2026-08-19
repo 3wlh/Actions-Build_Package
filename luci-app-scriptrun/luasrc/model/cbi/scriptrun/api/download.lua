@@ -58,12 +58,12 @@ local function dl_running(file, url)
 end
 
 -- 计算设备架构信息, 拼装下载URL
-function arch_info(bin_file, download_url)
+function arch_info(bin_file, file_url)
 	local arch = sys.exec("uname -m 2>/dev/null") or ""
 	arch = arch:gsub("%s+", "")
 	local arch_map = { aarch64 = "arm64", x86_64 = "amd64" }
 	local pkg_arch = arch_map[arch] or arch
-	local bin_url = string.format(download_url, pkg_arch)
+	local bin_url = string.format(file_url, pkg_arch)
 	return {
 		arch = arch,
 		pkg_arch = pkg_arch,
@@ -90,11 +90,13 @@ function Get_Position()
     end
     local services = {
         -- 优先：HTTP，兼容性最好
-        {url = "https://1.1.1.1/cdn-cgi/trace" , pattern = 'loc=(%w+)'},
-        {url = "https://freeipapi.com/api/json", pattern = '"countryCode":"(%w+)"'},
+        {url = "https://api.country.is/" , pattern = '"country":"(%w+)"'},
+		{url = "https://get.geojs.io/v1/ip/geo.json" , pattern = '"country_code":"(%w+)"'},
+		{url = "https://reallyfreegeoip.org/json/" , pattern = '"country_code":"(%w+)"'},
         {url = "http://ip-api.com/json?fields=countryCode" , pattern = '"countryCode":"(%w+)"'},
         {url = "http://ipwho.is/" , pattern = '"country_code":"(%w+)"'},
-        {url = "https://ipinfo.io/json" , pattern = '"country":"(%w+)"'}
+        {url = "https://ipinfo.io/json" , pattern = '"country":"(%w+)"'},
+        {url = "https://api.ipapi.is/" , pattern = '"cc":"(%w+)"'},
     }
     for _, svc in ipairs(services) do
 		local output, country

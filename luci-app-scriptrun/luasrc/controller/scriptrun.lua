@@ -32,7 +32,7 @@ function action_index(index)
 		end	
 		exec_cmd()
 	else
-		default_url = api.Get_Url(cnb_url, default_url)
+		default_url = api.Get_Url(cn_url, default_url)
 		local info = api.arch_info(bin_file, default_url)
 		luci.template.render(name.."/download", {
 			Name = name,
