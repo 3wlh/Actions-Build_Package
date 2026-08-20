@@ -71,8 +71,6 @@ function Run_status()
 	local status = {
 		running = (luci.sys.call(cmd) == 0),
 		port = (port or 4096),
-		username = username,
-		password = password,
 	}
 	luci.http.write_json(status)
 end
