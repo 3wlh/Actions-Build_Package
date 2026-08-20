@@ -65,11 +65,14 @@ function Run_status()
 	luci.http.prepare_content("application/json")
 	local uci  = require "luci.model.uci".cursor()
 	local port = tonumber(uci:get(name, "config", "port"))
-	local token = uci:get(name, "config", "token")
+	local username = uci:get(name, "config", "username")
+	local password = uci:get(name, "config", "password")
 	local cmd = string.format("pgrep %s* >/dev/null", name)
 	local status = {
 		running = (luci.sys.call(cmd) == 0),
 		port = (port or 4096),
+		username = username,
+		password = password,
 	}
 	luci.http.write_json(status)
 end
