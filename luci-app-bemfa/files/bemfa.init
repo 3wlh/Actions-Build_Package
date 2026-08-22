@@ -1,0 +1,36 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+STOP=10
+
+NAME="bemfa"
+PROG="$(find /usr/sbin/ -maxdepth 1 -name "${NAME}*" | head -1)"
+
+writelog() {
+	# echo "$(date "+%Y.%m.%d_%H%M%S") - ${1}" >>/tmp/$NAME.log
+	logger -t ${NAME} "${1}"
+}
+
+start() {
+	config_load "$NAME"
+	local enabled
+	config_get_bool enabled "config" "enabled" "0"
+	[ "$enabled" -eq "1" ] || return 1
+	local key topic msg
+	config_get key "config" "key"
+	config_get topic "config" "topic"
+	config_get msg "config" "msg"
+
+	# 创建配置目录
+	[[ -d ${dir} ]] || mkdir -pm 755 "${dir}"
+	[[ -n "${msg}" ]] && inmsg=" -msg \"${msg}\""
+	# 构建启动参数
+	start-stop-daemon -S -q -b -x "$PROG" -- -key "${key}" -topic "${topic}"${inmsg}
+	writelog "${NAME} Starting ..."
+}
+
+stop() {
+	# kill -9 $(pgrep -f "${PROG}*" | sed "s/$$//g") 2>/dev/null
+	start-stop-daemon -K -q -s KILL -x "$PROG" 2>/dev/null
+	writelog "${NAME} stopped ..."
+}

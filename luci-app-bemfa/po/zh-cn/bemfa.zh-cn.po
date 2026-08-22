@@ -1,0 +1,92 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Last-Translator: 3wlh <3wlh.lh@gmail.com>\n\n"
+"Language-Team: Chinese (Simplified)\n"
+"Language: zh-Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# 插件名称
+msgid "Bemfa"
+msgstr "巴法云"
+
+# 页面标题
+msgid "Settings"
+msgstr "设置"
+msgid "Edit"
+msgstr "编辑"
+
+# 页面描述
+msgid "Configuration"
+msgstr "配置设置"
+msgid "A professional IoT device access and management platform, providing stable and reliable persistent TCP connections and MQTT protocol support."
+msgstr "一个专业的物联网设备接入和管理平台，提供稳定可靠的持久TCP连接和MQTT协议支持。"
+msgid "Official reference"
+msgstr "官方参考"
+# 服务状态
+msgid "Status"
+msgstr "状态"
+msgid "Collecting data..."
+msgstr "正在收集数据..."
+msgid "Program: RUNNING"
+msgstr "程序：运行中"
+msgid "Program: NOT RUNNING"
+msgstr "程序：未运行"
+msgid "Program：DETECT ERROR"
+msgstr "程序：检测异常"
+
+# 按钮文本
+msgid "Open Web parse"
+msgstr "打开解析页面"
+msgid "Open Web logs"
+msgstr "打开日志页面"
+
+# 配置项
+msgid "Basic Settings"
+msgstr "基础设置"
+msgid "Enable"
+msgstr "启用"
+msgid "User Private Key"
+msgstr "用户私钥"
+msgid "Topic"
+msgstr "订阅主题"
+msgid "Please enter the subscription topics, separated by |."
+msgstr "请输入订阅主题，用|分隔."
+msgid "Msg"
+msgstr "订阅消息"
+msgid "Filter (empty = no filter, use | to separate)"
+msgstr "筛选消息条件（空表示无筛选，使用|进行分隔）"
+
+# 按钮（扩展）
+msgid "Restart Service"
+msgstr "重启服务"
+
+# 下载页面 (二进制未安装时)
+msgid "Binary Not Installed"
+msgstr "二进制未安装"
+msgid "The binary was not found in /usr/sbin/"
+msgstr "未在 /usr/sbin/ 下找到二进制文件"
+msgid "Device architecture"
+msgstr "设备架构"
+msgid "Binary file"
+msgstr "二进制文件"
+msgid "Install path"
+msgstr "安装路径"
+msgid "Download URL:"
+msgstr "下载地址："
+msgid "Downloading, please wait..."
+msgstr "正在下载，请稍候..."
+msgid "Download successful. Entering settings..."
+msgstr "下载成功，即将进入设置页面..."
+
+# 下载页面 - 下载按钮
+msgid "Download"
+msgstr "下载"
+msgid "Downloading..."
+msgstr "下载中..."
+msgid "Download failed"
+msgstr "下载失败"
+msgid "Retry"
+msgstr "重试"
