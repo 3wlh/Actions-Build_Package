@@ -17,7 +17,7 @@ local function init_config()
     uci:set(name, "config", "enabled", uci:get(name, "config", "enabled") or 0)
     uci:set(name, "config", "key", uci:get(name, "config", "key") or "")
     uci:set(name, "config", "topic", uci:get(name, "config", "topic") or "")
-    uci:set(name, "config", "msg", uci:get(name, "config", "msg") or "")
+    uci:set(name, "config", "msg", uci:get(name, "config", "msg") or "on")
 
     return
 end
@@ -62,6 +62,7 @@ o.description = _('Please enter the subscription topics, separated by |.');
 
 -- 解密密钥
 o = s:option(Value, "msg", _("Msg"))
+o.default = "on"
 o.rmempty = true
 o.description = _('Filter (empty = no filter, use | to separate)');
 
