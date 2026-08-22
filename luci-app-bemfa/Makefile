@@ -62,7 +62,7 @@ endef
 
 # 卸载后: 删除 opkg (不跟踪的残留文件),
 define Package/$(PKG_NAME)/postrm
-[ -n "$${IPKG_INSTROOT}" ] || { rm -f /usr/sbin/mddns-script
+[ -n "$${IPKG_INSTROOT}" ] || { rm -f /usr/sbin/bemfa
 	rm -f /tmp/luci-indexcache.*
 	rm -rf /tmp/luci-modulecache/
 	/etc/init.d/rpcd reload 2>/dev/null
