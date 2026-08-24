@@ -1,5 +1,5 @@
 #!/bin/sh
-name="bemfa"
+name="bemfa-server"
 [ ! -f "/usr/share/ucitrack/luci-app-${name}.json" ] && {
     cat > /usr/share/ucitrack/luci-app-${name}.json << EOF
 {

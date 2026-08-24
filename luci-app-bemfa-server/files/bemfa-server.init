@@ -3,7 +3,7 @@
 START=99
 STOP=10
 
-NAME="bemfa"
+NAME="bemfa-server"
 PROG="$(find /usr/sbin/ -maxdepth 1 -name "${NAME}*" | head -1)"
 
 writelog() {
@@ -26,10 +26,8 @@ start() {
 	local dev_dir="/etc/$NAME/devices.json"
 	[ -d "$(dirname "$dev_dir")" ] || mkdir -pm 755 "$(dirname "$dev_dir")"
 	[ -f ${dev_dir} ] || echo '{}' > "$dev_dir"
-	[ -n "${msg}" ] && inmsg=" -msg \"${msg}\""
 	# 构建启动参数
 	set -- -key "$key" -topic "$topic" -d "$dev_dir"
-	[ -n "$msg" ] && set -- "$@" -msg "$msg"
 	start-stop-daemon -S -q -b -x "$PROG" -- "$@"
 	writelog "${NAME} Starting ..."
 }

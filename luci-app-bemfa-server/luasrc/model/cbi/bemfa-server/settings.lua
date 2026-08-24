@@ -60,11 +60,5 @@ o.rmempty = true
 o.datatype = "string"
 o.description = _('Please enter the subscription topics, separated by |.');
 
--- 配置消息
-o = s:option(Value, "msg", _("Msg"))
-o.default = "on"
-o.rmempty = true
-o.description = _('Filter keywords (empty = no filter; if set, only messages matching any keyword are kept; separate with |)');
-
 -- 渲染表单
 return m
