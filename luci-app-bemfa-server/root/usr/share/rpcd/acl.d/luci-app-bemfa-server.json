@@ -1,13 +1,13 @@
 {
-	"luci-app-bemfa": {
-		"description": "Grant UCI access for luci-app-bemfa",
+	"luci-app-bemfa-server": {
+		"description": "Grant UCI access for luci-app-bemfa-server",
 		"read": {
-			"uci": [ "bemfa" ],
+			"uci": [ "bemfa-server" ],
 			"ubus": {
 				"service": [ "list" ]
 			},
 			"file": {
-				"/usr/sbin/bemfa": [ "exec" ],
+				"/usr/sbin/bemfa-server": [ "exec" ],
 				"/*": [ "read" ]
 			}
 		},

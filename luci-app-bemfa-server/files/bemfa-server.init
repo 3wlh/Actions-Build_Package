@@ -28,7 +28,9 @@ start() {
 	[ -f ${dev_dir} ] || echo '{}' > "$dev_dir"
 	[ -n "${msg}" ] && inmsg=" -msg \"${msg}\""
 	# 构建启动参数
-	start-stop-daemon -S -q -b -x "$PROG" -- -key "${key}" -topic "${topic}"${inmsg} -d $dev_dir
+	set -- -key "$key" -topic "$topic" -d "$dev_dir"
+	[ -n "$msg" ] && set -- "$@" -msg "$msg"
+	start-stop-daemon -S -q -b -x "$PROG" -- "$@"
 	writelog "${NAME} Starting ..."
 }
 

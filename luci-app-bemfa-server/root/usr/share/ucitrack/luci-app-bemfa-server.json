@@ -1,0 +1,4 @@
+{
+    "config": "bemfa-server",
+    "init": "bemfa-server"  
+}

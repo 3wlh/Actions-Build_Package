@@ -38,7 +38,7 @@ on:
           - luci-app-scriptrun
           - luci-app-napcatapi
           - luci-app-photopea
-          - luci-app-bemfa
+          - luci-app-bemfa-server
           - luci-app-wake-on-lan
           - luci-app-napcat
           - luci-app-cifs-mount2
