@@ -90,7 +90,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) ./files/bemfa-server.config $(1)/etc/config/bemfa-server
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_BIN) ./files/bemfa.uci-default $(1)/etc/uci-defaults/99-$(PKG_NAME)
+	$(INSTALL_BIN) ./files/bemfa-server.uci-default $(1)/etc/uci-defaults/99-$(PKG_NAME)
 	$(INSTALL_DIR) $(1)/etc/bemfa-server
 	$(CP) ./files/devices.json $(1)/etc/bemfa/devices.json
 endef
