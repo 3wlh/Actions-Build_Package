@@ -15,7 +15,7 @@ end
 -- 二进制文件名与下载地址
 local bin_file = "mddns-go"
 local cn_url = "https://cnb.cool/3wlh/Build-File/-/releases/download//GitHub-Actions_MDDNS/MDDNS-linux-%s"
-local default_url = "https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_MDDNS/MDDNS-linux-%s"
+local default_url = "https://github.com/3wlh/Build-Source/releases/download/GitHub-Actions_MDDNS/MDDNS-linux-%s"
 
 function Get_Url()
 	return cnb_url

@@ -12,7 +12,7 @@ end
 -- 二进制文件名与下载地址
 local bin_file = "docker-web"
 local cn_url = string.format("https://cnb.cool/3wlh/Build-File/-/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
-local default_url = string.format("https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
+local default_url = string.format("https://github.com/3wlh/Build-Source/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
 
 -- 主入口: 实时检查二进制, 存在则跳转设置页, 不存在则显示下载页面
 function action_index()
