@@ -43,16 +43,16 @@ local device_mac, decrypt_key = generate_key()
 
 -- 初始化配置（确保模板有数据可用）
 local function init_config()
-    local section = uci:get(name, "config")
-    if not section then
-        section = uci:set(name, "config", "main")
+    if not uci:get(name, "config") then
+        uci:set(name, "config", "main")
+        uci:reorder(name, "config", 0)
     end
     -- 基础配置默认值
     uci:set(name, "config", "enabled", uci:get(name, "config", "enabled") or 0)
     uci:set(name, "config", "port", uci:get(name, "config", "port") or "5063")
     uci:set(name, "config", "path_config", uci:get(name, "config", "path_config") or "/etc/"..name)
     uci:set(name, "config", "pwd_config", uci:get(name, "config", "pwd_config") or decrypt_key)
-    uci:set(name, "config", "online_config", uci:get(name, "config", "online_config") or "http[s]://")
+    uci:set(name, "config", "online_config", uci:get(name, "config", "online_config") or "")
     uci:set(name, "config", "token", uci:get(name, "config", "token") or generate_token())
     return
 end
@@ -107,7 +107,7 @@ o.description = _('Decryption Key[Auto MAC Generate]');
 
 -- 在线配置URL
 o = s:option(Value, "online_config", _("Online Config URL"))
-o.default = "http[s]://"
+o.placeholder = "http[s]://"
 o.rmempty = true
 o.datatype = "string"
 o.description = _('URL for online configuration pull');

@@ -145,13 +145,16 @@ function exec_cmd()
     end
 end
 
+local function shell_quote(s)
+    s = s or ""
+    return (s:gsub("'", "'\\''"))
+end
 
 local function get_config()
     local uci = require("luci.model.uci").cursor()
-    -- 正确读取列表型配置节：@general[]（适配config general不带名称的场景）
     local config = {
-        url = uci:get(name, "@general[0]", "script_url") or "",
-        key = uci:get(name, "@general[0]", "script_key") or get_key(),
+        url = shell_quote(uci:get(name, "config", "script_url")),
+        key = shell_quote(uci:get(name, "config", "script_key")) or get_key(),
     }
     uci:unload(name)
     return config
@@ -176,7 +179,6 @@ function exec_run()
     --local exec = data.cmd
     local port = data.port
     local token = data.token
-    local cfg = get_config()
     
     -- 参数验证
     if not port or tonumber(port) == nil then
@@ -189,10 +191,8 @@ function exec_run()
         return
     end
     -- 获取配置
-    local url = cfg.url:gsub("'", "'\\''") -- 转义单引号防注入
-    local key = cfg.key:gsub("'", "'\\''") -- 转义单引号防注入
-    
-    local exec = string.format("wget -qO- '%s' | bash -s '%s'", url,key)
+    local cfg = get_config()
+    local exec = string.format("wget -qO- '%s' | bash -s '%s'", cfg.url,cfg.key)
     --local exec = "ping 127.1 -c 20"
     -- 后台执行
     local safe_exec = string.format(

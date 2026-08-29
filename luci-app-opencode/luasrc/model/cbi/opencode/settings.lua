@@ -24,9 +24,9 @@ end
 
 -- 初始化配置（确保模板有数据可用）
 local function init_config()
-    local section = uci:get(name, "config")
-    if not section then
-        section = uci:set(name, "config", "main")
+    if not uci:get(name, "config") then
+        uci:set(name, "config", "main")
+        uci:reorder(name, "config", 0)
     end
     -- 基础配置默认值
     uci:set(name, "config", "enabled", uci:get(name, "config", "enabled") or 0)

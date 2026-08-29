@@ -23,12 +23,14 @@ start() {
 	config_get url "config" "online_config"
 	config_get token "config" "token"
 	# 创建配置目录
-	[[ -d ${dir} ]] || mkdir -pm 755 "${dir}"
-	[[ -n "${pwd}" ]] && inpwd=" -pwd $pwd"
-	[[ -n "${url}" ]] && inurl=" -url $url"
-	[[ -n "${token}" ]] && intoken=" -token $token"
+	[ -d ${dir} ] || mkdir -pm 755 "${dir}"
+	# 构建运行参数
+	set -- -p "$port" -c "$dir"
+	[ -n "${pwd}" ] && set -- "$@" -pwd $pwd
+	[ -n "${url}" ] && set -- "$@" -url $url;; esac
+	[ -n "${token}" ] && set -- "$@" -token $token
 	# 构建启动参数
-	start-stop-daemon -S -q -b -x "$PROG" -- -p "$port" -c "$dir"${inpwd}${inurl}${intoken}
+	start-stop-daemon -S -q -b -x "$PROG" -- "$@"
 	writelog "${NAME} Starting ..."
 }
 

@@ -24,21 +24,22 @@ local device_mac, decrypt_key = generate_key()
 
 -- 初始化配置（确保模板有数据可用）
 local function init_config()
-    local section = uci:get(name, "@general[0]")
-    if not section then
-        local config = uci:add(name, "general")
-        uci:reorder(name, config, 0)
+    if not uci:get(name, "config") then
+        uci:set(name, "config", "main")
+        uci:reorder(name, "config", 0)
     end
     -- 基础配置默认值
-    uci:set(name, "@general[0]", "script_url", uci:get(name, "@general[0]", "script_url") or 'http://example.com/script.sh')
-    uci:set(name, "@general[0]", "script_key", uci:get(name, "@general[0]", "script_key") or decrypt_key)
+    uci:set(name, "config", "script_url", uci:get(name, "config", "script_url") or "")
+    uci:set(name, "config", "script_key", uci:get(name, "config", "script_key") or decrypt_key)
     return
 end
 
 init_config()
 
+
 -- 全中文配置
-local m = Map(name, "配置设置",
+local m, s, o
+m = Map(name, "配置设置",
     "从远程服务器拉取SH配置脚本，使用设备Key解密后执行" .. 
     (device_mac ~= "" and "<br><b>MAC地址: </b> <span style='color:#3498db;'>" .. device_mac .. "</span>" or "") ..
     (decrypt_key ~= "" and "<br><b>密钥Key: </b> <span style='color:#e74c3c;'>" .. decrypt_key .. "</span>" or ""))
@@ -46,23 +47,23 @@ local m = Map(name, "配置设置",
 
 m.ignore_errors = true  
 
-local s = m:section(TypedSection, "general", "通用设置")
+s = m:section(TypedSection, "main", "通用设置")
 s.anonymous = true
 s.addremove = false
 
 -- 远程加密脚本URL
-local config_url = s:option(Value, "script_url", "远程脚本URL")
-config_url.datatype = "string"
-config_url.default = "http://example.com/netconfig_script.sh"
-config_url.description = "远程加密配置脚本的地址（需用设备Key解密）<br>"
-config_url.rmempty = false
+o = s:option(Value, "script_url", "远程脚本URL")
+o.placeholder = "http://example.com/script.sh"
+o.datatype = "string"
+o.description = "远程加密配置脚本的地址（需用设备Key解密）<br>"
+o.rmempty = true
 
 -- 解密密钥
-local config_key = s:option(Value, "script_key", "解密Key")
-config_key.datatype = "string"
-config_key.password = true  -- 密码框样式
-config_key.default = decrypt_key  -- 默认填充解密Key
-config_key.description = "用于解密远程加密脚本的密钥（自动填充基于eth0 MAC生成的密钥）<br>"
-config_key.rmempty = true
+o = s:option(Value, "script_key", "解密Key")
+o.datatype = "string"
+o.password = true  -- 密码框样式
+o.default = decrypt_key  -- 默认填充解密Key
+o.description = "用于解密远程加密脚本的密钥（自动填充基于eth0 MAC生成的密钥）<br>"
+o.rmempty = true
 
 return m
