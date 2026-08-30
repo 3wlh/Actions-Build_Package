@@ -40,6 +40,28 @@ function action_download()
 	luci.http.write_json(api.download(info.bin_path, info.bin_url, total))
 end
 
+-- 检查端口是否被占用（true = 已占用, false = 空闲）
+function is_port_in_use(port)
+    local ok, s = pcall(nixio.bind, "0.0.0.0", port)
+    if ok and s then
+        s:close()
+        return false   -- 绑定成功，说明没人占用
+    end
+    return true        -- 绑定失败，已被占用
+end
+
+-- 生成随机端口的函数
+function get_port()
+    math.randomseed(os.time())
+    for _ = 1, 100 do
+        local port = math.random(1024, 65535)
+        if not is_port_in_use(port) then
+            return port
+        end
+    end
+    return nil
+end
+
 -- 输出错误日志
 local errors = {}
 function log_error(msg)
@@ -48,19 +70,6 @@ function log_error(msg)
     local cmd = string.format("logger -t %s 'napcat error: %s'",name ,safe_msg )
     os.execute(cmd)
 end
-
-function get_port() 
-    math.randomseed(os.time()) 
-    for _ = 1, 10 do 
-        local port = math.random(1024, 65535) 
-        local cmd = string.format("netstat -tunl | grep -qw :%d", port) 
-        local ret = os.execute(cmd) 
-        if ret ~= 0 then 
-            return port
-        end 
-    end
-    log_error("未获取可用到[Port]")
-end 
  
 function sess_token() 
     local http = require "luci.http"
