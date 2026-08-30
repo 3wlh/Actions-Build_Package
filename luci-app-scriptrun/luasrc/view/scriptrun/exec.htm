@@ -91,10 +91,15 @@
 // 初始化配置
 const Port = "<%= Port %>";
 const Token = "<%= token %>";
+const Example = "<%= Example %>";
+console.log("Port:", Port);
 console.log("TOKEN:", Token);
+console.log("Example:", Example);
 const protocol = window.location.protocol;
 const hostname = window.location.hostname;
-const link = `${protocol}//${hostname}:${Port}`;
+const link = `${protocol}//${hostname}:${Port}?token=${Token}`;
+const json = JSON.stringify({port:Port,token:Token,example: Example});
+
 
 // 隐藏 loading，显示 iframe
 document.getElementById("loading-tip").style.display = "none";
@@ -113,7 +118,7 @@ function sendCmdToIframe() {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: cmd
-    }).catch(err => alert("执行失败：" + err.message));
+    }).catch(err => alert("❌ 下发失败：" + err.message));
 }
 
 function runCmd() {
@@ -124,29 +129,22 @@ function runCmd() {
     fetch(L.url("admin", "system", "<%=Name%>", "run"), {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            cmd: exec,
-            port: Port,
-            token: Token
-        })
+        body: json
     })
     .then(ret => ret.ok ? ret.json() : Promise.reject(`HTTP错误: ${ret.status} (${ret.statusText})`))
-    .then(status => console.log("✅ 执行成功:", status.msg))
-    .catch(err => console.error("执行失败!", err));
+    .then(data => console.log("✅ 下发成功:", data.msg))
+    .catch(err => console.error("❌ 下发失败!", err));
 }
 
 function stopCmd() {
     fetch(L.url("admin", "system", "<%=Name%>", "stop"), {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            port: Port,
-            token: Token
-        })
+        body: json
     })
     .then(ret => ret.ok ? ret.json() : Promise.reject(`HTTP错误: ${ret.status} (${ret.statusText})`))
-    .then(data => console.log("✅ 执行成功:",  data))
-    .catch(err => console.error("执行失败!", err));
+    .then(data => console.log("✅ 下发成功:",  status.msg))
+    .catch(err => console.error("❌ 下发失败!", err));
 }
 </script>
 <%+footer%>

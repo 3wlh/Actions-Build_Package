@@ -125,8 +125,23 @@ local function get_key()
     return mac, key
 end
 
+-- 生成位随机字符
+local function generate_string(len)
+    math.randomseed(os.time() + math.floor(os.clock() * 1000000))
+    local chars = "0123456789abcdefghijklmnopqrstuvwxyz"
+    local result = ""
+    local charsLen = #chars
+    len = len or 32
+    for i = 1, len do
+        -- 随机取字符集中的一个字符
+        local randomIdx = math.random(1, charsLen)
+        result = result .. string.sub(chars, randomIdx, randomIdx)
+    end
+    return result
+end
+
 function get_data()
-    return get_port(), sess_token()
+    return generate_string(5), get_port(), sess_token()
 end
 
 function exec_cmd()
@@ -140,6 +155,7 @@ function exec_cmd()
          luci.template.render(name.."/exec", {
             Name = name,
             Port = port,
+            Example = example,
             --Token = token
         })
     end
@@ -162,7 +178,7 @@ end
 
 -- 执行命令
 function exec_run()
-    luci.http.header("Content-Type", "application/json; charset=utf-8")
+    luci.http.header("application/json; charset=utf-8")
     -- 读取原始 POST 数据
     local request_body = luci.http.content()
     if not request_body then
@@ -177,29 +193,34 @@ function exec_run()
     end
     -- 提取字段
     --local exec = data.cmd
-    local port = data.port
-    local token = data.token
-    
+    -- local port = data.port
+    -- local token = data.token
+    local example = data.example
+   
     -- 参数验证
-    if not port or tonumber(port) == nil then
-        luci.http.write('{"msg":"端口无效"}')
-        return
-    end
+    --if not port or tonumber(port) == nil then
+        --luci.http.write('{"msg":"端口无效"}')
+        --return
+    --end
     -- 验证 token
+    --if not token then
+        --luci.http.write('{"msg":"token 无效"}')
+        --return
+    --end
+    
+    -- 验证 example
     if not token then
-        luci.http.write('{"msg":"token 无效"}')
+        luci.http.write('{"msg":"example 无效"}')
         return
     end
+    
     -- 获取配置
     local cfg = get_config()
     local exec = string.format("wget -qO- '%s' | bash -s '%s'", cfg.url,cfg.key)
-    --local exec = "ping 127.1 -c 20"
+    -- local exec = "ping 127.0.0.1 -c 5"
     -- 后台执行
-    local safe_exec = string.format(
-        "wget -qO- --post-data='%s' http://127.0.0.1:%s/exec >/dev/null",
-        exec,
-        port)
-    os.execute(safe_exec)
+    local safe_exec = string.format("/usr/sbin/sseconsole -n %s run \"%s\" &", example, exec)
+    luci.sys.exec(safe_exec)
     luci.http.write(string.format('{"msg":"%s"}', exec))
 end
 
@@ -217,24 +238,17 @@ function exec_stop()
         luci.http.write(string.format('{"msg":"%s"}', data))
         return
     end
+    
     -- 提取字段
-    --local exec = data.cmd
-    local port = data.port
-    local token = data.token
-    -- 参数验证
-    if not port or tonumber(port) == nil then
-        luci.http.write('{"msg":"端口无效"}')
+    local example = data.example
+     
+    -- 验证 token
+    if not example then
+        luci.http.write('{"msg":"example 无效"}')
         return
     end
-    -- 验证 token
-    if not token then
-        luci.http.write('{"msg":"token 无效"}')
-        return
-    end 
-    local cmd = string.format(
-        "wget -qO- --post-data='exec' http://127.0.0.1:%s/exec >/dev/null",
-        port
-    )
-    os.execute(cmd)
-    luci.http.write('{"msg":"已停止命令"}')
+    
+    local cmd = string.format("/usr/sbin/sseconsole -n %s stop", example)
+    luci.sys.exec(cmd)
+    luci.http.write('{"msg":"stop"}')
 end
