@@ -1,0 +1,50 @@
+<%+header%>
+
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;   /* 页面本身不出滚动条 */
+    }
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+    #log_box {
+        flex: 1;                  /* 占满剩余空间 */
+        width: 100%;
+        min-height: 0;            /* 关键：允许 flex 子项收缩 */
+        box-sizing: border-box;
+        font-family: monospace;
+        font-size: 14px;
+        background: #000;
+        color: #0f0;
+        white-space: pre;
+        resize: none;
+    }
+</style>
+
+<script type="text/javascript">
+    var lastLen = 0;
+
+    XHR.poll(2, L.url("admin", "services", "<%=Name%>_logs"), null,
+        function (xhr) {
+            var text = xhr.responseText || '';
+            if (text.length > lastLen) {
+                var box = document.getElementById('log_box');
+                box.value += text.substring(lastLen);
+                lastLen = text.length;
+                box.scrollTop = box.scrollHeight;
+            } else if (text.length < lastLen) {
+                document.getElementById('log_box').value = text;
+                lastLen = text.length;
+            }
+        }
+    );
+</script>
+
+<h2>执行日志</h2>
+
+<textarea id="log_box" readonly="readonly" wrap="off"></textarea>
+
+<%+footer%>

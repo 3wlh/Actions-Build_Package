@@ -11,18 +11,22 @@ function index()
 	-- 注册文件读写的 RPC 接口
     entry({"admin", "services", name.."_read"}, call("Read_File"), nil).leaf = true
     entry({"admin", "services", name.."_save"}, call("Save_File"), nil).leaf = true
+    entry({"admin", "services", name.."_logs"}, call("exec_log"), nil).leaf = true
 	-- 注册菜单 --
 	entry({"admin", "services", name, "settings_cbi"}, cbi(name.."/settings")).leaf = true
 	entry({"admin", "services", name, "settings"}, call("action_index", "settings"), _("Settings"), 10).leaf = true
 	entry({"admin", "services", name, "edit"}, call("action_index", "edit"), _("Edit"), 20).leaf = true
+	entry({"admin", "services", name, "logs"}, call("action_index", "logs"), _("Logs"), 30).leaf = true
 end
 
+local EXEC_LOG = string.format("/tmp/%s.log", name)
 local TARGET_FILE = string.format("/etc/%s/devices.json", name)
+
 
 -- 二进制文件名与下载地址
 local bin_file = name
 local cn_url = string.format("https://cnb.cool/3wlh/Build-File/-/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
-local default_url = string.format("https://github.com/3wlh/Build-Source/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
+local default_url = string.format("https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
 
 -- 主入口: 实时检查二进制, 存在则跳转设置页, 不存在则显示下载页面
 function action_index(index)
@@ -104,5 +108,19 @@ function Save_File()
         http.write_json({ code = 0, msg = "Save success" })
     else
         http.write_json({ code = 1, msg = "Save Failed." })
+    end
+end
+
+-- 获取日志
+local fs = require "nixio.fs"
+function exec_log()
+    luci.http.header("Content-Type", "text/plain; charset=utf-8")
+    luci.http.header("Cache-Control", "no-cache")   -- 防止缓存
+
+    local content = fs.readfile(EXEC_LOG)
+    if content then
+        luci.http.write(content)
+    else
+        luci.http.write("")
     end
 end
