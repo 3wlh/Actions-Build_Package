@@ -18,11 +18,11 @@ end
 -- 二进制名称与下载地址
 local bin_file = "sseconsole"
 local cn_url = string.format("https://cnb.cool/3wlh/Build-File/-/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
-local default_url = string.format("https://github.com/3wlh/Build-Source/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
+local default_url = string.format("https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_%s/%s-%%s",bin_file ,bin_file)
 
 -- 主入口: 实时检查二进制, 存在则跳转设置页, 不存在则显示下载页面
 function action_index(index)
-	-- 取 URL 最后一段
+	-- 取 URL 最后一段 "parse" / "logs"
 	local index_name = luci.dispatcher.context.path[#luci.dispatcher.context.path]
 	if api.installed(bin_file) then
 		-- if index_name == "settings" then
@@ -32,7 +32,8 @@ function action_index(index)
 		end	
 		exec_cmd()
 	else
-		local info = api.arch_info(bin_file, api.Get_Url(cn_url, default_url))
+		default_url = api.Get_Url(cn_url, default_url)
+		local info = api.arch_info(bin_file, default_url)
 		luci.template.render(name.."/download", {
 			Name = name,
 			arch = info.arch,
@@ -48,7 +49,6 @@ end
 function action_download()
 	local url  = luci.http.formvalue("url")
 	local path = luci.http.formvalue("path")
-	--local info = api.arch_info(bin_file, file_url)
 	local total = tonumber(luci.http.formvalue("total"))
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(api.download(path, url, total))
@@ -61,20 +61,29 @@ function log_msg(msg)
     nixio.syslog("info",string.format("%s: %s", name,msg))
 end
 
+-- 检查端口是否被占用（true = 已占用, false = 空闲）
+function is_port_in_use(port)
+    local ok, s = pcall(nixio.bind, "0.0.0.0", port)
+    if ok and s then
+        s:close()
+        return false   -- 绑定成功，说明没人占用
+    end
+    return true        -- 绑定失败，已被占用
+end
 
 -- 生成随机端口的函数
 function get_port()
     math.randomseed(os.time())
     for _ = 1, 100 do
         local port = math.random(1024, 65535)
-        local cmd = string.format("netstat -tunl | grep -qw :%d", port)
-        local ret = os.execute(cmd)
-        -- 返回非0表示端口未占用
-        if ret ~= 0 then
+        if not is_port_in_use(port) then
             return port
         end
     end
+    return nil
 end
+
+
 
 -- 获取登录token
 function sess_token() 
@@ -103,6 +112,21 @@ function sess_token()
     return nil
 end
 
+-- 生成位随机字符（默认:32）
+local function generate_string(len)
+    math.randomseed(os.time() + math.floor(os.clock() * 1000000))
+    local chars = "0123456789abcdefghijklmnopqrstuvwxyz"
+    local result = ""
+    local charsLen = #chars
+    len = len or 32
+    for i = 1, len do
+        -- 随机取字符集中的一个字符
+        local randomIdx = math.random(1, charsLen)
+        result = result .. string.sub(chars, randomIdx, randomIdx)
+    end
+    return result
+end
+
 -- 生成解密密钥（Key）的函数
 local function get_key()
     -- 获取eth0 MAC（优先ip命令）
@@ -125,39 +149,30 @@ local function get_key()
     return mac, key
 end
 
--- 生成位随机字符
-local function generate_string(len)
-    math.randomseed(os.time() + math.floor(os.clock() * 1000000))
-    local chars = "0123456789abcdefghijklmnopqrstuvwxyz"
-    local result = ""
-    local charsLen = #chars
-    len = len or 32
-    for i = 1, len do
-        -- 随机取字符集中的一个字符
-        local randomIdx = math.random(1, charsLen)
-        result = result .. string.sub(chars, randomIdx, randomIdx)
-    end
-    return result
-end
-
 function get_data()
     return generate_string(5), get_port(), sess_token()
 end
 
 function exec_cmd()
-    local port, token = get_data()  
+    local example, port, token = get_data()  
     if #errors > 0 then
         luci.template.render(name.."/errlog", { errors = errors })
         return
     end
-    local cmd = string.format("/usr/sbin/sseconsole -p %s -t %s >/dev/null &", port, token)
-    if os.execute(cmd) then
-         luci.template.render(name.."/exec", {
-            Name = name,
-            Port = port,
-            Example = example,
-            --Token = token
-        })
+    local cmd = string.format("/usr/sbin/sseconsole -n %s -p %s -t %s >/dev/null &", example, port, token)
+    if luci.sys.call(cmd) == 0 then
+        os.execute("sleep 0.5")
+        if is_port_in_use(port) then
+            luci.template.render(name.."/exec", {
+                Name = name,
+                Port = port,
+                Example = example,
+                --Token = token
+            })
+        else
+            log_msg("程序未运行")
+            luci.template.render(name.."/errlog", { errors = errors })
+        end
     end
 end
 
@@ -168,6 +183,7 @@ end
 
 local function get_config()
     local uci = require("luci.model.uci").cursor()
+    -- 正确读取列表型配置节：@general[]（适配config general不带名称的场景）
     local config = {
         url = shell_quote(uci:get(name, "config", "script_url")),
         key = shell_quote(uci:get(name, "config", "script_key")) or get_key(),
@@ -208,8 +224,8 @@ function exec_run()
         --return
     --end
     
-    -- 验证 example
-    if not token then
+    -- 验证 Example
+    if not example then
         luci.http.write('{"msg":"example 无效"}')
         return
     end
@@ -220,12 +236,13 @@ function exec_run()
     -- local exec = "ping 127.0.0.1 -c 5"
     -- 后台执行
     local safe_exec = string.format("/usr/sbin/sseconsole -n %s run \"%s\" &", example, exec)
+    --os.execute(safe_exec)
     luci.sys.exec(safe_exec)
     luci.http.write(string.format('{"msg":"%s"}', exec))
 end
 
 function exec_stop()
-     luci.http.header("Content-Type", "application/json; charset=utf-8")
+     luci.http.header( "application/json; charset=utf-8")
     -- 读取原始 POST 数据
     local request_body = luci.http.content()
     if not request_body then
@@ -241,8 +258,8 @@ function exec_stop()
     
     -- 提取字段
     local example = data.example
-     
-    -- 验证 token
+    
+    -- 验证 Example
     if not example then
         luci.http.write('{"msg":"example 无效"}')
         return
