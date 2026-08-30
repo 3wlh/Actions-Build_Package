@@ -7,6 +7,9 @@ local function _(s)
     return translate(s)
 end
 
+-- 获取lan口ip
+-- local lan_ip = luci.sys.exec("uci -q get network.lan.ipaddr"):gsub("%s+$", "")
+
 -- 初始化配置（确保模板有数据可用）
 local function init_config()
     local section = uci:get(name, "config")
@@ -15,10 +18,10 @@ local function init_config()
     end
     -- 基础配置默认值
     uci:set(name, "config", "enabled", uci:get(name, "config", "enabled") or 0)
+    uci:set(name, "config", "prot", uci:get(name, "config", "prot") or "38880")
     uci:set(name, "config", "key", uci:get(name, "config", "key") or "")
     uci:set(name, "config", "topic", uci:get(name, "config", "topic") or "")
-    uci:set(name, "config", "msg", uci:get(name, "config", "msg") or "on")
-
+    -- uci:set(name, "config", "ip", uci:get(name, "config", "ip") or lan_ip)
     return
 end
 
@@ -48,6 +51,13 @@ s.anonymous = true
 -- 启用开关
 s:option(Flag, "enabled", _("Enable")).rmempty = false
 
+-- WS端口
+o = s:option(Value, "wsport", _("Wsport"))
+o.default = "38880"
+o.rmempty = true
+o.datatype = "string"
+o.description = _('Please enter the Websocket connection port.');
+
 -- 配置令牌
 o = s:option(Value, "key", _("UserKey"))
 o.password = true
@@ -59,6 +69,12 @@ o = s:option(Value, "topic", _("Topic"))
 o.rmempty = true
 o.datatype = "string"
 o.description = _('Please enter the subscription topics, separated by |.');
+
+-- 配置IP
+-- o = s:option(Value, "ip", _("IP"))
+-- o.rmempty = true
+-- o.datatype = "string"
+-- o.description = _('Please enter the IP address of the broadcast.');
 
 -- 渲染表单
 return m
