@@ -90,26 +90,33 @@ function Get_Position()
     end
     local services = {
         -- 优先：HTTP，兼容性最好
-        {url = "https://api.country.is/" , pattern = '"country":"(%w+)"'},
-		{url = "https://get.geojs.io/v1/ip/geo.json" , pattern = '"country_code":"(%w+)"'},
-		{url = "https://reallyfreegeoip.org/json/" , pattern = '"country_code":"(%w+)"'},
-        {url = "http://ip-api.com/json?fields=countryCode" , pattern = '"countryCode":"(%w+)"'},
-        {url = "http://ipwho.is/" , pattern = '"country_code":"(%w+)"'},
-        {url = "https://ipinfo.io/json" , pattern = '"country":"(%w+)"'},
-        {url = "https://api.ipapi.is/" , pattern = '"cc":"(%w+)"'},
+        -- 腾讯：[https://i.news.qq.com;https://r.inews.qq.com/api/ip2city]
+        {url = "https://i.news.qq.com/api/ip2city" , pattern = '"country":"([^"]+)"'},
+        {url = "https://api.live.bilibili.com/xlive/web-room/v1/index/getIpInfo" , pattern = '"country":"([^"]+)"'},
+        {url = "https://g3.letv.com/r?format=1" , pattern = '"geo"%s*:%s*"([^.]+)'},
+        {url = "https://get.geojs.io/v1/ip/country" , pattern = "^(%u%u)"},
+        {url = "https://get.geojs.io/" , pattern = "Country:.-%((%u%u)%)"},
+		{url = "https://1.1.1.1/cdn-cgi/trace" , pattern = "loc=(%u%u)"},	
     }
     for _, svc in ipairs(services) do
 		local output, country
         if c == "curl" then
 			output = sys.exec(string.format("curl -s -m 2 '%s' 2>/dev/null", svc.url))
 		elseif c == "wget" then
-			output = sys.exec(string.format("wget -qO- -T 2 '%s' 2>/dev/null", svc.url)) 
+			output = sys.exec(string.format("wget -qO- -T 2 --no-check-certificate '%s' 2>/dev/null", svc.url)) 
 		end
         if output and output ~= "" then
             country = output:match(svc.pattern)
             if country then
-                return country
-            end
+				if country == "中国" then
+					country = "CN"
+				elseif #country ~= 2 then
+					country = nil
+				end
+				if country then 
+					return country:upper() 
+				end
+			end
         end
     end
     return nil
