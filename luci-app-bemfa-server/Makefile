@@ -46,6 +46,7 @@ endef
 define Package/$(PKG_NAME)/postinst
 [ -n "$${IPKG_INSTROOT}" ] || { rm -f /tmp/luci-indexcache.*
 	rm -rf /tmp/luci-modulecache/
+	/etc/init.d/bemfa-server enable 2>/dev/null
 	/etc/init.d/rpcd reload 2>/dev/null
 	/etc/init.d/ucitrack reload 2>/dev/null
 	exit 0
@@ -80,7 +81,6 @@ define Package/$(PKG_NAME)/conffiles
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/usr/lib/bemfa-server
 	$(CP) $(PKG_BUILD_DIR)/root/* $(1)/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
 	$(CP) $(PKG_BUILD_DIR)/luasrc/* $(1)/usr/lib/lua/luci/
