@@ -78,6 +78,7 @@ endef
 
 define Package/$(PKG_NAME)/conffiles
 /etc/bemfa-server
+/etc/config/bemfa-server
 endef
 
 define Package/$(PKG_NAME)/install
