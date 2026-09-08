@@ -133,7 +133,8 @@ get_record() {
         log_ok "查询记录成功: ${sub}.${domain} (${type}) -> ID=${id}, Value=${val}"
         echo "$id $val"
     else
-        log_err "查询记录失败: ${sub}.${domain} (${type}) 未找到记录"
+        # API 确认查询成功但无记录: 记录确实不存在, 主程序走添加流程
+        log_info "记录不存在: ${sub}.${domain} (${type})"
     fi
 }
 

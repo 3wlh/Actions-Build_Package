@@ -53,22 +53,22 @@ url_encode() {
 # HTTP GET (带认证头)
 http_get() {
     if [ "$HTTP_CLIENT" = "curl" ]; then
-        curl -s -H "X-API-Key: $API_KEY" -H "X-API-Secret: $API_SECRET" "$1"
+        curl -s --connect-timeout 5 --max-time 15 -H "X-API-Key: $API_KEY" -H "X-API-Secret: $API_SECRET" "$1"
     else
-        wget -q -O - --header="X-API-Key: $API_KEY" --header="X-API-Secret: $API_SECRET" "$1"
+        wget -q -O - --timeout=15 --tries=1 --header="X-API-Key: $API_KEY" --header="X-API-Secret: $API_SECRET" "$1"
     fi
 }
 
 # HTTP POST (JSON body, 带认证头)
 http_post() {
     if [ "$HTTP_CLIENT" = "curl" ]; then
-        curl -s -X POST \
+        curl -s --connect-timeout 5 --max-time 15 -X POST \
             -H "X-API-Key: $API_KEY" \
             -H "X-API-Secret: $API_SECRET" \
             -H "Content-Type: application/json" \
             -d "$2" "$1"
     else
-        wget -q -O - \
+        wget -q -O - --timeout=15 --tries=1 \
             --header="X-API-Key: $API_KEY" \
             --header="X-API-Secret: $API_SECRET" \
             --header="Content-Type: application/json" \

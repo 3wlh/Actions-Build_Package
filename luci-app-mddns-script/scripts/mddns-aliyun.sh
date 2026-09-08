@@ -51,6 +51,51 @@ http_get() {
     fi
 }
 
+
+# ── 获取准确 UTC 时间戳: 阿里网关 → 百度 → 淘宝/苏宁 → 本地 ──
+get_utc_ts() {
+    local t ms
+
+    # 通用: 向指定站点发 HEAD 请求取响应头 Date (GNU date 才能解析, 失败自动跳过)
+    get_date_header() {
+        if [ "$HTTP_CLIENT" = "curl" ]; then
+            curl -sI --connect-timeout 5 --max-time 8 "$1" 2>/dev/null \
+                | sed -n 's/^[Dd]ate:[ ]*//p' | tr -d '\r'
+        else
+            wget -S --spider -T 8 "$1" 2>&1 \
+                | sed -n 's/.*[Dd]ate:[ ]*//p' | tr -d '\r'
+        fi
+    }
+
+    # 1) 阿里云网关自身时间 (与校验方同源, 最准)
+    ms=$(date -u -d "$(get_date_header "$ENDPOINT")" +%s 2>/dev/null)
+
+    # 2) 备用: 百度响应头时间
+    if [ -z "$ms" ]; then
+        ms=$(date -u -d "$(get_date_header "https://www.baidu.com")" +%s 2>/dev/null)
+    fi
+
+    # 3) 再备用: 毫秒级时间戳接口 (淘宝 → 苏宁)
+    if [ -z "$ms" ]; then
+        t=$(http_get "https://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp" \
+            | grep -o '"t":"[0-9]*' | tr -d '"' | sed 's/t://')
+        [ -z "$t" ] && t=$(http_get "https://f.m.suning.com/api/ct.do" \
+            | grep -o '"currentTime":[0-9]*' | cut -d: -f2)
+        case "$t" in
+            [0-9]*) ms=$(( t / 1000 )) ;;
+        esac
+    fi
+
+    # 统一用 awk 的 strftime 转成阿里云要求的 UTC 格式 (busybox awk 也支持)
+    if [ -n "$ms" ]; then
+        ts=$(TZ=UTC0 awk -v e="$ms" 'BEGIN{print strftime("%Y-%m-%dT%H:%M:%S", e) "Z"}')
+        [ -n "$ts" ] && { printf '%s' "$ts"; return 0; }
+    fi
+
+    # 4) 全部失败 → 回退本地时间 (保持原行为)
+    date -u +"%Y-%m-%dT%H:%M:%SZ"
+}
+
 url_encode() {
     printf '%s' "$1" | awk '
     BEGIN { for (i=1;i<256;i++) ord[sprintf("%c",i)]=i }
@@ -81,7 +126,7 @@ generate_signature() {
 
 send_request() {
     action="$1"; shift
-    ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+    ts=$(get_utc_ts)
     nonce="$(date +%s)$$"
     all="Action=$action&Format=JSON&Version=2015-01-09&AccessKeyId=$ACCESS_KEY_ID&SignatureMethod=HMAC-SHA1&SignatureVersion=1.0&SignatureNonce=$nonce&Timestamp=$(url_encode "$ts")"
     for arg in "$@"; do all="$all&$arg"; done

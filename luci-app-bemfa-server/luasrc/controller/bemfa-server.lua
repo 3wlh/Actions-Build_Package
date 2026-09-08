@@ -3,6 +3,10 @@ local name = (...):match("%.([^%.]+)$")
 module("luci.controller."..name, package.seeall)
 local api = require("luci.model.cbi."..name..".api.download")
 
+function _(s)
+	luci.i18n.translate(s)
+end
+
 function index()
 	-- 菜单始终注册 (二进制检查在 action_index 实时执行, 避免菜单缓存导致下载后不刷新)
 	entry({"admin", "services", name}, call("action_index"), _("Bemfa"), 90).dependent = true
@@ -80,7 +84,7 @@ function Read_File()
     local http = require "luci.http"
     -- 安全检查：文件是否存在
     if not fs.access(TARGET_FILE, "r") then
-        http.write_json({ code = 1, msg = "File not found" })
+        http.write_json({ code = 1, msg = _("File not found") })
         return
     end
 
@@ -88,7 +92,7 @@ function Read_File()
     if content then
         http.write_json({ code = 0, data = content })
     else
-        http.write_json({ code = 1, msg = "Failed to read file" })
+        http.write_json({ code = 1, msg = _("Failed to read file") })
     end
 end
 
@@ -99,15 +103,15 @@ function Save_File()
     local content = http.formvalue("content")
     -- 安全检查：内容非空 + 文件可写
     if not content or not fs.access(TARGET_FILE, "w") then
-        http.write_json({ code = 1, msg = "File not writable" })
+        http.write_json({ code = 1, msg = _("File not writable") })
         return
     end
     local res = fs.writefile(TARGET_FILE, content)
 
     if res then
-        http.write_json({ code = 0, msg = "Save success" })
+        http.write_json({ code = 0, msg = _("Save success") })
     else
-        http.write_json({ code = 1, msg = "Save Failed." })
+        http.write_json({ code = 1, msg = _("Save Failed.") })
     end
 end
 

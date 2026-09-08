@@ -38,13 +38,13 @@ req() {
     url="${ENDPOINT}${path}"
     if [ "$HTTP_CLIENT" = "curl" ]; then
         if [ -n "$data" ]; then
-            curl -s -X "$method" \
+            curl -s --connect-timeout 5 --max-time 15 -X "$method" \
                 -H "X-Api-Key: $API_KEY" \
                 -H "X-Api-Secret: $API_SECRET" \
                 -H "Content-Type: application/json" \
                 -d "$data" "$url"
         else
-            curl -s -X "$method" \
+            curl -s --connect-timeout 5 --max-time 15 -X "$method" \
                 -H "X-Api-Key: $API_KEY" \
                 -H "X-Api-Secret: $API_SECRET" \
                 "$url"
@@ -52,7 +52,7 @@ req() {
     else
         # wget (GNU wget 支持 --header/--method/--body-data)
         if [ -n "$data" ]; then
-            wget -q -O - \
+            wget -q -O - --timeout=15 --tries=1 \
                 --header="X-Api-Key: $API_KEY" \
                 --header="X-Api-Secret: $API_SECRET" \
                 --header="Content-Type: application/json" \
@@ -60,7 +60,7 @@ req() {
                 --body-data="$data" \
                 "$url"
         else
-            wget -q -O - \
+            wget -q -O - --timeout=15 --tries=1 \
                 --header="X-Api-Key: $API_KEY" \
                 --header="X-Api-Secret: $API_SECRET" \
                 --method="$method" \
@@ -73,6 +73,18 @@ get_record() {
     domain="$1"; sub="$2"; type="$3"
     log_info "查询记录: ${sub}.${domain} (${type})"
     result=$(req "GET" "/dns/records/${domain}?take=100&skip=0")
+    # 请求失败 (网络错误/超时/无响应): 返回非零退出码, 主程序中止本次更新直接重试,
+    # 避免误判为"记录不存在"走添加流程
+    if [ -z "$result" ]; then
+        log_err "查询请求失败: ${sub}.${domain} (${type}) (网络错误或无响应)"
+        exit 1
+    fi
+    # API 返回错误 (认证失败等): 响应中无 items 字段, 同样中止, 不走添加
+    if ! printf '%s' "$result" | grep -q '"items"'; then
+        log_err "查询记录失败: ${sub}.${domain} (${type}) API返回错误"
+        log_err "API返回: $result"
+        exit 1
+    fi
     id=$(printf '%s' "$result" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
     val=$(printf '%s' "$result" | grep -o '"address":"[^"]*"' | head -1 | cut -d'"' -f4)
     if [ -z "$val" ]; then
@@ -82,8 +94,8 @@ get_record() {
         log_ok "查询记录成功: ${sub}.${domain} (${type}) -> ID=${id}, Value=${val}"
         echo "$id $val"
     else
-        log_err "查询记录失败: ${sub}.${domain} (${type}) 未找到记录"
-        log_err "API返回: $result"
+        # API 确认查询成功但无记录: 记录确实不存在, 主程序走添加流程
+        log_info "记录不存在: ${sub}.${domain} (${type})"
     fi
 }
 
