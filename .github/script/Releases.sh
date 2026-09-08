@@ -20,6 +20,6 @@ Delete "${DIR}" "${PACKAGES_PATH}"
 for FILE in "${PACKAGES_NAME[@]}"; do
     if [[ -n ${FILE} ]]; then
         dl         
-     fi
+    fi
 done
 
