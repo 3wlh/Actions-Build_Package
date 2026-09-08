@@ -8,7 +8,7 @@ Openclash "${ARCH}" "${PACKAGES_PATH}"
 Mddns "all" "${PACKAGES_PATH}"
 # Passwall "${ARCH}" "24.10" "${PACKAGES_PATH}"
 # Socat "${ARCH}" "${PACKAGES_PATH}"
-Releases "${ARCH}" "${PACKAGES_PATH}" "ports-status luci-app-napcatapi"
+Releases "${ARCH}" "${PACKAGES_PATH}" "luci-app-napcatapi"
 Releases "all" "${PACKAGES_PATH}" "luci-app-scriptrun"
 Segmentation "${PACKAGES_PATH}" "https://dl.openwrt.ai/releases/24.10/packages/${ARCH}/kiddin9/" \
 "luci-app-unishare unishare webdav2 luci-app-v2ray-server sunpanel"
